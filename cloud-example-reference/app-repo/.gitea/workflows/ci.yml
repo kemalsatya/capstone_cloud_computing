@@ -1,0 +1,71 @@
+name: capstone-ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  build-test-scan-publish:
+    runs-on: capstone
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Tool versions
+        run: |
+          java -version
+          mvn --version
+          node --version || true
+          docker version
+
+      - name: Verify application
+        run: |
+          set -euo pipefail
+          if [ -x ./mvnw ]; then
+            ./mvnw -B verify
+          elif [ -f pom.xml ]; then
+            mvn -B verify
+          else
+            echo "No Maven project detected. Replace this step with the approved build/test command."
+            exit 1
+          fi
+
+      - name: Build, scan, publish, and update GitOps desired state
+        env:
+          GITOPS_PASSWORD: ${{ secrets.GITOPS_PASSWORD }}
+        run: |
+          set -euo pipefail
+          GITEA_USER="__GITEA_USER__"
+          APP_REPO="__APP_REPO__"
+          GITOPS_REPO="__GITOPS_REPO__"
+          TRIVY_VERSION="0.76.0"
+          SHA="$(git rev-parse --short=12 HEAD)"
+          PUSH_IMAGE="localhost:5001/${GITEA_USER}/${APP_REPO}:${SHA}"
+          PULL_NAME="registry:5000/${GITEA_USER}/${APP_REPO}"
+
+          docker build -t "$PUSH_IMAGE" .
+
+          # Reporting gate first. Teams may later change --exit-code to 1 for an approved blocking policy.
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:${TRIVY_VERSION} image \
+            --severity HIGH,CRITICAL --exit-code 0 "$PUSH_IMAGE"
+
+          docker push "$PUSH_IMAGE"
+
+          rm -rf /tmp/capstone-gitops
+          AUTH="$(printf '%s:%s' "$GITEA_USER" "$GITOPS_PASSWORD" | base64 | tr -d '\n')"
+          git -c http.extraHeader="Authorization: Basic $AUTH" clone \
+            "http://gitea:3000/${GITEA_USER}/${GITOPS_REPO}.git" /tmp/capstone-gitops
+          cd /tmp/capstone-gitops
+          sed -i -E "s#newName: .*#newName: ${PULL_NAME}#" overlays/dev/kustomization.yaml
+          sed -i -E "s#newTag: .*#newTag: ${SHA}#" overlays/dev/kustomization.yaml
+          git config user.name 'Capstone CI'
+          git config user.email 'capstone-ci@example.local'
+          git add overlays/dev/kustomization.yaml
+          if git diff --cached --quiet; then
+            echo 'GitOps repository already references this image.'
+          else
+            git commit -m "deploy: ${APP_REPO} ${SHA}"
+            git -c http.extraHeader="Authorization: Basic $AUTH" push origin main
+          fi

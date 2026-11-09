@@ -1,0 +1,16 @@
+resources:
+  - ../../base
+
+images:
+  - name: registry:5000/__GITEA_USER__/__APP_REPO__
+    newName: registry:5000/__GITEA_USER__/__APP_REPO__
+    newTag: initial
+
+patches:
+  - target:
+      kind: Deployment
+      name: capstone-app
+    patch: |-
+      - op: replace
+        path: /spec/replicas
+        value: 1

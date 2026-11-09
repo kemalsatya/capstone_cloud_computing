@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: capstone-app-config
+  namespace: capstone
+data:
+  DB_URL: jdbc:postgresql://host.k3d.internal:5432/capstone
+  DB_USER: capstone
+  OIDC_ISSUER: http://host.k3d.internal:8081/realms/capstone
