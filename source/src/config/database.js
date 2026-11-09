@@ -8,7 +8,7 @@ export const pool = new Pool({
     port: env.DB_PORT || 5432,
     user: env.DB_USER,
     password: env.DB_PASSWORD,
-    database: env.DB_PASSWORD
+    database: env.DB_NAME
 })
 
 export async function query(text, params) {
