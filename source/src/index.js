@@ -1,14 +1,10 @@
-import express from 'express'
-import { env } from './config/env';
-const app = express();
+import { createApp } from './app.js';
+import { env } from './config/env.js';
+
+const app = createApp();
 const PORT = env.PORT;
 
-// Base route
-app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-// Start the server
 app.listen(PORT, () => {
-  console.log(`Server is running at http://localhost:${PORT}`);
+    console.log(`[JournalFit Server] Running on http://localhost:${PORT}`);
+    console.log(`[JournalFit Server] Environment: PORT=${PORT}, DB_HOST=${env.DB_HOST}:${env.DB_PORT}, DB_NAME=${env.DB_NAME}`);
 });
