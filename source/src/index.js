@@ -1,6 +1,7 @@
-const express = require('express');
+import express from 'express'
+import { env } from './config/env';
 const app = express();
-const PORT = 3000;
+const PORT = env.PORT;
 
 // Base route
 app.get('/', (req, res) => {
