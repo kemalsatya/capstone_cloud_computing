@@ -1,0 +1,13 @@
+﻿Timestamp: 2026-11-10T00:38:07.6608839+07:00
+horizontalpodautoscaler.autoscaling/journalfit-backend created (server dry run)
+horizontalpodautoscaler.autoscaling/journalfit-backend created
+NAME                 REFERENCE                       TARGETS              MINPODS   MAXPODS   REPLICAS   AGE
+journalfit-backend   Deployment/journalfit-backend   cpu: <unknown>/70%   2         3         0          0s
+Ownership: spec.replicas omitted from manifest; HPA owns scale. Update last-applied annotation only so later apply does not remove existing replica count.
+deployment.apps/journalfit-backend configured
+configmap/journalfit-backend-config unchanged (server dry run)
+service/journalfit-backend unchanged (server dry run)
+persistentvolumeclaim/journalfit-uploads unchanged (server dry run)
+deployment.apps/journalfit-backend configured (server dry run)
+horizontalpodautoscaler.autoscaling/journalfit-backend unchanged (server dry run)
+ingress.networking.k8s.io/journalfit-backend unchanged (server dry run)

@@ -1,0 +1,13 @@
+Timestamp: 2026-11-10T00:18:33.269915+07:00
+Method: HTTP via Ingress 127.0.0.1:8088 with Host journalfit.localhost; local reference DOCX used as test fixture, no backend modifications.
+GET /health/live HTTP 200
+{"status": "alive", "timestamp": "2026-11-09T17:18:33.348Z"}
+GET /health/ready HTTP 200
+{"status": "ready", "database": "connected", "timestamp": "2026-11-09T17:18:33.356Z"}
+Fixture: Panduan_Eksekusi_Capstone_JournalFit_v2.docx; bytes=42595; SHA256=ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753
+POST /api/manuscripts/upload HTTP 201
+GET /api/manuscripts/ms-a5430ef1/report HTTP 200
+Manuscript ID: ms-a5430ef1
+Stored path: /uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+Report payload: {"success": true, "message": "Manuscript report retrieved successfully.", "data": {"manuscript": {"id": "ms-a5430ef1", "tenant_id": "tenant-a", "author_id": null, "title": "Panduan_Eksekusi_Capstone_JournalFit_v2.docx", "file_path": "/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx", "upload_time": "2026-11-09T17:18:35.268Z", "tenant_name": "Journal Fitra Journal (Tenant A)"}, "checkResult": {"id": "cr-2441838a", "manuscript_id": "ms-a5430ef1", "status": "COMPLETED", "format_score": 80, "created_at": "2026-11-09T17:18:35.275Z"}, "findings": [{"id": "f-2441838a-1", "check_result_id": "cr-2441838a", "rule_type": "WORD_COUNT", "severity": "WARNING", "message": "Word count (1233) is below minimum requirement of 3000 words.", "created_at": "2026-11-09T17:18:35.280Z"}, {"id": "f-2441838a-2", "check_result_id": "cr-2441838a", "rule_type": "ABSTRACT_CHECK", "severity": "INFO", "message": "Abstract section is present.", "created_at": "2026-11-09T17:18:35.285Z"}, {"id": "f-2441838a-3", "check_result_id": "cr-2441838a", "rule_type": "KEYWORDS_CHECK", "severity": "INFO", "message": "Keywords section is present.", "created_at": "2026-11-09T17:18:35.290Z"}]}}
+Interpretation: actual DOCX upload and report retrieval succeeded via Kubernetes Ingress and PostgreSQL. This does not yet prove persistence across pod replacement or restore.

@@ -78,6 +78,12 @@ Tenant test memakai data aktual, bukan menganggap seed metadata sebagai file DOC
 `capstone` tidak memiliki keenam tabel tersebut. Tidak ada skema yang dibuat dalam
 audit ini. Bukti: `evidence/platform/integration-audit.txt`.
 
+**Pembaruan integrasi 2026-11-10:** setelah pengguna mengizinkan kelanjutan D.0,
+database journalfit dibuat dan `source/schema.sql` diterapkan tanpa perubahan,
+dalam satu transaksi. Enam tabel dan seed terverifikasi. Hash file SQL tetap sama.
+Audit awal di atas tetap berlaku sebagai catatan historis, bukan status terbaru.
+Bukti: `evidence/platform/database-initialization.txt`.
+
 ## A.3 Penyimpanan dokumen dan batas scaling lab
 
 Kode menulis ke `path.resolve(process.cwd(), 'uploads')`, sehingga lokasi fisik
@@ -113,86 +119,87 @@ Jangan memperluas ke object storage, NFS atau layanan tambahan tanpa koordinasi.
 lalu buktikan file tetap ada pada volume dan laporan tetap dapat diambil. Uji akses
 tulis dari replica yang memakai volume yang sama. Kegagalan node bukan bagian klaim ini.
 
-## A.4 Identitas Kubernetes, image dan GitOps
+## A.4 Penyelarasan ke Anggota 3
 
-| Parameter | Baseline sementara untuk manifest platform |
+Atas instruksi pengguna, konfigurasi platform mengikuti branch
+`chore/cicd-gitops-pipeline` commit `cf78b0d`, diperiksa kembali melalui fetch.
+Keputusan ini menggantikan usulan sebelumnya tentang namespace capstone, tag
+12 karakter dan repository GitOps terpisah. Workflow Anggota 3 tidak diubah.
+
+| Parameter | Konfigurasi yang diikuti |
 | --- | --- |
-| Cluster/context baru | `capstone` / `k3d-capstone` |
-| Namespace aplikasi | `capstone`, konsisten dengan baseline dosen |
-| Deployment / Service | `journalfit-backend` / `journalfit-backend` |
-| Label selector | `app=journalfit` |
-| Container | `backend` |
-| Port Service | 80 menuju container 8000 |
-| Push image dari runner host | `localhost:5001/journalfit-backend:<sha12>` |
-| Image yang ditarik cluster | `registry:5000/journalfit-backend:<sha12>` |
-| Identitas rilis | 12 karakter SHA commit source; tag tidak ditimpa untuk artifact berbeda |
-| Repository aplikasi GitHub | `kemalsatya/capstone_cloud_computing`, yang sekarang digunakan |
-| Target repository aplikasi Gitea | `student/capstone-app`, mengikuti nama baseline paket |
-| Target repository GitOps Gitea | `student/capstone-gitops`, terpisah dari source aplikasi |
-| URL Argo CD ke GitOps | `http://host.k3d.internal:3001/student/capstone-gitops.git` |
-| Branch / path GitOps | `main` / `overlays/dev` |
-| Base dan overlay GitOps | `base/` dan `overlays/dev/kustomization.yaml` |
-| Argo Application | `journalfit-backend`, namespace controller `argocd` |
+| Cluster/context | capstone / k3d-capstone |
+| Namespace workload, ConfigMap, Secret dan PVC | default |
+| Deployment / Service / Argo Application | journalfit-backend |
+| Container / label | backend / app=journalfit |
+| Service | Port 80 menuju container 8000 |
+| Tag artifact | 7 karakter SHA source; artifact saat ini 3bdf305 |
+| Push / pull | localhost:5001/journalfit-backend / registry:5000/journalfit-backend |
+| Sumber Argo CD | https://github.com/kemalsatya/capstone_cloud_computing.git |
+| targetRevision / path | HEAD (default branch repository) / deployment |
+| Entry point manifest | deployment/kustomization.yaml |
+| Namespace controller Argo CD | argocd |
 
-Nama dan URL Gitea di atas adalah target rancangan, belum repository yang dibuktikan
-tersedia. Anggota 3 menentukan hubungan GitHub dengan mirror/source di Gitea dan
-memastikan commit yang dibangun dapat ditelusuri ke commit GitHub; tidak melakukan
-force push atau mengganti remote repository yang ada.
+Namespace default adalah bawaan cluster dan tidak dikelola manifest Namespace,
+sehingga file namespace.yaml tidak lagi digunakan. Jangan membuat Argo Application
+kedua yang merekonsiliasi workload yang sama dari repository/path berbeda.
 
-**Satu sumber konfigurasi aktif:**
+Sumber GitHub aplikasi ini mengikuti instruksi pengguna dan konfigurasi Anggota 3;
+berbeda dari pemisahan app/GitOps repository pada Infrastructure Guide. Perbedaan
+tersebut tetap dicatat untuk review kepatuhan kelompok, bukan diklaim sudah memenuhi
+pemisahan repository. Tidak membuat repository GitOps lain secara bersamaan.
 
-1. Anggota 2 menyusun manifest di `deployment/` pada feature branch untuk review.
-2. Anggota 3 mengintegrasikan versi yang disetujui ke `base/` repository GitOps.
-3. Setelah Argo CD aktif, repository GitOps menjadi satu-satunya sumber desired
-   state runtime. `deployment/` pada repository aplikasi adalah snapshot referensi
-   versi yang diserahkan, bukan target rekonsiliasi kedua.
-4. Perubahan manifest selanjutnya harus dipromosikan ke GitOps dan dicatat
-   revision-nya; jangan menerapkan snapshot lama di atas aplikasi yang dikelola Argo.
-   Anggota 2 dan 3 mereview perubahan manifest yang sama.
+### Migrasi lokal dan data
 
-**Alur delivery milik Anggota 3:** checkout source, jalankan tes dari `source/`, build
-dengan context `source/`, scan bersama Anggota 4, publish tag SHA, ubah image tag
-overlay GitOps, lalu Argo CD melakukan rekonsiliasi. Contoh build dari root:
+Workload baru di default sudah memiliki dua replica Ready dengan PVC baru pada
+node storage yang sama. Seluruh file upload yang ada disalin melalui stream biner,
+checksum sumber/tujuan cocok. Health dan laporan lama tetap HTTP 200 setelah Ingress
+dialihkan. Database PostgreSQL tetap sama. Deployment lama di capstone diskalakan
+ke nol dan Ingress lamanya dilepas; PVC/Secret/namespace lama tidak dihapus.
 
-```powershell
-docker build -t localhost:5001/journalfit-backend:<sha12> ./source
-```
+Tag pendek 3bdf305 merujuk artifact yang sama dengan 3bdf305d106c:
+sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95.
+Tidak membangun artifact baru dengan tag commit lama. Image produksi masih Node.js
+24 sesuai Dockerfile yang akan dipakai pipeline ketika file tersebut tersedia.
 
-`<sha12>` harus diganti dengan SHA sebenarnya. `platform-dev` hanya tag tes lokal.
-Pipeline tidak menjalankan `kubectl apply`. Workflow Gitea harus berada pada path
-aktif `.gitea/workflows/` di root repository aplikasi Gitea; file di `automation/`
-sendiri hanya arsip sampai ditempatkan pada path yang benar oleh Anggota 3.
+### Runtime CI dan pekerjaan delivery yang belum selesai
 
-Rollback dilakukan dengan mengembalikan referensi artifact melalui commit GitOps.
-Jangan menguji `kubectl set image` atau `rollout undo` sebagai perubahan permanen
-ketika Argo self-heal aktif. Saat HPA diaktifkan, overlay jangan terus memaksakan
-replica tetap; Anggota 3 mengatur pengabaian `/spec/replicas` dan sinkronisasinya
-agar Argo CD menghormati HPA. Ini harus diverifikasi pada tahap E.
+GitHub CI Anggota 3 menggunakan Node.js 20 untuk npm test, tetapi build image memakai
+source/Dockerfile kita. Runtime CI dan runtime image merupakan dua pengaturan terpisah.
+Uji diagnostik menunjukkan 10 tes lulus pada Node20 dengan path eksplisit
+`node --test tests/app.test.js`. Namun perintah npm test saat ini memakai pola
+`tests/**/*.test.js` yang tidak ditemukan oleh Node20 dalam lingkungan uji.
 
-Dasar teknis yang diperiksa: [access mode PersistentVolume Kubernetes](https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes)
-dan [opsi sinkronisasi Argo CD](https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/#respect-ignore-differences-configs).
+Anggota 1/3 perlu menyelaraskan perintah tes, misalnya memakai path eksplisit pada
+script test atau versi Node CI yang mendukung pola tersebut. Tidak ada perubahan
+package.json atau workflow oleh Anggota 2. Hasil tes eksplisit bukan klaim CI hijau.
 
-Deployment manual hanya dapat dipakai sebagai verifikasi awal sebelum handoff
-Argo CD, dengan context/namespace eksplisit dan metode dicatat dalam evidence.
+Workflow Gitea yang diperiksa belum memperbarui tag pada manifest setelah push;
+Argo tidak otomatis memilih image baru hanya karena registry mendapat tag baru.
+Anggota 3 perlu memperbarui desired state dan membuktikan revision/image runtime.
+Skrip rollout undo juga harus diselaraskan dengan selfHeal Argo: perubahan manual
+bisa dikembalikan sesuai Git. HPA memerlukan koordinasi kepemilikan spec.replicas.
 
-## Bahan penyelarasan A.4 dengan branch CI/CD
+Deployment masih manual. Pada preflight D.8, perubahan platform belum dipush
+atau masuk main. Publikasi branch harus diverifikasi sebelum sinkronisasi; Argo
+yang membaca HEAD/main tidak otomatis membaca feature branch.
+Tidak mengaktifkan Argo atau mengubah pipeline tanpa handoff Anggota 3.
 
-Branch `chore/cicd-gitops-pipeline` commit `cf78b0d` belum menjadi kontrak final.
-Berikut perbedaan yang harus direview bersama Anggota 3 sebelum handoff Argo CD:
+Pembaruan D.8: controller Argo CD v3.5.6 sudah dipasang. Application review tersedia
+di automation/argocd/application.yaml, sementara membaca feat/k8s-manifests dan
+auto-sync disabled. Setelah push/review, sync revision diuji; setelah PR merge,
+targetRevision kembali main/HEAD. HPA diabaikan pada spec.replicas, dan PVC dilindungi
+Prune=false,Delete=false. Ini persiapan konfigurasi, belum bukti sync dari GitHub.
 
-| Bagian | Baseline platform sementara | Temuan pada branch CI/CD | Tindak lanjut saat integrasi |
-| --- | --- | --- | --- |
-| Runtime | Node.js 24 | GitHub Actions menguji Node.js 20 | Selaraskan versi CI dengan runtime yang disepakati. |
-| Dockerfile/context | source/Dockerfile, context source/ | Pipeline mendukung path tersebut | Gunakan Dockerfile aplikasi; fallback tidak diperlukan setelah tersedia pada commit source. |
-| Image | journalfit-backend | journalfit-backend | Penamaan sudah cocok. |
-| Tag | SHA 12 karakter | SHA 7 karakter | Sepakati satu format dan gunakan identik pada artifact, manifest dan evidence. |
-| Namespace | capstone | default | Selaraskan Application, manifest, Secret dan perintah rollback. |
-| Sumber Argo | student/capstone-gitops, main, overlays/dev | GitHub aplikasi, targetRevision HEAD, path deployment | Tetap usulkan repo GitOps terpisah sesuai Infrastructure Guide; jangan aktifkan dua Application untuk workload yang sama. |
-| Desired-state update | CI memperbarui tag overlay | Belum ada langkah pembaruan manifest setelah push pada workflow Gitea yang diperiksa | Anggota 3 melengkapi alur artifact ke GitOps sebelum mengklaim auto-deploy. |
-| Rollback | Commit GitOps merujuk artifact sebelumnya | Skrip memakai rollout undo, sementara selfHeal aktif | Selaraskan rollback dengan rekonsiliasi Argo. |
+Patch untuk workflow cf78b0d tersedia pada automation/handoff/; patch mengusulkan
+Node24 agar npm test yang ada berjalan tanpa mengubah backend/package.json, serta
+build/publish strict. Helper pembaruan tag menyiapkan diff setelah memverifikasi
+image terpublikasi, tanpa commit/push otomatis. Handoff lengkap dan gate publikasi
+ada pada automation/handoff/D8_INTEGRATION.md.
 
-Pemeriksaan branch dilakukan lewat `git fetch` dan `git show`; workflow, Application,
-dan skrip milik Anggota 3 tidak diubah atau dijalankan. Temuan kode bukan hasil CI.
+Bukti: evidence/platform/member3-alignment.txt dan
+member3-node20-compatibility.txt. Kegagalan salin metadata direktori awal dan kegagalan
+npm test dicatat apa adanya; checksum dan tes eksplisit diverifikasi setelahnya.
 
 ## Status tahap A dan gate integrasi
 
@@ -201,19 +208,23 @@ dan skrip milik Anggota 3 tidak diubah atau dijalankan. Temuan kode bukan hasil 
 - [x] Kondisi database diperiksa read-only; gap skema tercatat.
 - [x] A.2: database, environment variable dan referensi Secret ditetapkan sementara.
 - [x] A.3: PVC lokal, mount dan batas scaling satu node ditetapkan sementara.
-- [x] A.4: identitas platform dan sumber GitOps sementara ditetapkan; perbedaan dengan
-  branch CI/CD dicatat sebagai bahan penyelarasan.
+- [x] A.4: identitas platform dan sumber GitOps disesuaikan ke branch Anggota 3
+  atas instruksi pengguna; handoff/CI end-to-end masih harus dibuktikan.
 
 Sesuai instruksi pengguna, penulisan dan validasi manifest pada tahap C dapat
 dilanjutkan dengan baseline ini. Tidak diperlukan klaim kesepakatan kelompok untuk
 menyusun draft platform. Namun, sebelum integrasi runtime:
 
-- [ ] Anggota 1 atau pengguna melalui koordinasi menyiapkan database tujuan dan
-  skema; verifikasi enam tabel dan transaksi nyata. Skema tidak dibuat oleh dokumen ini.
-- [ ] Uji koneksi database dari pod dan hak akses Secret bersama Anggota 4.
-- [ ] Verifikasi izin PVC, penempatan replica, persistensi file dan cakupan backup.
-- [ ] Selaraskan namespace/tag/source GitOps/versi Node/rollback dengan Anggota 3
-  sebelum aktivasi Argo CD dan pengujian delivery.
+- [x] Database dan skema dari Anggota 1 diterapkan lokal setelah izin pengguna;
+  enam tabel dan seed terverifikasi, upload DOCX nyata dan report berhasil.
+- [x] Koneksi database dari pod, readiness dan penggunaan Secret runtime berhasil;
+  review hak akses lanjutan tetap dikoordinasikan dengan Anggota 4.
+- [x] Izin PVC, penempatan dua replica dan persistensi file setelah satu pod diganti
+  diverifikasi dengan checksum dan laporan yang sama.
+- [ ] Konfirmasi dan uji cakupan backup file bersama Anggota 4; bukan hasil pengujian persistensi pod.
+- [x] Sesuaikan namespace default, tag SHA7 dan sumber GitHub deployment/ ke Anggota 3.
+- [ ] Anggota 1/3 menindaklanjuti perintah npm test Node20, desired-state update dan
+  rollback sebelum aktivasi serta pembuktian delivery Argo CD.
 
 Jika ada pembaruan anggota lain, bandingkan kode dan konfigurasi dengan baseline
 ini, catat keputusan yang berubah dan alasannya, lalu perbarui kontrak, manifest

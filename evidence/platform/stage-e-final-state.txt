@@ -1,0 +1,32 @@
+﻿Timestamp: 2026-11-10T00:43:27.5550491+07:00
+Restore normal SHA7 artifact 3bdf305 after metadata-only rollout test; HPA remains active. This is lab cleanup, not delivery-pipeline rollback evidence.
+configmap/journalfit-backend-config unchanged
+service/journalfit-backend unchanged
+persistentvolumeclaim/journalfit-uploads unchanged
+deployment.apps/journalfit-backend configured
+horizontalpodautoscaler.autoscaling/journalfit-backend unchanged
+ingress.networking.k8s.io/journalfit-backend unchanged
+Waiting for deployment "journalfit-backend" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 old replicas are pending termination...
+deployment "journalfit-backend" successfully rolled out
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                                     SELECTOR
+deployment.apps/journalfit-backend   2/2     2            2           16m   backend      registry:5000/journalfit-backend:3bdf305   app=journalfit
+
+NAME                                                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/journalfit-backend   Deployment/journalfit-backend   cpu: 1%/70%   2         3         2          5m43s
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-462818b8-6b0b-475e-9511-34f656284417   1Gi        RWO            local-path     <unset>                 18m   Filesystem
+Final verification timestamp: 2026-11-10T00:44:44.124580+07:00
+GET /health/live HTTP 200
+GET /health/ready HTTP 200
+GET /api/manuscripts/ms-a5430ef1/report HTTP 200
+journalfit-backend-7cb887f88d-mgttm ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+journalfit-backend-7cb887f88d-mp9k4 ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+Final HPA desiredReplicas=2; workload Ready; original DOCX SHA256 and report preserved. No load generator remains active.

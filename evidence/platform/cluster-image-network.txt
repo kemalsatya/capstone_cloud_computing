@@ -1,0 +1,10 @@
+﻿Timestamp: 2026-11-10T00:02:21.3464708+07:00
+Command: apply temporary non-root probe pod using release image from registry:5000; TCP check only, no database mutation.
+pod/journalfit-platform-network-check created
+pod/journalfit-platform-network-check condition met
+Probe wait exit code: 0
+Node runtime: v24.22.2 UID: 10001
+PostgreSQL TCP host.k3d.internal:5432 connected (no authentication or SQL executed)
+NAME                                READY   STATUS      RESTARTS   AGE   IP          NODE                    NOMINATED NODE   READINESS GATES
+journalfit-platform-network-check   0/1     Completed   0          10s   10.42.1.7   k3d-capstone-server-0   <none>           <none>
+registry:5000/journalfit-backend@sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95

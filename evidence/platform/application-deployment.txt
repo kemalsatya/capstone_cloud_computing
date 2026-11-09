@@ -1,0 +1,27 @@
+﻿Timestamp: 2026-11-10T00:17:09.8331511+07:00
+Command: kubectl --context k3d-capstone apply -k ./deployment
+namespace/capstone unchanged
+configmap/journalfit-backend-config created
+service/journalfit-backend created
+persistentvolumeclaim/journalfit-uploads created
+deployment.apps/journalfit-backend created
+ingress.networking.k8s.io/journalfit-backend created
+Waiting for deployment "journalfit-backend" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "journalfit-backend" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "journalfit-backend" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 of 2 updated replicas are available...
+deployment "journalfit-backend" successfully rolled out
+Initial rollout exit code: 0
+NAME                                     READY   STATUS      RESTARTS   AGE   IP          NODE                    NOMINATED NODE   READINESS GATES
+pod/journalfit-backend-65fb8cb7d-fjhdn   1/1     Running     0          37s   10.42.0.7   k3d-capstone-agent-0    <none>           <none>
+pod/journalfit-backend-65fb8cb7d-pjtkd   1/1     Running     0          37s   10.42.0.8   k3d-capstone-agent-0    <none>           <none>
+pod/journalfit-platform-network-check    0/1     Completed   0          15m   10.42.1.7   k3d-capstone-server-0   <none>           <none>
+
+NAME                         TYPE        CLUSTER-IP     EXTERNAL-IP   PORT(S)   AGE   SELECTOR
+service/journalfit-backend   ClusterIP   10.43.54.244   <none>        80/TCP    38s   app=journalfit
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-12fe5212-17f8-4f08-8f37-ac7da1d49b3f   1Gi        RWO            local-path     <unset>                 37s   Filesystem
+
+NAME                                           CLASS     HOSTS                  ADDRESS                 PORTS   AGE
+ingress.networking.k8s.io/journalfit-backend   traefik   journalfit.localhost   172.28.0.7,172.28.0.8   80      37s

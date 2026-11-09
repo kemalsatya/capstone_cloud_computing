@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: journalfit-backend-config
-  namespace: capstone
+  namespace: default
 data:
   NODE_ENV: production
   PORT: "8000"

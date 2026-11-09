@@ -1,0 +1,27 @@
+﻿Timestamp: 2026-11-09T23:58:45.1429345+07:00
+Command: k3d cluster create capstone --servers 1 --agents 1 --network capstone-net --api-port 6550 -p 8088:80@loadbalancer -p 8443:443@loadbalancer --registry-config <lab>/infrastructure/k3d/registries.yaml --wait --timeout 180s
+[36mINFO[0m[0000] portmapping '8088:80' targets the loadbalancer: defaulting to [servers:*:proxy agents:*:proxy] 
+[36mINFO[0m[0000] portmapping '8443:443' targets the loadbalancer: defaulting to [servers:*:proxy agents:*:proxy] 
+[36mINFO[0m[0000] Prep: Network                                
+[36mINFO[0m[0000] Re-using existing network 'capstone-net' (64061952f4939bd18f6368e8db8972d25681057c5ecb5a211517f2128d4ffaab) 
+[36mINFO[0m[0000] Created image volume k3d-capstone-images     
+[36mINFO[0m[0000] Starting new tools node...                   
+[36mINFO[0m[0000] Starting node 'k3d-capstone-tools'           
+[36mINFO[0m[0001] Creating node 'k3d-capstone-server-0'        
+[36mINFO[0m[0001] Creating node 'k3d-capstone-agent-0'         
+[36mINFO[0m[0001] Creating LoadBalancer 'k3d-capstone-serverlb' 
+[36mINFO[0m[0001] Using the k3d-tools node to gather environment information 
+[36mINFO[0m[0002] Starting new tools node...                   
+[36mINFO[0m[0002] Starting node 'k3d-capstone-tools'           
+[36mINFO[0m[0004] Starting cluster 'capstone'                  
+[36mINFO[0m[0004] Starting servers...                          
+[36mINFO[0m[0004] Starting node 'k3d-capstone-server-0'        
+[36mINFO[0m[0011] Starting agents...                           
+[36mINFO[0m[0011] Starting node 'k3d-capstone-agent-0'         
+[36mINFO[0m[0014] Starting helpers...                          
+[36mINFO[0m[0015] Starting node 'k3d-capstone-serverlb'        
+[36mINFO[0m[0021] Injecting records for hostAliases (incl. host.k3d.internal) and for 8 network members into CoreDNS configmap... 
+[36mINFO[0m[0023] Cluster 'capstone' created successfully!     
+[36mINFO[0m[0023] You can now use it like this:                
+kubectl cluster-info
+Cluster create exit code: 0
