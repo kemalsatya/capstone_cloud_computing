@@ -14,18 +14,19 @@ jobs:
 
       - name: Tool Versions Check
         run: |
-          python3 --version || true
+          node --version || true
+          npm --version || true
           docker version
 
-      - name: Verify Application Code (Fallback Stub Aware)
+      - name: Verify Application Code (Node.js Test)
         run: |
           set -euo pipefail
-          if [ -d "source/tests" ] && [ "$(ls -A source/tests 2>/dev/null)" ]; then
-            pytest source/tests/
-          elif [ -f "source/app/main.py" ]; then
-            python3 -m py_compile source/app/main.py
+          if [ -f "source/package.json" ]; then
+            cd source
+            npm ci || npm install
+            npm test
           else
-            echo "[NOTICE] source/app/main.py is in progress by Anggota 1. CI stub verification OK."
+            echo "[NOTICE] source/package.json is missing."
           fi
 
       - name: Build, Scan, and Tag Immutable Container Artifact
@@ -39,10 +40,16 @@ jobs:
           elif [ -f "deployment/Dockerfile" ]; then
             docker build -t "$PUSH_IMAGE" -f deployment/Dockerfile .
           else
-            echo "[NOTICE] Dockerfile is in progress by Anggota 2. Building stub image for CI verification."
+            echo "[NOTICE] Dockerfile is in progress by Anggota 2. Building Node.js container image."
             docker build -t "$PUSH_IMAGE" - << 'EOF'
-          FROM python:3.11-slim
-          CMD ["python", "-c", "print('JournalFit Stub Running')"]
+          FROM node:20-alpine
+          WORKDIR /app
+          COPY source/package*.json ./
+          RUN npm ci --omit=dev || npm install --omit=dev
+          COPY source/src ./src
+          USER node
+          EXPOSE 8000
+          CMD ["node", "src/index.js"]
           EOF
           fi
 

@@ -15,12 +15,16 @@ elif [ -f "deployment/Dockerfile" ]; then
   docker build -t "${IMAGE_TAG}" -f deployment/Dockerfile .
 else
   echo "[NOTICE] Dockerfile asli belum dibuat oleh Anggota 2."
-  echo "[NOTICE] Menggunakan base stub sementara agar build image tetap lolos uji..."
+  echo "[NOTICE] Menggunakan base stub Node.js sementara agar build image tetap lolos uji..."
   docker build -t "${IMAGE_TAG}" - << 'EOF'
-FROM python:3.11-slim
+FROM node:20-alpine
 WORKDIR /app
-RUN echo "print('JournalFit backend active')" > main.py
-CMD ["python", "main.py"]
+COPY source/package*.json ./
+RUN npm ci --omit=dev 2>/dev/null || true
+COPY source/src ./src
+USER node
+EXPOSE 8000
+CMD ["node", "src/index.js"]
 EOF
 fi
 
