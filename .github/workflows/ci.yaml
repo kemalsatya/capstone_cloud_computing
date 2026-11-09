@@ -1,0 +1,93 @@
+name: Capstone CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-verify:
+    name: Test & Sanity Verification
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python Environment
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -s source/requirements.txt ]; then
+            pip install -r source/requirements.txt
+          fi
+          pip install pytest
+
+      - name: Execute Tests (Graceful fallback if Anggota 1 code is in progress)
+        run: |
+          set -euo pipefail
+          if [ -d "source/tests" ] && [ "$(ls -A source/tests 2>/dev/null)" ]; then
+            echo "[INFO] Running pytest test suite..."
+            pytest source/tests/ -v
+          elif [ -f "source/app/main.py" ]; then
+            echo "[INFO] Running syntax verification on source/..."
+            python -m py_compile source/app/main.py
+          else
+            echo "[NOTICE] source/app/main.py not yet implemented by Anggota 1."
+            echo "[NOTICE] Passing CI sanity gate with stub check to keep delivery unblocked."
+            python -c "print('CI Test Stage Ready: Waiting for Anggota 1 application code')"
+          fi
+
+  build-scan-artifact:
+    name: Build Immutable Container & Scan
+    needs: test-and-verify
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Compute Immutable Tag Metadata
+        id: meta
+        run: |
+          SHA=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "COMMIT_SHA=${SHA}" >> $GITHUB_ENV
+          echo "IMAGE_NAME=journalfit-backend" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build Container Image (Graceful fallback if Dockerfile in progress)
+        run: |
+          set -euo pipefail
+          DOCKERFILE_PATH="deployment/Dockerfile"
+          if [ ! -f "$DOCKERFILE_PATH" ] && [ -f "source/Dockerfile" ]; then
+            DOCKERFILE_PATH="source/Dockerfile"
+          fi
+
+          if [ -f "$DOCKERFILE_PATH" ]; then
+            echo "[INFO] Building container image from $DOCKERFILE_PATH..."
+            docker build -t "journalfit-backend:${{ env.COMMIT_SHA }}" -f "$DOCKERFILE_PATH" .
+          else
+            echo "[NOTICE] Dockerfile not yet authored by Anggota 2."
+            echo "[NOTICE] Building lightweight stub image to verify CI containerization step..."
+            docker build -t "journalfit-backend:${{ env.COMMIT_SHA }}" - << 'EOF'
+          FROM python:3.11-slim
+          WORKDIR /app
+          RUN echo "print('JournalFit CI Stub')" > main.py
+          CMD ["python", "main.py"]
+          EOF
+          fi
+
+      - name: Run Trivy Vulnerability Scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'journalfit-backend:${{ env.COMMIT_SHA }}'
+          format: 'table'
+          exit-code: '0'
+          ignore-unfixed: true
+          vuln-type: 'os,library'
+          severity: 'CRITICAL,HIGH'

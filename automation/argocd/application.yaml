@@ -1,0 +1,22 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: journalfit-backend
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: default
+  source:
+    repoURL: 'https://github.com/kemalsatya/capstone_cloud_computing.git'
+    targetRevision: HEAD
+    path: deployment
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
