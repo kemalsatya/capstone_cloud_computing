@@ -1,0 +1,14 @@
+﻿Timestamp: 2026-11-09T22:56:15.0959645+07:00
+Command: docker inspect (state/health only)
+/capstone-gitea status=running
+/capstone-postgres status=running health=healthy
+/capstone-keycloak status=running
+/capstone-registry status=running
+Command: docker exec capstone-postgres sh -c pg_isready (using container configuration)
+/var/run/postgresql:5432 - accepting connections
+Postgres readiness exit code: 0
+http://127.0.0.1:5001/v2/ HTTP 200
+http://127.0.0.1:3001/ HTTP 200
+http://127.0.0.1:8081/realms/capstone/.well-known/openid-configuration FAILED: The underlying connection was closed: The connection was closed unexpectedly.
+Keycloak readiness recheck:
+HTTP 200 at 2026-11-09T22:57:35.3216673+07:00
