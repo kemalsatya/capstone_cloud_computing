@@ -71,12 +71,19 @@ Audit database read-only: `evidence/platform/integration-audit.txt`.
 
 ## C. MANIFEST KUBERNETES
 
-- [ ] C.1 Adaptasi template menjadi deployment/configmap.yaml, deployment.yaml,
-        service.yaml; tambahkan namespace/Kustomize/Ingress bila diperlukan.
-- [ ] C.2 Terapkan requests CPU 100m/memory 128Mi, limits CPU 250m/memory 256Mi,
+**Status tahap: SELESAI untuk draft dan validasi lokal.** Validasi API server dan
+uji runtime menunggu cluster capstone pada tahap D. HPA tetap pada tahap E.
+
+- [x] C.1 Adaptasi template menjadi deployment/configmap.yaml, deployment.yaml,
+        service.yaml, namespace.yaml, pvc.yaml, ingress.yaml dan kustomization.yaml.
+- [x] C.2 Terapkan requests CPU 100m/memory 128Mi, limits CPU 250m/memory 256Mi,
         port 8000, probes /health/live dan /health/ready serta referensi Secret.
-- [ ] C.3 Terapkan strategi rollout dan penyimpanan sesuai kontrak integrasi.
-- [ ] C.4 Validasi manifest, selector, port, konfigurasi serta path GitOps.
+- [x] C.3 Tetapkan dua replica, maxUnavailable 0/maxSurge 1, PVC RWO local-path 1Gi,
+        /app/uploads, UID/fsGroup 10001 dan penempatan pada satu node storage berlabel.
+- [x] C.4 Render enam resource dengan kubectl kustomize; periksa konsistensi selector,
+        port, env, referensi ConfigMap/Secret/PVC dan Ingress secara lokal.
+        Evidence: evidence/platform/manifest-validation.txt. Belum ada server dry-run.
+        Kustomize adalah entry point; sumber GitOps final tetap mengikuti penyelarasan A.4.
 
 ## D. DEPLOYMENT DAN VERIFIKASI
 
@@ -88,6 +95,7 @@ Audit database read-only: `evidence/platform/integration-audit.txt`.
         Evidence: `evidence/platform/core-health.txt`.
 - [ ] D.2 Buat cluster capstone setelah memverifikasi nama/context; jangan gunakan
         cluster praktikum lama tanpa pemeriksaan.
+        Setelah cluster siap, lakukan validasi API/schema dan server dry-run manifest.
 - [ ] D.3 Verifikasi smoke test host -> registry -> cluster -> Service/Ingress.
 - [ ] D.4 Publikasikan image: push localhost:5001, pull registry:5000.
 - [ ] D.5 Siapkan Secret runtime tanpa menyimpan nilainya di Git.

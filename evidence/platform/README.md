@@ -17,6 +17,7 @@ yang belum di-commit pada branch `feat/k8s-manifests`. Timestamp aktual ada di l
 | `docker-runtime.txt` | UID/GID 10001, uploads writable, liveness dan readiness HTTP 200. | Memakai database lab yang ada tanpa perubahan skema. Bukan pengujian transaksi atau persistensi file. |
 | `application-tests-container.txt` | `npm test` dalam image, 10 lulus dan 0 gagal; tests dipasang read-only. | Sebagian pengujian memakai mock. Tidak menggantikan uji tenant dengan database nyata. |
 | `integration-audit.txt` | Inventaris database read-only: journalfit belum tersedia, keenam tabel belum ada pada database lab. | Bukan migrasi atau bukti kesiapan skema aplikasi. |
+| `manifest-validation.txt` | Kustomize merender enam resource; pemeriksaan statis selector, port, konfigurasi, referensi Secret/volume dan baseline resource lulus. | Belum ada validasi API server, apply atau pengujian runtime Kubernetes. |
 
 ## Interpretasi dan keputusan
 
