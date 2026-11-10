@@ -4,7 +4,7 @@
   "description": "Multi-Tenant Journal Manuscript Pre-Submission Checker (JournalFit)",
   "main": "src/index.js",
   "scripts": {
-    "test": "node --test tests/**/*.test.js",
+    "test": "node --test",
     "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
