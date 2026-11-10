@@ -3,3 +3,14 @@
 !package-lock.json
 !src/
 !src/**
+node_modules
+npm-debug.log
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+tests
+instructions
+uploads
+*.md
