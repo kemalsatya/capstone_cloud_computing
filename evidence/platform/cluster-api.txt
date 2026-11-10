@@ -1,0 +1,7 @@
+﻿Timestamp: 2026-11-10T00:00:24.3652720+07:00
+Correction: set only cluster k3d-capstone API server to https://127.0.0.1:6550 (published host port).
+Cluster "k3d-capstone" set.
+NAME                    STATUS   ROLES           AGE   VERSION        INTERNAL-IP   EXTERNAL-IP   OS-IMAGE           KERNEL-VERSION                     CONTAINER-RUNTIME
+k3d-capstone-agent-0    Ready    <none>          84s   v1.35.5+k3s1   172.28.0.8    <none>        K3s v1.35.5+k3s1   6.6.87.2-microsoft-standard-WSL2   containerd://2.2.3-k3s1
+k3d-capstone-server-0   Ready    control-plane   87s   v1.35.5+k3s1   172.28.0.7    <none>        K3s v1.35.5+k3s1   6.6.87.2-microsoft-standard-WSL2   containerd://2.2.3-k3s1
+Nodes check exit code: 0

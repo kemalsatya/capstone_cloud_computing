@@ -1,0 +1,122 @@
+{
+  "timestamp": "2026-11-10T00:39:34.037139+07:00",
+  "method": "64 concurrent read-only report requests from a separate pod, CPU target 70%, replica limits 2-3",
+  "limitation": "Local workload on one storage node; not a production capacity or multi-node HA result. Argo CD absent.",
+  "baseline": {
+    "timestamp": "2026-11-10T00:39:34.612863+07:00",
+    "phase": "baseline",
+    "deployment_replicas": 2,
+    "ready_replicas": 2,
+    "hpa_status": {
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T17:38:23Z",
+          "message": "recommended size matches current size",
+          "reason": "ReadyForNewScale",
+          "status": "True",
+          "type": "AbleToScale"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T17:38:23Z",
+          "message": "the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)",
+          "reason": "ValidMetricFound",
+          "status": "True",
+          "type": "ScalingActive"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T17:39:23Z",
+          "message": "the desired replica count is less than the minimum replica count",
+          "reason": "TooFewReplicas",
+          "status": "True",
+          "type": "ScalingLimited"
+        }
+      ],
+      "currentMetrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 1,
+              "averageValue": "1m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "currentReplicas": 2,
+      "desiredReplicas": 2
+    },
+    "pod_metrics": "NAME                                  CPU(cores)   MEMORY(bytes)   \njournalfit-backend-7678669685-6qd2w   1m           24Mi            \njournalfit-backend-7678669685-9h87r   1m           24Mi            \n"
+  },
+  "scale_up_seconds": 64.95,
+  "load_samples": [
+    {
+      "timestamp": "2026-11-09T17:39:46.378Z",
+      "final": false,
+      "seconds": 10.018,
+      "concurrency": 64,
+      "total": 2038,
+      "ok": 2038,
+      "failed": 0
+    },
+    {
+      "timestamp": "2026-11-09T17:39:56.378Z",
+      "final": false,
+      "seconds": 20,
+      "concurrency": 64,
+      "total": 5002,
+      "ok": 5002,
+      "failed": 0
+    },
+    {
+      "timestamp": "2026-11-09T17:40:06.378Z",
+      "final": false,
+      "seconds": 30,
+      "concurrency": 64,
+      "total": 7950,
+      "ok": 7950,
+      "failed": 0
+    },
+    {
+      "timestamp": "2026-11-09T17:40:16.382Z",
+      "final": false,
+      "seconds": 40.004,
+      "concurrency": 64,
+      "total": 10975,
+      "ok": 10975,
+      "failed": 0
+    },
+    {
+      "timestamp": "2026-11-09T17:40:26.385Z",
+      "final": false,
+      "seconds": 50.007,
+      "concurrency": 64,
+      "total": 14361,
+      "ok": 14361,
+      "failed": 0
+    },
+    {
+      "timestamp": "2026-11-09T17:40:36.385Z",
+      "final": false,
+      "seconds": 60.007,
+      "concurrency": 64,
+      "total": 17717,
+      "ok": 17717,
+      "failed": 0
+    },
+    {
+      "timestamp": "2026-11-09T17:40:42.771Z",
+      "final": true,
+      "seconds": 66.393,
+      "concurrency": 64,
+      "total": 19865,
+      "ok": 19865,
+      "failed": 0
+    }
+  ],
+  "scale_down_seconds_after_load_stop": 74.59,
+  "observed_scale_up": true,
+  "observed_scale_down": true,
+  "hpa_events": "Name:                                                  journalfit-backend\nNamespace:                                             default\nLabels:                                                <none>\nAnnotations:                                           <none>\nCreationTimestamp:                                     Tue, 10 Nov 2026 00:38:08 +0700\nReference:                                             Deployment/journalfit-backend\nMetrics:                                               ( current / target )\n  resource cpu on pods  (as a percentage of request):  1% (1m) / 70%\nMin replicas:                                          2\nMax replicas:                                          3\nBehavior:\n  Scale Up:\n    Stabilization Window: 0 seconds\n    Select Policy: Max\n    Policies:\n      - Type: Pods  Value: 1  Period: 30 seconds\n  Scale Down:\n    Stabilization Window: 60 seconds\n    Select Policy: Max\n    Policies:\n      - Type: Pods  Value: 1  Period: 30 seconds\nDeployment pods:    3 current / 2 desired\nConditions:\n  Type            Status  Reason            Message\n  ----            ------  ------            -------\n  AbleToScale     True    SucceededRescale  the HPA controller was able to update the target scale to 2\n  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)\n  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count\nEvents:\n  Type    Reason             Age   From                       Message\n  ----    ------             ----  ----                       -------\n  Normal  SuccessfulRescale  111s  horizontal-pod-autoscaler  New size: 3; reason: cpu resource utilization (percentage of request) above target\n  Normal  SuccessfulRescale  6s    horizontal-pod-autoscaler  New size: 2; reason: All metrics below target\n",
+  "final_pods": "NAME                                  READY   STATUS        RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES\njournalfit-backend-7678669685-6qd2w   1/1     Running       0          5m9s    10.42.0.15   k3d-capstone-agent-0   <none>           <none>\njournalfit-backend-7678669685-9h87r   1/1     Running       0          5m21s   10.42.0.14   k3d-capstone-agent-0   <none>           <none>\njournalfit-backend-7678669685-s7kqw   1/1     Terminating   0          111s    10.42.0.16   k3d-capstone-agent-0   <none>           <none>\n"
+}

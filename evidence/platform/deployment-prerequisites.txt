@@ -1,0 +1,20 @@
+﻿Timestamp: 2026-11-10T00:01:37.5280620+07:00
+Context: k3d-capstone. Namespace/storage label/runtime Secret setup; no application Deployment applied.
+namespace/capstone created
+node/k3d-capstone-agent-0 labeled
+secret/journalfit-backend-secret created
+NAME                        TYPE     DATA   AGE
+journalfit-backend-secret   Opaque   1      0s
+NAME                                               PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+storageclass.storage.k8s.io/local-path (default)   rancher.io/local-path   Delete          WaitForFirstConsumer   false                  2m39s
+
+NAME                                     CONTROLLER                      PARAMETERS   AGE
+ingressclass.networking.k8s.io/traefik   traefik.io/ingress-controller   <none>       2m9s
+Command: kubectl --context k3d-capstone apply --dry-run=server -k ./deployment
+namespace/capstone unchanged (server dry run)
+configmap/journalfit-backend-config created (server dry run)
+service/journalfit-backend created (server dry run)
+persistentvolumeclaim/journalfit-uploads created (server dry run)
+deployment.apps/journalfit-backend created (server dry run)
+ingress.networking.k8s.io/journalfit-backend created (server dry run)
+Server dry-run exit code: 0

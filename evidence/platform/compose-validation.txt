@@ -1,0 +1,5 @@
+Timestamp: 2026-11-09T22:54:19.7651572+07:00
+Local .env copied from instructor template outside Git repository. Values omitted.
+Command: docker compose --env-file <lab>/infrastructure/.env -f <lab>/infrastructure/docker-compose.yml config --quiet
+Validation exit code: 0
+Interpretation: configuration parses successfully; this does not verify image availability, port availability or service health.
