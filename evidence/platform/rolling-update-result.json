@@ -1,0 +1,65 @@
+{
+  "timestamp": "2026-11-10T00:36:34.365699+07:00",
+  "method": "3 HTTP workers, 100ms pause per worker, Ingress, readiness and real report endpoint",
+  "old_pods": [
+    {
+      "name": "journalfit-backend-7cb887f88d-8blzs",
+      "uid": "a1454be3-b080-458d-b7e3-c861c3f9005b",
+      "image": "registry:5000/journalfit-backend:3bdf305",
+      "image_id": "registry:5000/journalfit-backend@sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95"
+    },
+    {
+      "name": "journalfit-backend-7cb887f88d-glc7k",
+      "uid": "38e03c9f-64f8-463a-95da-d144c5041c6e",
+      "image": "registry:5000/journalfit-backend:3bdf305",
+      "image_id": "registry:5000/journalfit-backend@sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95"
+    }
+  ],
+  "replacement": {
+    "purpose": "test-only metadata change; backend unchanged",
+    "tag": "3bdf305-e1-20261110003537",
+    "image": "registry:5000/journalfit-backend:3bdf305-e1-20261110003537"
+  },
+  "limitation": "Sampled requests in one local run; not proof of universal zero downtime. Image differs in build metadata, backend unchanged. No Argo CD active.",
+  "apply": {
+    "exit_code": 0,
+    "stdout": "configmap/journalfit-backend-config unchanged\nservice/journalfit-backend unchanged\npersistentvolumeclaim/journalfit-uploads unchanged\ndeployment.apps/journalfit-backend configured\ningress.networking.k8s.io/journalfit-backend unchanged\n",
+    "stderr": ""
+  },
+  "rollout": {
+    "exit_code": 0,
+    "seconds": 22.53,
+    "stdout": "Waiting for deployment \"journalfit-backend\" rollout to finish: 0 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 old replicas are pending termination...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 old replicas are pending termination...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 old replicas are pending termination...\ndeployment \"journalfit-backend\" successfully rolled out\n",
+    "stderr": ""
+  },
+  "new_pods": [
+    {
+      "name": "journalfit-backend-7678669685-6qd2w",
+      "uid": "f88c11d5-509f-4132-a8c5-555a3be99389",
+      "image": "registry:5000/journalfit-backend:3bdf305-e1-20261110003537",
+      "image_id": "registry:5000/journalfit-backend@sha256:cd0ee75c2fbb978c4340bbc859be3f12c9e4e238d4c1ef9db5c7d24a10ae24a8"
+    },
+    {
+      "name": "journalfit-backend-7678669685-9h87r",
+      "uid": "5f9ec9a5-b22e-496b-9c43-674f89a4dadd",
+      "image": "registry:5000/journalfit-backend:3bdf305-e1-20261110003537",
+      "image_id": "registry:5000/journalfit-backend@sha256:cd0ee75c2fbb978c4340bbc859be3f12c9e4e238d4c1ef9db5c7d24a10ae24a8"
+    },
+    {
+      "name": "journalfit-backend-7cb887f88d-8blzs",
+      "uid": "a1454be3-b080-458d-b7e3-c861c3f9005b",
+      "image": "registry:5000/journalfit-backend:3bdf305",
+      "image_id": "registry:5000/journalfit-backend@sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95"
+    },
+    {
+      "name": "journalfit-backend-7cb887f88d-glc7k",
+      "uid": "38e03c9f-64f8-463a-95da-d144c5041c6e",
+      "image": "registry:5000/journalfit-backend:3bdf305",
+      "image_id": "registry:5000/journalfit-backend@sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95"
+    }
+  ],
+  "traffic_seconds": 31.58,
+  "requests": 777,
+  "failed_requests": 0,
+  "latency_p95_ms": 26.73
+}

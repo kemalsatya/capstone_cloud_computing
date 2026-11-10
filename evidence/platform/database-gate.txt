@@ -1,0 +1,18 @@
+﻿Timestamp: 2026-11-10T00:04:02.0196835+07:00
+User decision: do not create database or apply schema.sql; wait for Anggota 1.
+Command: read-only SQL database inventory using local container user.
+ datname  
+----------
+ capstone
+(1 row)
+
+Database inventory exit code: 0
+Command: kubectl --context k3d-capstone -n capstone get deployment,service,pvc,ingress
+kubectl : No resources found in capstone namespace.
+At line:11 char:1
++ kubectl --context k3d-capstone -n capstone get deployment,service,pvc ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (No resources fo...tone namespace.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Interpretation: journalfit database not present; no application Deployment/Service/PVC/Ingress applied. Namespace, runtime Secret and completed platform TCP probe exist. Full application verification remains pending.

@@ -1,0 +1,125 @@
+﻿Timestamp: 2026-11-10T00:25:34.4658028+07:00
+Reference: origin/chore/cicd-gitops-pipeline cf78b0d. Adopt default namespace, 7-character source SHA and GitHub application repo deployment/ path. Do not edit member 3 workflows.
+Node runtime remains Node 24 from platform Dockerfile; GitHub CI Node 20 is a separate test environment. Compatibility checked separately; no backend edits authorized.
+Command: docker tag localhost:5001/journalfit-backend:3bdf305d106c localhost:5001/journalfit-backend:3bdf305; docker push <7-char tag>
+The push refers to repository [localhost:5001/journalfit-backend]
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+1d804a079d7f: Layer already exists
+dd051e1b8c92: Layer already exists
+ed61b9f2bb56: Layer already exists
+f3db01672604: Layer already exists
+f6733d471895: Layer already exists
+2451e90e9242: Layer already exists
+d055089ca6c1: Layer already exists
+7bc42169b987: Already exists
+44136fa355b3: Already exists
+67dd44e03538: Layer already exists
+0485e61ce465: Layer already exists
+3bdf305: digest: sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95 size: 856
+secret/journalfit-backend-secret created
+configmap/journalfit-backend-config created (server dry run)
+service/journalfit-backend created (server dry run)
+persistentvolumeclaim/journalfit-uploads created (server dry run)
+deployment.apps/journalfit-backend created (server dry run)
+ingress.networking.k8s.io/journalfit-backend created (server dry run)
+persistentvolumeclaim/journalfit-uploads created
+Migration timestamp: 2026-11-10T00:26:24.795602+07:00
+pod/journalfit-uploads-copy created
+pod/journalfit-uploads-copy condition met
+Copy source pod: capstone/journalfit-backend-65fb8cb7d-pjtkd; target: default/journalfit-uploads-copy. Binary tar stream, no file committed.
+Tar copy exit codes: source=0, target=2
+tar: .: Cannot utime: Operation not permitted
+tar: .: Cannot change mode to rwxr-sr-x: Operation not permitted
+tar: Exiting with failure status due to previous errors
+command terminated with exit code 2
+
+Initial tar copy failed on root-directory metadata permissions; retry preserves destination directory ownership and verifies file contents.
+Retry tar exit codes: source=0, target=2
+tar: .: Cannot change mode to rwxrwxrwx: Operation not permitted
+tar: Exiting with failure status due to previous errors
+command terminated with exit code 2
+
+Copy individual upload files (no root-directory archive entry): 1
+File-only tar exit codes: source=0, target=0
+Checksum match: ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+All 1 upload files copied and verified. Original capstone PVC/data retained.
+Create default workload without conflicting Ingress first.
+configmap/journalfit-backend-config created
+service/journalfit-backend created
+deployment.apps/journalfit-backend created
+Waiting for deployment "journalfit-backend" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "journalfit-backend" rollout to finish: 0 of 2 updated replicas are available...
+Waiting for deployment "journalfit-backend" rollout to finish: 0 of 2 updated replicas are available...
+deployment "journalfit-backend" successfully rolled out
+New default deployment Ready; switch Ingress and stop old replica workload while retaining old PVC.
+ingress.networking.k8s.io "journalfit-backend" deleted from capstone namespace
+ingress.networking.k8s.io/journalfit-backend created
+deployment.apps/journalfit-backend scaled
+pod "journalfit-uploads-copy" deleted from default namespace
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS   IMAGES                                     SELECTOR
+deployment.apps/journalfit-backend   2/2     2            2           42s   backend      registry:5000/journalfit-backend:3bdf305   app=journalfit
+
+NAME                                      READY   STATUS        RESTARTS   AGE    IP           NODE                   NOMINATED NODE   READINESS GATES
+pod/journalfit-backend-7cb887f88d-8blzs   1/1     Running       0          42s    10.42.0.13   k3d-capstone-agent-0   <none>           <none>
+pod/journalfit-backend-7cb887f88d-glc7k   1/1     Running       0          42s    10.42.0.12   k3d-capstone-agent-0   <none>           <none>
+pod/journalfit-uploads-copy               1/1     Terminating   0          2m1s   10.42.0.11   k3d-capstone-agent-0   <none>           <none>
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE     VOLUMEMODE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-462818b8-6b0b-475e-9511-34f656284417   1Gi        RWO            local-path     <unset>                 2m49s   Filesystem
+
+NAME                                           CLASS     HOSTS                  ADDRESS                 PORTS   AGE
+ingress.networking.k8s.io/journalfit-backend   traefik   journalfit.localhost   172.28.0.7,172.28.0.8   80      31s
+2026-11-10T00:29:18.047651+07:00 After namespace switch: GET /health/live HTTP 200
+2026-11-10T00:29:18.061232+07:00 After namespace switch: GET /health/ready HTTP 200
+2026-11-10T00:29:18.114991+07:00 After namespace switch: GET /api/manuscripts/ms-a5430ef1/report HTTP 200
+Final inventory after normal helper termination (initial delete wait timed out; no forced removal used):
+NAME                                      READY   STATUS    RESTARTS   AGE     IP           NODE                   NOMINATED NODE   READINESS GATES
+pod/journalfit-backend-7cb887f88d-8blzs   1/1     Running   0          2m22s   10.42.0.13   k3d-capstone-agent-0   <none>           <none>
+pod/journalfit-backend-7cb887f88d-glc7k   1/1     Running   0          2m22s   10.42.0.12   k3d-capstone-agent-0   <none>           <none>
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE     VOLUMEMODE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-462818b8-6b0b-475e-9511-34f656284417   1Gi        RWO            local-path     <unset>                 4m29s   Filesystem
+
+NAME                                           CLASS     HOSTS                  ADDRESS                 PORTS   AGE
+ingress.networking.k8s.io/journalfit-backend   traefik   journalfit.localhost   172.28.0.7,172.28.0.8   80      2m11s
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/journalfit-backend   0/0     0            0           12m
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-12fe5212-17f8-4f08-8f37-ac7da1d49b3f   1Gi        RWO            local-path     <unset>                 12m
+Final active replica file/identity check:
+Pod=journalfit-backend-7cb887f88d-8blzs namespace=default node=k3d-capstone-agent-0
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+Pod=journalfit-backend-7cb887f88d-glc7k namespace=default node=k3d-capstone-agent-0
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+configmap/journalfit-backend-config unchanged (server dry run)
+service/journalfit-backend unchanged (server dry run)
+persistentvolumeclaim/journalfit-uploads unchanged (server dry run)
+deployment.apps/journalfit-backend unchanged (server dry run)
+ingress.networking.k8s.io/journalfit-backend unchanged (server dry run)
