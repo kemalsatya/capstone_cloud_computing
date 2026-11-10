@@ -12,3 +12,8 @@ CREATE DATABASE
 (6 rows)
 
 Restore validation database: capstone_restore_validation
+ manuscripts 
+-------------
+           1
+(1 row)
+

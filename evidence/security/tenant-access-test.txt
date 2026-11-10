@@ -1,0 +1,10 @@
+HTTP/1.1 200 OK
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 836
+ETag: W/"344-xcq24DUuD6FnpbeRb3sjB0e+tII"
+Date: Tue, 10 Nov 2026 01:03:41 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":true,"message":"Manuscript report retrieved successfully.","data":{"manuscript":{"id":"ms-001","tenant_id":"tenant-a","author_id":"user-a-01","title":"Cloud Native Performance Study","file_path":"/uploads/ms-001.docx","upload_time":"2026-11-09T17:50:57.051Z","tenant_name":"Journal Fitra Journal (Tenant A)"},"checkResult":{"id":"cr-001","manuscript_id":"ms-001","status":"COMPLETED","format_score":85,"created_at":"2026-11-09T17:50:57.052Z"},"findings":[{"id":"f-001","check_result_id":"cr-001","rule_type":"WORD_COUNT","severity":"INFO","message":"Total word count is 4500 words (compliant: 3000-8000 words).","created_at":"2026-11-09T17:50:57.053Z"},{"id":"f-002","check_result_id":"cr-001","rule_type":"ABSTRACT_CHECK","severity":"INFO","message":"Abstract section is present.","created_at":"2026-11-09T17:50:57.053Z"}]}}
