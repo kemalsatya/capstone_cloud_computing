@@ -1,6 +1,6 @@
 # JournalFit - Roadmap Platform & Kubernetes
 
-**Status keseluruhan:** BELUM SELESAI
+**Status keseluruhan:** BELUM SELESAI - M3 terverifikasi dan dokumentasi F disiapkan; D.8/M4 tertunda.
 
 Checklist ini diperbarui setelah setiap poin terverifikasi. `[x]` berarti selesai; `[ ]` berarti belum selesai.
 
@@ -12,30 +12,31 @@ Checklist ini diperbarui setelah setiap poin terverifikasi. `[x]` berarti selesa
 
 **Lab:** C:\cloud-capstone\Cloud_Computing_Common_Capstone_Infrastructure_Package
 
+**Catatan troubleshooting 2026-11-10:** readiness sempat gagal setelah restart
+karena host.k3d.internal ENOTFOUND. DB_HOST diubah ke host.docker.internal setelah
+koneksi database read-only terverifikasi. Catatan pemulihan disimpan di
+evidence/platform/readiness-dns-recovery-20261110.txt; database/PVC tidak dibuat ulang.
+
 ## POSISI DAN URUTAN BERIKUTNYA
 
-Persiapan lab, baseline sementara A, Docker dan penulisan manifest sudah selesai.
-Tahap D sudah memverifikasi cluster, registry, Secret dan deployment manual aplikasi,
-termasuk transaksi DOCX nyata dan persistensi setelah satu pod diganti.
-Tahap A tidak perlu diulang atau menunggu pengesahan semua anggota untuk pekerjaan
-platform yang tidak bergantung pada keputusan tersebut.
+M3 platform lokal sudah diimplementasikan dan diuji. Dokumentasi F merangkum
+hasil, versi, interpretasi dan batasnya; bukan memperluas M3 menjadi seluruh M4.
+Update feature branch remote 2bd8428 sudah diserap fast-forward tanpa menimpa
+perbaikan DNS lokal. Dockerfile Node 22 dari kelompok diuji kandidat secara terpisah;
+workload Kubernetes tetap artifact 3bdf305 Node 24 sampai promosi berikutnya.
 
-1. Pengguna sudah mengizinkan dua commit progres D/E dan persiapan D.8, lalu push
-   branch feat/k8s-manifests. Periksa hasil push sebelum melanjutkan sinkronisasi.
-2. Jangan membuat PR atau merge main: pengguna meminta commit dan push saja.
-   Pada preflight D.8, tiga commit sebelumnya belum dipublikasikan; status remote
-   berikutnya diverifikasi melalui Git, bukan dianggap bukti sinkronisasi Argo.
-3. D.0 dan D.6 sudah selesai setelah pengguna mengizinkan penerapan SQL lokal.
-4. Persiapan lokal D.8 selesai; setelah branch dipublikasikan, buktikan Argo membaca
-   revision tersebut, sync/health, ownership HPA dan rekonsiliasi drift.
-5. E sudah diuji; selesaikan D.8 dan review/dokumentasi akhir F.
+1. Selesaikan pemeriksaan F, commit perubahan terpilih dan push feat/k8s-manifests
+   sesuai izin pengguna. Reference-docs, .env, PDF belajar dan file QA tmp tidak dipush.
+2. Jangan membuat PR atau merge main; pengguna meminta commit dan push saja.
+   Draft deskripsi PR hanya bahan review lokal/kelompok.
+3. Paket evidence 04 memakai output asli yang terbaca; foto pengumpulan belum
+   dinyatakan sudah dibuat/diserahkan hanya karena log tersedia.
+4. D.8.4/D.8.5 tetap tertunda: Argo sync/revision/Healthy, drift dan handoff CI belum
+   dibuktikan. Ini perlu koordinasi M4, bukan syarat menyatakan inti M3 terimplementasi.
 
-Git membagikan backend, SQL, Dockerfile dan manifest. Database, tabel, file upload,
-Secret dan container harus disiapkan pada lingkungan integrasi yang dipilih.
-Menjalankan SQL yang sudah ada merupakan pekerjaan integrasi lokal; mengubah desain
-SQL tetap domain Anggota 1. Pengguna kemudian mengizinkan penerapan SQL yang sudah
-ada untuk integrasi lokal pada 2026-11-10; file backend/SQL tidak diubah.
-
+Git membagikan source dan konfigurasi, bukan database/Secret/upload yang berjalan.
+Penerapan schema.sql yang sudah ada dilakukan setelah izin pengguna, tanpa perubahan
+SQL/backend. Perbaikan DNS memakai DB_HOST host.docker.internal untuk Windows ini.
 
 ## 0. PERSIAPAN LAB
 
@@ -76,7 +77,7 @@ Audit database read-only: `evidence/platform/integration-audit.txt`.
         Baseline: database journalfit, user lab capstone, password via Secret.
         Kesiapan database/tabel merupakan tugas integrasi D.0, bukan syarat menulis manifest.
 - [x] A.3 Tetapkan rancangan persistensi sementara: PVC local-path RWO 1Gi pada
-        /app/uploads; replica pada satu node storage. Pengujian persistensi masih tertunda.
+        /app/uploads; replica pada satu node storage. Persistensi kemudian diuji pada D.6.
 - [x] A.4 Tetapkan identitas platform sementara dan dokumentasikan bahan penyelarasan
         dengan branch CI/CD cf78b0d: Node 20/24, namespace, tag, sumber GitOps dan rollback.
         Diperbarui atas instruksi pengguna: namespace default, tag SHA7,
@@ -84,7 +85,7 @@ Audit database read-only: `evidence/platform/integration-audit.txt`.
 
 ## B. DOCKER
 
-- [x] B.1 Buat source/Dockerfile dan source/.dockerignore untuk Node.js 24,
+- [x] B.1 Uji awal source/Dockerfile dan source/.dockerignore memakai Node.js 24,
         npm ci --omit=dev, port 8000 dan appuser UID/GID 10001. Backend tidak diubah.
 - [x] B.2 Build image journalfit-backend:platform-dev berhasil; UID 10001 terverifikasi
         dan /app/uploads writable. Sepuluh tes aplikasi yang tersedia lulus dalam image.
@@ -95,8 +96,8 @@ Audit database read-only: `evidence/platform/integration-audit.txt`.
 
 ## C. MANIFEST KUBERNETES
 
-**Status tahap: SELESAI untuk draft dan validasi lokal.** Validasi API server juga
-sudah lulus pada D.2. Uji runtime aplikasi belum dilakukan. HPA tetap pada tahap E.
+**Status tahap: SELESAI.** Render lokal dan validasi API lulus; runtime kemudian
+diverifikasi pada D.6, dan HPA pada E. Evidence awal tidak dianggap run baru.
 
 - [x] C.1 Adaptasi template menjadi deployment/configmap.yaml, deployment.yaml,
         service.yaml, namespace.yaml, pvc.yaml, ingress.yaml dan kustomization.yaml.
@@ -147,9 +148,9 @@ capstone; workload aktif kemudian dipindah ke default sesuai Anggota 3.
         tag SHA7 dan sumber Argo GitHub aplikasi HEAD path deployment/. Salin DOCX
         ke PVC default dan verifikasi checksum; dua pod Ready, probes/report HTTP 200.
         Deployment lama capstone nol replica dan PVC-nya dipertahankan.
-        Evidence: member3-alignment.txt. Dockerfile runtime tetap Node24; tes eksplisit
-        Node20 lulus 10/10, tetapi npm test Node20 gagal glob (evidence terpisah).
-- [ ] D.8 Handoff Anggota 3: tindak lanjuti npm test Node20, desired-state image update,
+        Evidence: member3-alignment.txt. Dockerfile runtime tetap Node 24; tes eksplisit
+        Node 20 lulus 10/10, tetapi npm test Node 20 gagal glob (evidence terpisah).
+- [ ] D.8 Handoff Anggota 3: tindak lanjuti npm test Node 20, desired-state image update,
         rollback/selfHeal dan kepemilikan replica HPA; setelah push/PR diizinkan dan
         source tersedia di GitHub, buktikan Argo sync revision serta artifact runtime.
         Perbedaan dengan panduan pemisahan repo app/GitOps tetap dicatat untuk review.
@@ -160,7 +161,8 @@ capstone; workload aktif kemudian dipindah ke default sesuai Anggota 3.
         namespace default, ignore /spec/replicas dan RespectIgnoreDifferences.
         Auto-sync disabled sampai sumber dipublikasikan/review; PVC dilindungi prune/delete.
         Application server dry-run lulus, belum dibuat/disinkronkan.
-- [x] D.8.3 Patch CI Anggota 3 siap review: Node24, build/install strict, publish
+- [x] D.8.3 Patch CI Anggota 3 siap review: awal Node 24, diperbarui Node 22 saat F
+        mengikuti Dockerfile terbaru; build/install strict, publish
         hanya push main dan helper prepared image update tanpa direct commit/push main.
         Patch dicek pada salinan cf78b0d; helper tag valid/invalid teruji.
         Evidence: delivery-preflight.txt dan delivery-validation.txt. Bukan CI run sukses.
@@ -203,16 +205,23 @@ Integrasi Argo CD/HPA tetap D.8; hasil tidak membuktikan HA lintas node atau sem
 
 ## F. EVIDENCE DAN PENYELESAIAN
 
-- [ ] F.1 Simpan output aktual di evidence/platform/ setiap kali tahap diuji, dengan
-        timestamp, versi/commit/image, metode, hasil, interpretasi dan keterbatasan.
-- [ ] F.2 Review baseline sementara terhadap pembaruan Anggota 1/3/4; dokumentasikan
-        perubahan kontrak dan ulangi pengujian terdampak. Jangan klaim persetujuan tanpa koordinasi.
-- [ ] F.3 Siapkan ringkasan kontribusi dan PR sesuai template repository.
-        Push feature branch diizinkan; PR belum diizinkan. Konfirmasi publikasi melalui Git.
-        Jangan membuat PR sampai ada instruksi baru.
-- [ ] F.4 Pastikan tidak ada credential/evidence palsu dan tidak ada commit di main.
-- [ ] F.5 Setelah semua poin di atas terverifikasi, ubah status keseluruhan menjadi
-        SELESAI SEMUA. Push hanya setelah persetujuan pengguna.
+**Status tahap: dokumentasi M3 dan review lokal diselesaikan; penutupan keseluruhan bersyarat.**
+
+- [x] F.1 Indeks evidence aktual beserta timestamp, revisi, metode, hasil dan batasnya
+        dirapikan pada evidence/platform/README.md dan ringkasan M3. Log asli tidak
+        diganti menjadi klaim sukses; kegagalan DNS dan pemulihannya disimpan.
+- [x] F.2 Update source/Anggota 3/Anggota 4 direview read-only. Dockerfile baru dibangun,
+        10 tes dan health kandidat diuji terpisah. Riwayat temuan YAML Argo, perbaikannya di main 280a866 dan batas
+        evidence restore dicatat, tanpa klaim persetujuan anggota lain.
+        Evidence: final-source-validation-20261110.txt, final-integration-review-20261110.txt.
+- [x] F.3 Ringkasan kontribusi, panduan demo, transkrip dan draft deskripsi PR disiapkan.
+        Pengguna belum mengizinkan pembuatan PR; tidak ada PR yang dibuat.
+- [x] F.4 Review final scope/credential pada 16 file lolos; Kustomize merender enam
+        resource. Whitespace dokumen lolos; spasi output log asli dipertahankan. Path eksplisit;
+        reference-docs, .env, output PDF dan QA tmp tidak dimasukkan.
+- [ ] F.5 Penutupan SELESAI SEMUA hanya setelah seluruh poin roadmap terpenuhi.
+        D.8.4/D.8.5 masih tertunda dan foto pengumpulan belum dinyatakan terverifikasi.
+        Karena itu status keseluruhan tetap BELUM SELESAI, meskipun inti M3 sudah diuji.
 
 ## BATAS KERJA
 

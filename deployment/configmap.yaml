@@ -6,7 +6,7 @@ metadata:
 data:
   NODE_ENV: production
   PORT: "8000"
-  DB_HOST: host.k3d.internal
+  DB_HOST: host.docker.internal
   DB_PORT: "5432"
   DB_USER: capstone
   DB_NAME: journalfit

@@ -1,0 +1,58 @@
+Timestamp: 2026-11-10T13:42:57.151699+07:00
+Scope: diagnose Running but unready pods after Docker restart; no database recreation.
+Command: kubectl --context k3d-capstone -n default get deployment journalfit-backend
+NAME                 READY   UP-TO-DATE   AVAILABLE   AGE
+journalfit-backend   0/2     2            0           13h
+Command: kubectl --context k3d-capstone -n default get pods -l app=journalfit -o wide
+NAME                                  READY   STATUS    RESTARTS      AGE   IP           NODE                   NOMINATED NODE   READINESS GATES
+journalfit-backend-7cb887f88d-mgttm   0/1     Running   3 (37m ago)   12h   10.42.0.64   k3d-capstone-agent-0   <none>           <none>
+journalfit-backend-7cb887f88d-mp9k4   0/1     Running   3 (37m ago)   12h   10.42.0.63   k3d-capstone-agent-0   <none>           <none>
+CoreDNS NodeHosts at diagnosis:
+172.28.0.3 k3d-capstone-server-0
+172.28.0.5 k3d-capstone-agent-0
+Direct pod health before fix:
+/health/live 200 {"status":"alive","timestamp":"2026-11-10T06:42:58.850Z"}
+/health/ready 503 {"status":"unready","database":"disconnected","error":"getaddrinfo ENOTFOUND host.k3d.internal","timestamp":"2026-11-10T06:42:58.913Z"}
+Diagnosis: host.k3d.internal ENOTFOUND. host.docker.internal TCP and authenticated SELECT current_database() both succeeded; database journalfit exists.
+Fix: DB_HOST changed in tracked ConfigMap to Docker Desktop host.docker.internal, tested from pod. No backend, Secret, schema or PVC changed.
+configmap/journalfit-backend-config configured
+Command: rollout restart deployment/journalfit-backend to refresh envFrom configuration
+deployment.apps/journalfit-backend restarted
+Waiting for deployment "journalfit-backend" rollout to finish: 0 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 out of 2 new replicas have been updated...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 old replicas are pending termination...
+Waiting for deployment "journalfit-backend" rollout to finish: 1 old replicas are pending termination...
+deployment "journalfit-backend" successfully rolled out
+Recovery rollout exit code: 0
+Final verification timestamp: 2026-11-10T13:44:34.856260+07:00
+GET /health/live HTTP 200
+GET /health/ready HTTP 200
+GET /api/manuscripts/ms-a5430ef1/report HTTP 200
+journalfit-backend-654cf96667-h876w Ready; DB_HOST=host.docker.internal; ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+journalfit-backend-654cf96667-qrfh6 Ready; DB_HOST=host.docker.internal; ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/journalfit-backend   2/2     2            2           13h
+
+NAME                                      READY   STATUS    RESTARTS   AGE
+pod/journalfit-backend-654cf96667-h876w   1/1     Running   0          78s
+pod/journalfit-backend-654cf96667-qrfh6   1/1     Running   0          88s
+
+NAME                         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+service/journalfit-backend   ClusterIP   10.43.41.15   <none>        80/TCP    13h
+service/kubernetes           ClusterIP   10.43.0.1     <none>        443/TCP   13h
+
+NAME                                           CLASS     HOSTS                  ADDRESS                 PORTS   AGE
+ingress.networking.k8s.io/journalfit-backend   traefik   journalfit.localhost   172.28.0.3,172.28.0.5   80      13h
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-462818b8-6b0b-475e-9511-34f656284417   1Gi        RWO            local-path     <unset>                 13h
+
+NAME                                                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/journalfit-backend   Deployment/journalfit-backend   cpu: 1%/70%   2         3         2          13h
+
+Conclusion: readiness recovered, old report and DOCX preserved; database/schema/Secret/PVC unchanged. No new application feature or GitOps claim.

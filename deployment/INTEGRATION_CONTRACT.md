@@ -20,12 +20,12 @@ volume, cluster, repository Gitea, pipeline atau deployment.
 | Parameter | Kontrak |
 | --- | --- |
 | Framework | Node.js/Express modular monolith yang sudah ada di main |
-| Runtime container | Node.js 24, base `node:24-bookworm-slim` |
+| Runtime/source | Source terbaru node:22-alpine (kandidat diuji); artifact cluster3bdf305 masih Node 24. |
 | Build context | `source/` dari root repository |
 | Instalasi runtime | `npm ci --omit=dev`, menggunakan package-lock.json |
 | Entrypoint | `node src/index.js` |
 | Working directory | `/app` |
-| User dan group | `appuser`, UID/GID `10001:10001` |
+| User dan group | Manifest UID/GID10001; source Dockerfile terbaru USER node/UID 1000, kandidat override10001 dengan mount sementara diuji. |
 | Port | `PORT=8000`, HTTP |
 | Liveness | `GET /health/live`, HTTP 200 ketika proses melayani request |
 | Readiness | `GET /health/ready`, HTTP 200 jika `SELECT 1` berhasil, 503 jika gagal |
@@ -43,7 +43,7 @@ memeriksa keberadaan tabel; verifikasi skema dan transaksi harus dilakukan terpi
 | Key | Baseline sementara | Tempat konfigurasi Kubernetes |
 | --- | --- | --- |
 | `PORT` | `8000` | ConfigMap |
-| `DB_HOST` | `host.k3d.internal`, mengikuti rute PostgreSQL host dalam panduan dosen | ConfigMap |
+| `DB_HOST` | `host.docker.internal`, rute Docker Desktop Windows yang diuji setelah restart | ConfigMap |
 | `DB_PORT` | `5432` | ConfigMap |
 | `DB_NAME` | `journalfit`, database aplikasi terpisah dari database lab `capstone` | ConfigMap |
 | `DB_USER` | `capstone`, user lab dari konfigurasi paket; evaluasi hak akses bersama Anggota 4 | ConfigMap |
@@ -57,8 +57,12 @@ sinkronisasi aplikasi. Environment variable diberikan secara eksplisit agar defa
 Untuk Docker lokal, `DB_HOST=postgres` hanya berlaku ketika container aplikasi
 bergabung ke network Compose `capstone-net`; ini berbeda dari rute Kubernetes.
 Tes Docker sebelumnya menggunakan database lab `capstone` untuk `SELECT 1` saja.
-Konektivitas `host.k3d.internal:5432` dari pod wajib dibuktikan pada tahap D;
-konfigurasi contoh belum menjadi bukti jaringan berhasil.
+Pada pengujian awal D, koneksi memakai host.k3d.internal. Setelah restart Docker
+pada 2026-11-10, alias itu hilang dari resolusi DNS pod dan readiness menjadi 503
+ENOTFOUND. Rute host.docker.internal terbukti bisa TCP dan autentikasi SELECT ke
+journalfit, sehingga baseline ConfigMap diperbarui untuk lingkungan Windows ini.
+Perubahan ConfigMap envFrom memerlukan refresh pod agar environment diperbarui.
+Bukti diagnosis/perbaikan: evidence/platform/readiness-dns-recovery-20261110.txt.
 
 **Pembagian pekerjaan:**
 
@@ -166,9 +170,9 @@ Tidak membangun artifact baru dengan tag commit lama. Image produksi masih Node.
 
 GitHub CI Anggota 3 menggunakan Node.js 20 untuk npm test, tetapi build image memakai
 source/Dockerfile kita. Runtime CI dan runtime image merupakan dua pengaturan terpisah.
-Uji diagnostik menunjukkan 10 tes lulus pada Node20 dengan path eksplisit
+Uji diagnostik menunjukkan 10 tes lulus pada Node 20 dengan path eksplisit
 `node --test tests/app.test.js`. Namun perintah npm test saat ini memakai pola
-`tests/**/*.test.js` yang tidak ditemukan oleh Node20 dalam lingkungan uji.
+`tests/**/*.test.js` yang tidak ditemukan oleh Node 20 dalam lingkungan uji.
 
 Anggota 1/3 perlu menyelaraskan perintah tes, misalnya memakai path eksplisit pada
 script test atau versi Node CI yang mendukung pola tersebut. Tidak ada perubahan
@@ -192,7 +196,7 @@ targetRevision kembali main/HEAD. HPA diabaikan pada spec.replicas, dan PVC dili
 Prune=false,Delete=false. Ini persiapan konfigurasi, belum bukti sync dari GitHub.
 
 Patch untuk workflow cf78b0d tersedia pada automation/handoff/; patch mengusulkan
-Node24 agar npm test yang ada berjalan tanpa mengubah backend/package.json, serta
+Node 22 sesuai source Dockerfile terbaru agar npm test berjalan tanpa mengubah backend/package.json, serta
 build/publish strict. Helper pembaruan tag menyiapkan diff setelah memverifikasi
 image terpublikasi, tanpa commit/push otomatis. Handoff lengkap dan gate publikasi
 ada pada automation/handoff/D8_INTEGRATION.md.
@@ -223,7 +227,7 @@ menyusun draft platform. Namun, sebelum integrasi runtime:
   diverifikasi dengan checksum dan laporan yang sama.
 - [ ] Konfirmasi dan uji cakupan backup file bersama Anggota 4; bukan hasil pengujian persistensi pod.
 - [x] Sesuaikan namespace default, tag SHA7 dan sumber GitHub deployment/ ke Anggota 3.
-- [ ] Anggota 1/3 menindaklanjuti perintah npm test Node20, desired-state update dan
+- [ ] Anggota 1/3 menindaklanjuti perintah npm test Node 20, desired-state update dan
   rollback sebelum aktivasi serta pembuktian delivery Argo CD.
 
 Jika ada pembaruan anggota lain, bandingkan kode dan konfigurasi dengan baseline
@@ -232,3 +236,17 @@ serta roadmap pada feature branch. Ulangi hanya pengujian yang terdampak. Jangan
 menimpa pekerjaan anggota lain, memasang dua sumber rekonsiliasi, atau menghapus data
 untuk menyesuaikan baseline. Penetapan sementara ini tidak mengotorisasi perubahan
 backend, penerapan skema atau pipeline anggota lain.
+
+## Review F 2026-11-10
+
+Update remote feature branch 2bd8428 membawa Dockerfile Node 22 Alpine dan dumb-init
+dari commit 3ffb92f. Source kelompok dipertahankan; build, 10 tes dan health kandidat
+diuji, termasuk UID 10001 dengan mount sementara. Image tersebut belum dipromosikan
+ke cluster; evidence Kubernetes tetap artifact 3bdf305 Node 24.
+
+Anggota 3 commit 5b63bc1 sudah menambahkan aturan HPA ignore. Prefix YAML invalid
+pada versi itu diperbaiki melalui a9d5993 dan masuk origin/main 280a866; parser
+YAML main lulus saat fetch akhir. Main juga memperbaiki tes menjadi node --test.
+Perubahan main terbaru direview read-only, belum digabung ke feature branch ini.
+Branch Anggota 4 menyediakan rekaman tenant/restore yang dibaca sebagai evidence
+anggota terkait, bukan hasil uji ulang Anggota 2. Detail: final-integration-review-20261110.txt.

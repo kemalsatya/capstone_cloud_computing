@@ -1,8 +1,15 @@
 # Evidence platform JournalFit
 
-Pemilik pekerjaan: Anggota 2, Platform & Kubernetes Engineer. Pengujian dilakukan
-pada 2026-11-09 (Asia/Jakarta), dari commit aplikasi `747c958` dan perubahan platform
-yang belum di-commit pada branch `feat/k8s-manifests`. Timestamp aktual ada di log.
+Pemilik pekerjaan: Anggota 2, Platform & Kubernetes Engineer. Pengujian berlangsung
+pada 2026-11-09 dan 2026-11-10 (Asia/Jakarta). Source aplikasi awal `747c958`,
+artifact bertag source `3bdf305`, dan perubahan platform ditelusuri melalui branch
+`feat/k8s-manifests`. Timestamp serta revisi setiap pengujian dicatat pada log terkait.
+
+## Dokumen pengantar F
+
+- [Ringkasan capaian M3 dan versi source/runtime](RINGKASAN_M3_ANGGOTA_2.md)
+- [Panduan demo dan screenshot](../../demo/panduan-demo-m3.md)
+- [Draft deskripsi PR, belum diterbitkan](../../demo/draft-deskripsi-pr-platform.md)
 
 ## Pengujian yang sudah dilakukan
 
@@ -29,7 +36,7 @@ yang belum di-commit pada branch `feat/k8s-manifests`. Timestamp aktual ada di l
 | `application-transaction.txt` / `.json` | Health 200, upload DOCX referensi asli 201 dan report 200 melalui Ingress; ID/path/checksum tersimpan. | Fixture panduan lokal, bukan bukti seluruh variasi DOCX atau authorization lengkap. |
 | `pod-replacement-persistence.txt` | Dua replica memiliki checksum DOCX sama; satu pod diganti normal, UID baru, dua Ready, report tetap 200; observasi 32.5 detik. | Termasuk overhead polling, tanpa pengukuran trafik kontinu, node failure atau backup/restore. |
 | `member3-alignment.txt` | Namespace default, tag SHA7 dan sumber GitHub diselaraskan; DOCX disalin dengan checksum cocok dan health/report tetap 200. | PVC lama dipertahankan, replica lama nol; kegagalan metadata tar awal tercatat. Belum aktivasi Argo. |
-| `member3-node20-compatibility.txt` | npm test Node20 gagal menemukan glob; 10 tes lulus dengan path eksplisit. | Ini diagnosis lokal, bukan run CI sukses; package.json/pipeline tidak diubah. |
+| `member3-node20-compatibility.txt` | npm test Node 20 gagal menemukan glob; 10 tes lulus dengan path eksplisit. | Ini diagnosis lokal, bukan run CI sukses; package.json/pipeline tidak diubah. |
 | `rolling-update-image.txt` / `.json` | Artifact metadata-only bertag uji dibangun dan dipush sebelum rollout. | Backend tidak berubah; bukan rilis fitur baru atau tag SHA source baru. |
 | `rolling-update-requests.csv` / `rolling-update-result.json` | 777 request, 0 gagal teramati, durasi 31.58s; rollout 22.53s, p95 latensi 26.73ms. | Sampling readiness/report satu run lokal; tidak menjamin tanpa downtime universal. |
 | `metrics-api-preflight.txt` / `hpa-setup.txt` | Metrics API tersedia, metrik pod terbaca, HPA CPU 70% min 2/max 3 diaktifkan. | Baseline lab, belum hasil rightsizing atau optimasi. |
@@ -39,14 +46,22 @@ yang belum di-commit pada branch `feat/k8s-manifests`. Timestamp aktual ada di l
 | `argocd-installation.txt` | Argo CD v3.5.6 dari manifest resmi pinned dipasang; controller dan komponen utama Ready. | Instalasi controller saja, bukan sync aplikasi. |
 | `delivery-preflight.txt` | Application server dry-run lulus, branch belum dipublikasikan; helper menerima tag valid dan menolak tag invalid tanpa perubahan. | Application belum diterapkan; tidak ada credential atau push. |
 | `delivery-validation.txt` | Patch CI cf78b0d dapat diterapkan pada salinan terisolasi; YAML/shell dan konfigurasi Application/HPA/PVC konsisten. | Static checks, bukan run CI atau delivery end-to-end. |
+| `readiness-dns-recovery-20261110.txt` | Diagnosis readiness 503 ENOTFOUND setelah restart; DB_HOST disesuaikan ke host.docker.internal yang terbukti terhubung ke database. | Perbaikan rute Docker Desktop Windows, bukan migrasi database atau uji DR. Lihat hasil akhir pada log yang sama. |
+
+| `final-source-validation-20261110.txt` | Source Node 22 baru dibangun; non-root default 1000, 10 tes, serta UID 10001/mount sementara dan health 200 lulus. | Kandidat Docker lokal, belum mengganti artifact Kubernetes Node 24. |
+| `final-integration-review-20261110.txt` | Review refs terbaru, temuan YAML Argo, serta keberadaan evidence anggota lain. | Review teknis, bukan persetujuan pemilik branch atau pengujian ulang security/restore. |
+| `final-platform-snapshot-20261110.txt` | Kondisi workload dan health/laporan akhir untuk penutupan dokumentasi F. | Snapshot bertimestamp, bukan jaminan kondisi selamanya atau sync GitOps. |
 
 ## Interpretasi dan keputusan
 
 Tahap persiapan dan pengujian dasar Docker sudah selesai. Pengguna menyetujui
-Node.js/Express yang ada di main sebagai runtime; Dockerfile menggunakan
-`node:24-bookworm-slim` dan dependencies dari lockfile. Direktori uploads dimiliki
+Node.js/Express sebagai runtime. Uji awal memakai Dockerfile node:24-bookworm-slim.
+Source terbaru dari kelompok memakai Node 22 Alpine; build/tes kandidat dilakukan
+terpisah dan tidak dipakai untuk melabeli ulang evidence lama. Direktori uploads dimiliki
 appuser, sedangkan konfigurasi database diberikan saat runtime. Build context
-hanya memasukkan package.json, package-lock.json dan src; .env tidak dikirim.
+pada awal hanya memasukkan package.json, package-lock.json dan src. Tambahan
+aturan dari kelompok mengizinkan .env.example sebagai contoh; .env aktual tetap
+dikecualikan dan Dockerfile tidak menyalinnya ke image.
 
 CI Anggota 3 perlu menggunakan build context `source/`, misalnya
 `docker build -t <image>:<commit-sha> ./source`. Tag `platform-dev` hanya untuk

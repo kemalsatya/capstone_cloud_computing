@@ -1,0 +1,23 @@
+Timestamp: 2026-11-10T14:22:31.104098+07:00
+Scope: F.2 read-only review of group updates; no approval on behalf of other members.
+HEAD: 2bd84284859d88d3df4390b68c88d2842de53247
+origin/main: 3ffb92fc9b211c06c8e4ffc0f079e73710c43240
+origin/chore/cicd-gitops-pipeline: 5b63bc108591176d3cbd5420005423e20247bffe
+origin/feat/security-trivy: efda1334204b5757febf8c6eef5f507e6df7e99d
+Member3 Argo YAML parser: FAIL; leading text before apiVersion must be removed by owner. mapping values are not allowed here
+Member3 diff: ignoreDifferences /spec/replicas and RespectIgnoreDifferences now present; no live Argo sync independently verified.
+Member4 branch contains tenant403 and restore evidence; inspected as member-provided records, not rerun or claimed as Anggota2 work.
+Remote Dockerfile changed to Node22 Alpine USER node with dumb-init. Current running image3bdf305 and previous evidence are Node24 UID10001. Candidate source build/tests checked separately.
+Local DB_HOST fix to host.docker.internal remains validated by actual readiness recovery evidence.
+Updated review-only CI patch: git apply --check passes on latest5b63bc1 workflow files; patched YAML uses Node22 matching candidate runtime. Active workflows not changed.
+README.md: relative file links verified.
+demo/panduan-demo-m3.md: relative file links verified.
+demo/transkrip-presentasi-m3.md: relative file links verified.
+demo/draft-deskripsi-pr-platform.md: relative file links verified.
+evidence/platform/RINGKASAN_M3_ANGGOTA_2.md: relative file links verified.
+
+Final fetch review: 2026-11-10T14:35:43.658536+07:00
+origin/main advanced to 280a866378345710e7c46c29d858bddeb1a5e49f
+PASS: main Argo YAML parses as Application; a9d5993 removes invalid prefix. Earlier 5b63bc1 finding is historical/resolved on main.
+PASS: main package test command is node --test, fixed by a8923ea.
+Main reviewed read-only, not merged into this feature branch; patch must be reviewed/adapted against destination workflows. No live sync was performed.
