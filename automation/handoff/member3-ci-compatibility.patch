@@ -1,0 +1,116 @@
+--- a/.github/workflows/ci.yaml
++++ b/.github/workflows/ci.yaml
+@@ -17,7 +17,7 @@
+       - name: Set up Node.js Environment
+         uses: actions/setup-node@v4
+         with:
+-          node-version: '20'
++          node-version: '24'
+           cache: 'npm'
+           cache-dependency-path: source/package-lock.json
+ 
+@@ -52,28 +52,8 @@
+       - name: Build Container Image (Node.js Express)
+         run: |
+           set -euo pipefail
+-          DOCKERFILE_PATH="source/Dockerfile"
+-          if [ ! -f "$DOCKERFILE_PATH" ] && [ -f "deployment/Dockerfile" ]; then
+-            DOCKERFILE_PATH="deployment/Dockerfile"
+-          fi
+-
+-          if [ -f "$DOCKERFILE_PATH" ]; then
+-            echo "[INFO] Building container image from $DOCKERFILE_PATH..."
+-            docker build -t "journalfit-backend:${{ env.COMMIT_SHA }}" -f "$DOCKERFILE_PATH" ./source
+-          else
+-            echo "[NOTICE] Dockerfile not yet authored by Anggota 2."
+-            echo "[NOTICE] Building lightweight Node.js stub image to keep CI delivery verified..."
+-            docker build -t "journalfit-backend:${{ env.COMMIT_SHA }}" - << 'EOF'
+-          FROM node:20-alpine
+-          WORKDIR /app
+-          COPY source/package*.json ./
+-          RUN npm ci --omit=dev
+-          COPY source/src ./src
+-          USER node
+-          EXPOSE 8000
+-          CMD ["node", "src/index.js"]
+-          EOF
+-          fi
++          test -f source/Dockerfile
++          docker build -t "journalfit-backend:${{ env.COMMIT_SHA }}" -f source/Dockerfile ./source
+ 
+       - name: Run Trivy Vulnerability Scanner
+         uses: aquasecurity/trivy-action@master
+--- a/.gitea/workflows/ci.yml
++++ b/.gitea/workflows/ci.yml
+@@ -12,10 +12,15 @@
+       - name: Checkout Code
+         uses: actions/checkout@v4
+ 
++      - name: Set up Node.js Runtime
++        uses: actions/setup-node@v4
++        with:
++          node-version: '24'
++
+       - name: Tool Versions Check
+         run: |
+-          node --version || true
+-          npm --version || true
++          node --version
++          npm --version
+           docker version
+ 
+       - name: Verify Application Code (Node.js Test)
+@@ -23,39 +28,27 @@
+           set -euo pipefail
+           if [ -f "source/package.json" ]; then
+             cd source
+-            npm ci || npm install
++            npm ci
+             npm test
+           else
+             echo "[NOTICE] source/package.json is missing."
+           fi
+ 
+-      - name: Build, Scan, and Tag Immutable Container Artifact
++      - name: Build, Scan, Publish and Prepare Reviewed Image Update
++        env:
++          EVENT_NAME: ${{ gitea.event_name }}
++          REF_NAME: ${{ gitea.ref }}
+         run: |
+           set -euo pipefail
+-          SHA="$(git rev-parse --short=7 HEAD)"
++          SHA="$(git rev-parse HEAD | cut -c1-7)"
+           PUSH_IMAGE="localhost:5001/journalfit-backend:${SHA}"
+-
+-          if [ -f "source/Dockerfile" ]; then
+-            docker build -t "$PUSH_IMAGE" -f source/Dockerfile ./source
+-          elif [ -f "deployment/Dockerfile" ]; then
+-            docker build -t "$PUSH_IMAGE" -f deployment/Dockerfile .
++          test -f source/Dockerfile
++          docker build -t "$PUSH_IMAGE" -f source/Dockerfile ./source
++          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
++            aquasec/trivy:0.76.0 image --severity HIGH,CRITICAL --exit-code 0 "$PUSH_IMAGE"
++          if [ "$EVENT_NAME" = "push" ] && [ "$REF_NAME" = "refs/heads/main" ]; then
++            docker push "$PUSH_IMAGE"
++            bash automation/scripts/prepare-image-update.sh "$SHA"
+           else
+-            echo "[NOTICE] Dockerfile is in progress by Anggota 2. Building Node.js container image."
+-            docker build -t "$PUSH_IMAGE" - << 'EOF'
+-          FROM node:20-alpine
+-          WORKDIR /app
+-          COPY source/package*.json ./
+-          RUN npm ci --omit=dev || npm install --omit=dev
+-          COPY source/src ./src
+-          USER node
+-          EXPOSE 8000
+-          CMD ["node", "src/index.js"]
+-          EOF
++            echo "PR verification only; no registry publication or desired-state change."
+           fi
+-
+-          # Scan with local Trivy runner
+-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+-            aquasec/trivy:latest image --severity HIGH,CRITICAL --exit-code 0 "$PUSH_IMAGE" || true
+-
+-          # Push to local registry
+-          docker push "$PUSH_IMAGE" || echo "[WARN] Local registry push skipped if registry not online."

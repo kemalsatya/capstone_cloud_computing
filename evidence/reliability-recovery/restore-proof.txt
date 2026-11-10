@@ -1,0 +1,19 @@
+DROP DATABASE
+CREATE DATABASE
+                 List of relations
+ Schema |         Name          | Type  |  Owner   
+--------+-----------------------+-------+----------
+ public | check_results         | table | capstone
+ public | findings              | table | capstone
+ public | format_rule_templates | table | capstone
+ public | manuscripts           | table | capstone
+ public | tenants               | table | capstone
+ public | users                 | table | capstone
+(6 rows)
+
+Restore validation database: capstone_restore_validation
+ manuscripts 
+-------------
+           1
+(1 row)
+

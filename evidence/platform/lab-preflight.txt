@@ -1,0 +1,40 @@
+Timestamp: 2026-11-09T22:40:38.3156421+07:00
+Command: powershell.exe -NoProfile -ExecutionPolicy Bypass -File <lab>/scripts/doctor.ps1
+== Cloud Capstone Infrastructure Doctor ==
+Docker            OK
+  Client:
+Compose           OK
+  Docker Compose version v5.5.0
+Git               OK
+  git version 2.51.2.windows.1
+curl              OK
+  curl 8.21.0 (Windows) libcurl/8.21.0 Schannel zlib/1.3.2 WinIDN WinLDAP
+kubectl           OK
+  Client Version: v1.36.1
+k3d               OK
+  k3d version v5.9.0
+Docker engine: RUNNING
+Doctor result: READY
+Doctor exit code: 0
+Command: docker ps --format (names/status/ports)
+NAMES                           STATUS                        PORTS
+k3d-funqy-lab-serverlb          Up About a minute             0.0.0.0:57263->6443/tcp, 0.0.0.0:8098->30080/tcp, [::]:8098->30080/tcp
+k3d-funqy-lab-server-0          Up 37 seconds                 
+k3d-campus-cloud-v3-serverlb    Up About a minute             0.0.0.0:8089->80/tcp, [::]:8089->80/tcp, 0.0.0.0:6551->6443/tcp
+k3d-campus-cloud-v3-agent-0     Up About a minute             
+k3d-campus-cloud-v3-server-0    Up About a minute             
+k3d-campus-registry.localhost   Up About a minute             0.0.0.0:5001->5000/tcp
+campus-cloud-lab-gitea-1        Up About a minute             127.0.0.1:2322->22/tcp, 127.0.0.1:3001->3000/tcp
+campus-cloud-lab-postgres-1     Up About a minute (healthy)   127.0.0.1:5432->5432/tcp
+k3d-campus-cloud-serverlb       Up About a minute             0.0.0.0:8088->80/tcp, [::]:8088->80/tcp, 0.0.0.0:6550->6443/tcp
+k3d-campus-cloud-agent-0        Up 10 seconds                 
+k3d-campus-cloud-server-0       Up About a minute             
+campus-cloud-lab-rabbitmq-1     Up About a minute             127.0.0.1:5672->5672/tcp, 127.0.0.1:15672->15672/tcp
+Command: k3d cluster list
+NAME              SERVERS   AGENTS   LOADBALANCER
+campus-cloud      1/1       1/1      true
+campus-cloud-v3   1/1       1/1      true
+funqy-lab         1/1       0/0      true
+Command: kubectl config current-context
+k3d-funqy-lab
+Interpretation: Doctor checks tool availability and Docker only; READY does not verify port availability or JournalFit readiness. Existing lab containers occupy default capstone ports. No capstone stack started.

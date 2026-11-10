@@ -1,0 +1,21 @@
+﻿Timestamp: 2026-11-10T00:19:34.0878583+07:00
+Manuscript ID: ms-a5430ef1; expected SHA256: ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753
+Before replacement: pod inventory, identity and shared file checksum
+Pod=journalfit-backend-65fb8cb7d-fjhdn UID=1f3195da-ccc2-449a-9e50-bcea433b1a56 node=k3d-capstone-agent-0
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+Pod=journalfit-backend-65fb8cb7d-pjtkd UID=02ea1b95-1283-4866-ae4c-d171cf5d128b node=k3d-capstone-agent-0
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+Command: kubectl --context k3d-capstone -n capstone delete pod journalfit-backend-65fb8cb7d-fjhdn --timeout=60s (normal termination; no force)
+pod "journalfit-backend-65fb8cb7d-fjhdn" deleted from capstone namespace
+deployment "journalfit-backend" successfully rolled out
+pod/journalfit-backend-65fb8cb7d-pjtkd condition met
+pod/journalfit-backend-65fb8cb7d-tkpbl condition met
+Observed recovery check elapsed seconds: 32.5 (includes kubectl/API polling overhead)
+Pod=journalfit-backend-65fb8cb7d-pjtkd UID=02ea1b95-1283-4866-ae4c-d171cf5d128b node=k3d-capstone-agent-0
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+Pod=journalfit-backend-65fb8cb7d-tkpbl UID=aceebf46-30f7-4e4d-8e87-2d6935d76758 node=k3d-capstone-agent-0
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+Report after replacement HTTP 200; manuscript=ms-a5430ef1; findings=3
+Interpretation: two replicas share the uploaded DOCX; one pod was replaced with a new UID, both Ready, file SHA256 unchanged and database-backed report available. No continuous traffic/downtime, node-loss or backup/restore claim.

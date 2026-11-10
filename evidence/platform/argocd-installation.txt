@@ -1,0 +1,100 @@
+﻿Timestamp: 2026-11-10T00:58:20.3844099+07:00
+Source: https://raw.githubusercontent.com/argoproj/argo-cd/v3.5.6/manifests/install.yaml
+Installation only: no sample Gitea Application, bootstrap-project, force push or force-conflicts.
+Manifest SHA256: 846C644BC81CE5557DD9048757A9C7353378F25C5EB811C77D32A9E907823599
+namespace/argocd created
+customresourcedefinition.apiextensions.k8s.io/applications.argoproj.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/applicationsets.argoproj.io serverside-applied
+customresourcedefinition.apiextensions.k8s.io/appprojects.argoproj.io serverside-applied
+serviceaccount/argocd-application-controller serverside-applied
+serviceaccount/argocd-applicationset-controller serverside-applied
+serviceaccount/argocd-dex-server serverside-applied
+serviceaccount/argocd-notifications-controller serverside-applied
+serviceaccount/argocd-redis serverside-applied
+serviceaccount/argocd-repo-server serverside-applied
+serviceaccount/argocd-server serverside-applied
+role.rbac.authorization.k8s.io/argocd-application-controller serverside-applied
+role.rbac.authorization.k8s.io/argocd-applicationset-controller serverside-applied
+role.rbac.authorization.k8s.io/argocd-dex-server serverside-applied
+role.rbac.authorization.k8s.io/argocd-notifications-controller serverside-applied
+role.rbac.authorization.k8s.io/argocd-redis serverside-applied
+role.rbac.authorization.k8s.io/argocd-server serverside-applied
+clusterrole.rbac.authorization.k8s.io/argocd-application-controller serverside-applied
+clusterrole.rbac.authorization.k8s.io/argocd-applicationset-controller serverside-applied
+clusterrole.rbac.authorization.k8s.io/argocd-server serverside-applied
+rolebinding.rbac.authorization.k8s.io/argocd-application-controller serverside-applied
+rolebinding.rbac.authorization.k8s.io/argocd-applicationset-controller serverside-applied
+rolebinding.rbac.authorization.k8s.io/argocd-dex-server serverside-applied
+rolebinding.rbac.authorization.k8s.io/argocd-notifications-controller serverside-applied
+rolebinding.rbac.authorization.k8s.io/argocd-redis serverside-applied
+rolebinding.rbac.authorization.k8s.io/argocd-server serverside-applied
+clusterrolebinding.rbac.authorization.k8s.io/argocd-application-controller serverside-applied
+clusterrolebinding.rbac.authorization.k8s.io/argocd-applicationset-controller serverside-applied
+clusterrolebinding.rbac.authorization.k8s.io/argocd-server serverside-applied
+configmap/argocd-cm serverside-applied
+configmap/argocd-cmd-params-cm serverside-applied
+configmap/argocd-gpg-keys-cm serverside-applied
+configmap/argocd-notifications-cm serverside-applied
+configmap/argocd-rbac-cm serverside-applied
+configmap/argocd-ssh-known-hosts-cm serverside-applied
+configmap/argocd-tls-certs-cm serverside-applied
+secret/argocd-notifications-secret serverside-applied
+secret/argocd-secret serverside-applied
+service/argocd-applicationset-controller serverside-applied
+service/argocd-dex-server serverside-applied
+service/argocd-metrics serverside-applied
+service/argocd-notifications-controller-metrics serverside-applied
+service/argocd-redis serverside-applied
+service/argocd-repo-server serverside-applied
+service/argocd-server serverside-applied
+service/argocd-server-metrics serverside-applied
+deployment.apps/argocd-applicationset-controller serverside-applied
+deployment.apps/argocd-dex-server serverside-applied
+deployment.apps/argocd-notifications-controller serverside-applied
+deployment.apps/argocd-redis serverside-applied
+deployment.apps/argocd-repo-server serverside-applied
+deployment.apps/argocd-server serverside-applied
+statefulset.apps/argocd-application-controller serverside-applied
+networkpolicy.networking.k8s.io/argocd-application-controller-network-policy serverside-applied
+networkpolicy.networking.k8s.io/argocd-applicationset-controller-network-policy serverside-applied
+networkpolicy.networking.k8s.io/argocd-dex-server-network-policy serverside-applied
+networkpolicy.networking.k8s.io/argocd-notifications-controller-network-policy serverside-applied
+networkpolicy.networking.k8s.io/argocd-redis-network-policy serverside-applied
+networkpolicy.networking.k8s.io/argocd-repo-server-network-policy serverside-applied
+networkpolicy.networking.k8s.io/argocd-server-network-policy serverside-applied
+Waiting for deployment "argocd-redis" rollout to finish: 0 of 1 updated replicas are available...
+deployment "argocd-redis" successfully rolled out
+Waiting for deployment "argocd-repo-server" rollout to finish: 0 of 1 updated replicas are available...
+deployment "argocd-repo-server" successfully rolled out
+Waiting for deployment "argocd-server" rollout to finish: 0 of 1 updated replicas are available...
+deployment "argocd-server" successfully rolled out
+partitioned roll out complete: 1 new pods have been updated...
+NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE    CONTAINERS                         IMAGES                                             SELECTOR
+deployment.apps/argocd-applicationset-controller   1/1     1            1           104s   argocd-applicationset-controller   quay.io/argoproj/argocd:v3.5.6                     app.kubernetes.io/name=argocd-applicationset-controller
+deployment.apps/argocd-dex-server                  1/1     1            1           104s   dex                                ghcr.io/dexidp/dex:v2.45.1                         app.kubernetes.io/name=argocd-dex-server
+deployment.apps/argocd-notifications-controller    1/1     1            1           104s   argocd-notifications-controller    quay.io/argoproj/argocd:v3.5.6                     app.kubernetes.io/name=argocd-notifications-controller
+deployment.apps/argocd-redis                       1/1     1            1           104s   redis                              public.ecr.aws/docker/library/redis:8.2.3-alpine   app.kubernetes.io/name=argocd-redis
+deployment.apps/argocd-repo-server                 1/1     1            1           104s   argocd-repo-server                 quay.io/argoproj/argocd:v3.5.6                     app.kubernetes.io/name=argocd-repo-server
+deployment.apps/argocd-server                      1/1     1            1           104s   argocd-server                      quay.io/argoproj/argocd:v3.5.6                     app.kubernetes.io/name=argocd-server
+
+NAME                                             READY   AGE    CONTAINERS                      IMAGES
+statefulset.apps/argocd-application-controller   1/1     104s   argocd-application-controller   quay.io/argoproj/argocd:v3.5.6
+
+NAME                                                    READY   STATUS    RESTARTS   AGE    IP           NODE                    NOMINATED NODE   READINESS GATES
+pod/argocd-application-controller-0                     1/1     Running   0          104s   10.42.1.12   k3d-capstone-server-0   <none>           <none>
+pod/argocd-applicationset-controller-7567dc5fbb-g2j5h   1/1     Running   0          104s   10.42.1.9    k3d-capstone-server-0   <none>           <none>
+pod/argocd-dex-server-776dbb476d-xgltc                  1/1     Running   0          104s   10.42.1.10   k3d-capstone-server-0   <none>           <none>
+pod/argocd-notifications-controller-7fc8df5f57-smw6k    1/1     Running   0          104s   10.42.0.19   k3d-capstone-agent-0    <none>           <none>
+pod/argocd-redis-7f849fd769-kxxd8                       1/1     Running   0          104s   10.42.1.11   k3d-capstone-server-0   <none>           <none>
+pod/argocd-repo-server-58c976b9df-sgg7x                 1/1     Running   0          104s   10.42.0.20   k3d-capstone-agent-0    <none>           <none>
+pod/argocd-server-947dccccf-lfrlr                       1/1     Running   0          104s   10.42.1.13   k3d-capstone-server-0   <none>           <none>
+
+NAME                                              TYPE        CLUSTER-IP      EXTERNAL-IP   PORT(S)                      AGE    SELECTOR
+service/argocd-applicationset-controller          ClusterIP   10.43.190.222   <none>        7000/TCP,8080/TCP            105s   app.kubernetes.io/name=argocd-applicationset-controller
+service/argocd-dex-server                         ClusterIP   10.43.62.204    <none>        5556/TCP,5557/TCP,5558/TCP   105s   app.kubernetes.io/name=argocd-dex-server
+service/argocd-metrics                            ClusterIP   10.43.238.30    <none>        8082/TCP                     105s   app.kubernetes.io/name=argocd-application-controller
+service/argocd-notifications-controller-metrics   ClusterIP   10.43.107.164   <none>        9001/TCP                     105s   app.kubernetes.io/name=argocd-notifications-controller
+service/argocd-redis                              ClusterIP   10.43.127.241   <none>        6379/TCP                     105s   app.kubernetes.io/name=argocd-redis
+service/argocd-repo-server                        ClusterIP   10.43.186.133   <none>        8081/TCP,8084/TCP            105s   app.kubernetes.io/name=argocd-repo-server
+service/argocd-server                             ClusterIP   10.43.176.69    <none>        80/TCP,443/TCP               105s   app.kubernetes.io/name=argocd-server
+service/argocd-server-metrics                     ClusterIP   10.43.5.120     <none>        8083/TCP                     105s   app.kubernetes.io/name=argocd-server

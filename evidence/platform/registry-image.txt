@@ -1,0 +1,120 @@
+﻿Timestamp: 2026-11-09T23:59:27.1690125+07:00
+Source revision: 3bdf305d106cb893bacf0bb7984df187e0499b5d
+Command: docker build --label org.opencontainers.image.revision=3bdf305d106cb893bacf0bb7984df187e0499b5d -t localhost:5001/journalfit-backend:3bdf305d106c ./source
+docker : #0 building with "desktop-linux" instance using docker driver
+At line:10 char:1
++ docker build --progress=plain --label "org.opencontainers.image.revis ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (#0 building wit...g docker driver:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+#1 [internal] load build definition from Dockerfile
+#1 transferring dockerfile: 481B 0.0s done
+#1 DONE 0.1s
+
+#2 [internal] load metadata for docker.io/library/node:24-bookworm-slim
+#2 ...
+
+#3 [auth] library/node:pull token for registry-1.docker.io
+#3 DONE 0.0s
+
+#2 [internal] load metadata for docker.io/library/node:24-bookworm-slim
+#2 DONE 5.1s
+
+#4 [internal] load .dockerignore
+#4 transferring context: 90B done
+#4 DONE 0.0s
+
+#5 [internal] load build context
+#5 transferring context: 1.46kB 0.0s done
+#5 DONE 0.0s
+
+#6 [1/5] FROM 
+docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9
+#6 resolve 
+docker.io/library/node:24-bookworm-slim@sha256:01d566e8d94d8c619591d78652babfccd3c6992a3dffa9ed5ab39e11cf6c70e9 0.1s 
+done
+#6 DONE 0.1s
+
+#7 [4/5] RUN npm ci --omit=dev     && npm cache clean --force     && groupadd --gid 10001 appuser     && useradd --uid 
+10001 --gid appuser --no-create-home --shell /usr/sbin/nologin appuser     && install -d -o appuser -g appuser 
+/app/uploads
+#7 CACHED
+
+#8 [2/5] WORKDIR /app
+#8 CACHED
+
+#9 [3/5] COPY package.json package-lock.json ./
+#9 CACHED
+
+#10 [5/5] COPY src/ ./src/
+#10 CACHED
+
+#11 exporting to image
+#11 exporting layers done
+#11 exporting manifest sha256:673da2273fe94d9a873169a28871d485f1923bc6d42216ab7dd34f3fc7f59684 0.0s done
+#11 exporting config sha256:17e6f7acb1a3e598ce0b886e5cce51a7dd3ffca998d06e41c197a07f2021c685 0.0s done
+#11 exporting attestation manifest sha256:f593a3ed0c969eefc94d19e2202957d4206a9079890270044197463017cdec4e 0.0s done
+#11 exporting manifest list sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95 0.0s done
+#11 naming to localhost:5001/journalfit-backend:3bdf305d106c done
+#11 unpacking to localhost:5001/journalfit-backend:3bdf305d106c 0.0s done
+#11 DONE 0.3s
+
+View build details: docker-desktop://dashboard/build/desktop-linux/desktop-linux/owg8ugg6lcu1gajfmd1f0m43g
+Build exit code: 0
+Command: docker push localhost:5001/journalfit-backend:3bdf305d106c
+The push refers to repository [localhost:5001/journalfit-backend]
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+67dd44e03538: Waiting
+dd051e1b8c92: Waiting
+7bc42169b987: Waiting
+44136fa355b3: Waiting
+ed61b9f2bb56: Waiting
+f3db01672604: Waiting
+7bc42169b987: Pushed
+67dd44e03538: Pushed
+0485e61ce465: Waiting
+44136fa355b3: Pushed
+f6733d471895: Waiting
+f3db01672604: Pushed
+2451e90e9242: Waiting
+ed61b9f2bb56: Pushed
+d055089ca6c1: Waiting
+f6733d471895: Pushed
+2451e90e9242: Pushed
+d055089ca6c1: Pushed
+1d804a079d7f: Pushed
+dd051e1b8c92: Pushed
+0485e61ce465: Pushed
+3bdf305d106c: digest: sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95 size: 856
+Push exit code: 0
+Verified image ID: sha256:a441538a80ffd8f2fad9e29b17ec9c3872f851bba8d8eb01c55674fdba9ccc95
+Verified OCI revision: 3bdf305d106cb893bacf0bb7984df187e0499b5d

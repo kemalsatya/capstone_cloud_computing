@@ -1,0 +1,12 @@
+﻿Timestamp: 2026-11-09T22:58:14.6206925+07:00
+Command: docker run --rm -d --name journalfit-platform-check --network capstone-net -p 127.0.0.1:8000:8000 <DB settings from local lab configuration; password omitted> journalfit-backend:platform-dev
+d509894f3e3d63bc5be9b94c4072adc1f55d5e6bda2df6597a60126a50d7cd2f
+Command: docker exec journalfit-platform-check id
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+Command: docker exec journalfit-platform-check sh -c <test uploads writable>
+uploads-writable
+/health/live HTTP 200 {"status":"alive","timestamp":"2026-11-09T15:58:15.705Z"}
+/health/ready HTTP 200 {"status":"ready","database":"connected","timestamp":"2026-11-09T15:58:15.783Z"}
+Interpretation: container runs as non-root; uploads directory writable; liveness and database readiness return 200. This is not an end-to-end transaction or persistent upload test. Readiness uses existing lab database without schema changes.
+Cleanup: docker stop journalfit-platform-check (temporary container uses --rm)
+journalfit-platform-check

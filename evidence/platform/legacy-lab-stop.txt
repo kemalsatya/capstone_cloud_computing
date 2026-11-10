@@ -1,0 +1,72 @@
+Timestamp: 2026-11-09T22:44:48.5343964+07:00
+Before: docker inspect (name/state/restart policy only)
+/k3d-funqy-lab-serverlb status=running restart=unless-stopped
+/k3d-funqy-lab-server-0 status=running restart=unless-stopped
+/k3d-campus-cloud-v3-tools status=exited restart=no
+/k3d-campus-cloud-v3-serverlb status=running restart=unless-stopped
+/k3d-campus-cloud-v3-agent-0 status=running restart=unless-stopped
+/k3d-campus-cloud-v3-server-0 status=running restart=unless-stopped
+/k3d-campus-registry.localhost status=running restart=unless-stopped
+/campus-cloud-lab-gitea-runner-1 status=exited restart=unless-stopped
+/campus-cloud-lab-gitea-1 status=running restart=unless-stopped
+/campus-cloud-lab-postgres-1 status=running restart=unless-stopped
+/k3d-campus-cloud-serverlb status=running restart=unless-stopped
+/k3d-campus-cloud-agent-0 status=running restart=unless-stopped
+/k3d-campus-cloud-server-0 status=running restart=unless-stopped
+/campus-cloud-lab-rabbitmq-1 status=running restart=unless-stopped
+/campus-cloud-lab-keycloak-1 status=exited restart=unless-stopped
+Command: docker update --restart=no <selected legacy lab containers>
+k3d-funqy-lab-serverlb
+k3d-funqy-lab-server-0
+k3d-campus-cloud-v3-tools
+k3d-campus-cloud-v3-serverlb
+k3d-campus-cloud-v3-agent-0
+k3d-campus-cloud-v3-server-0
+k3d-campus-registry.localhost
+campus-cloud-lab-gitea-runner-1
+campus-cloud-lab-gitea-1
+campus-cloud-lab-postgres-1
+k3d-campus-cloud-serverlb
+k3d-campus-cloud-agent-0
+k3d-campus-cloud-server-0
+campus-cloud-lab-rabbitmq-1
+campus-cloud-lab-keycloak-1
+Command: docker stop --time 30 <selected legacy lab containers>
+Flag --time has been deprecated, use --timeout instead
+k3d-funqy-lab-serverlb
+k3d-funqy-lab-server-0
+k3d-campus-cloud-v3-tools
+k3d-campus-cloud-v3-serverlb
+k3d-campus-cloud-v3-agent-0
+k3d-campus-cloud-v3-server-0
+k3d-campus-registry.localhost
+campus-cloud-lab-gitea-runner-1
+campus-cloud-lab-gitea-1
+campus-cloud-lab-postgres-1
+k3d-campus-cloud-serverlb
+k3d-campus-cloud-agent-0
+k3d-campus-cloud-server-0
+campus-cloud-lab-rabbitmq-1
+campus-cloud-lab-keycloak-1
+After: docker inspect (name/state/restart policy only)
+/k3d-funqy-lab-serverlb status=exited restart=no
+/k3d-funqy-lab-server-0 status=exited restart=no
+/k3d-campus-cloud-v3-tools status=exited restart=no
+/k3d-campus-cloud-v3-serverlb status=exited restart=no
+/k3d-campus-cloud-v3-agent-0 status=exited restart=no
+/k3d-campus-cloud-v3-server-0 status=exited restart=no
+/k3d-campus-registry.localhost status=exited restart=no
+/campus-cloud-lab-gitea-runner-1 status=exited restart=no
+/campus-cloud-lab-gitea-1 status=exited restart=no
+/campus-cloud-lab-postgres-1 status=exited restart=no
+/k3d-campus-cloud-serverlb status=exited restart=no
+/k3d-campus-cloud-agent-0 status=exited restart=no
+/k3d-campus-cloud-server-0 status=exited restart=no
+/campus-cloud-lab-rabbitmq-1 status=exited restart=no
+/campus-cloud-lab-keycloak-1 status=exited restart=no
+Command: docker ps (remaining running containers)
+NAMES     PORTS
+Selected container count: 15
+Interpretation: selected old Kubernetes/campus lab containers stopped and restart policy set to no. Containers and volumes were not deleted. Docker Desktop restart has not been tested.
+Command: Get-NetTCPConnection -State Listen (previous conflicting ports)
+No TCP listeners found on ports 3001,5432,5001,6550,8088 at verification time.
