@@ -1,0 +1,10 @@
+HTTP/1.1 403 Forbidden
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 146
+ETag: W/"92-kVy3jl8onQMbAuJgy5UBFPDEsKQ"
+Date: Tue, 10 Nov 2026 01:04:10 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"status":403,"message":"Access forbidden: Tenant 'tenant-b' is not authorized to access manuscript 'ms-001' owned by 'tenant-a'"}

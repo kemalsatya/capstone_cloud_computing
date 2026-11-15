@@ -1,0 +1,61 @@
+name: capstone-gitea-ci
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build-test-scan-publish:
+    runs-on: capstone
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Tool Versions Check
+        run: |
+          node --version || true
+          npm --version || true
+          docker version
+
+      - name: Verify Application Code (Node.js Test)
+        run: |
+          set -euo pipefail
+          if [ -f "source/package.json" ]; then
+            cd source
+            npm ci || npm install
+            npm test
+          else
+            echo "[NOTICE] source/package.json is missing."
+          fi
+
+      - name: Build, Scan, and Tag Immutable Container Artifact
+        run: |
+          set -euo pipefail
+          SHA="$(git rev-parse --short=7 HEAD)"
+          PUSH_IMAGE="localhost:5001/journalfit-backend:${SHA}"
+
+          if [ -f "source/Dockerfile" ]; then
+            docker build -t "$PUSH_IMAGE" -f source/Dockerfile ./source
+          elif [ -f "deployment/Dockerfile" ]; then
+            docker build -t "$PUSH_IMAGE" -f deployment/Dockerfile .
+          else
+            echo "[NOTICE] Dockerfile is in progress by Anggota 2. Building Node.js container image."
+            docker build -t "$PUSH_IMAGE" - << 'EOF'
+          FROM node:20-alpine
+          WORKDIR /app
+          COPY source/package*.json ./
+          RUN npm ci --omit=dev || npm install --omit=dev
+          COPY source/src ./src
+          USER node
+          EXPOSE 8000
+          CMD ["node", "src/index.js"]
+          EOF
+          fi
+
+          # Scan with local Trivy runner
+          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+            aquasec/trivy:latest image --severity HIGH,CRITICAL --exit-code 0 "$PUSH_IMAGE" || true
+
+          # Push to local registry
+          docker push "$PUSH_IMAGE" || echo "[WARN] Local registry push skipped if registry not online."

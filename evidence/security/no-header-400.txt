@@ -1,0 +1,10 @@
+HTTP/1.1 400 Bad Request
+X-Powered-By: Express
+Content-Type: application/json; charset=utf-8
+Content-Length: 90
+ETag: W/"5a-Fjzd+bMK9BH0UvjJ7AqLWeltO3s"
+Date: Tue, 10 Nov 2026 01:04:23 GMT
+Connection: keep-alive
+Keep-Alive: timeout=5
+
+{"success":false,"message":"Header X-Tenant-ID is required for tenant-scoped operations."}
