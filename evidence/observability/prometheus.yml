@@ -7,10 +7,13 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets:
-          - host.docker.internal:8088
           - app:8000
         labels:
-          environment: local-capstone
+          environment: local-compose
+      - targets:
+          - journalfit.localhost:8088
+        labels:
+          environment: k3d-ingress
 
   - job_name: prometheus
     static_configs:

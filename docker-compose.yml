@@ -105,6 +105,7 @@ services:
       - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      - "journalfit.localhost:host-gateway"
     volumes:
       - ./evidence/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
