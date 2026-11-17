@@ -147,6 +147,17 @@ describe('JournalFit Modular Monolith Tests', () => {
             assert.strictEqual(data.success, false);
         });
 
+        test('GET /metrics returns Prometheus text metrics', async () => {
+            const res = await fetch(`${baseUrl}/metrics`);
+            const body = await res.text();
+
+            assert.strictEqual(res.status, 200);
+            assert.match(res.headers.get('content-type') || '', /text\/plain/);
+            assert.match(body, /http_requests_total/);
+            assert.match(body, /http_request_duration_seconds_bucket/);
+            assert.match(body, /journalfit_process_uptime_seconds/);
+        });
+
         // Close server after tests
         test('teardown server', () => {
             server.close();

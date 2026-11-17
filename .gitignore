@@ -1,0 +1,19 @@
+# Local generated artifacts
+output/
+# Course reference materials (personal binaries)
+reference-docs/
+# Scratch and render intermediates
+tmp/
+
+# OS / Office junk
+Thumbs.db
+Desktop.ini
+~$*
+
+# Secrets (safety net beyond source/.gitignore)
+.env
+.env.*
+!.env.example
+
+# Node
+node_modules/

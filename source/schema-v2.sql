@@ -129,6 +129,10 @@ INSERT INTO manuscripts (id, tenant_id, author_id, title, file_path, abstract_te
      'Contoh abstrak.', ARRAY['cloud','performance'])
 ON CONFLICT (id) DO NOTHING;
 
+INSERT INTO check_results (id, manuscript_id, rule_template_id, rule_version, format_status, format_score, scope_status) VALUES
+    ('cr-001', 'ms-001', 'tpl-a-v1', 1, 'completed', 85, 'pending')
+ON CONFLICT (id) DO NOTHING;
+
 INSERT INTO findings (id, check_result_id, category, rule_key, check_level, severity, message) VALUES
     ('f-001', 'cr-001', 'format', 'ABSTRACT_LENGTH', 'auto', 'INFO', 'Panjang abstrak sesuai (100-200 kata).'),
     ('f-002', 'cr-001', 'format', 'KEYWORDS_PRESENT', 'auto', 'INFO', 'Keywords tersedia.')

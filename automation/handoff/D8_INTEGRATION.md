@@ -11,7 +11,7 @@ namespace default, sumber GitHub aplikasi, path deployment/ dan tag SHA7. Tidak
 melakukan merge branch tersebut atau mengganti workflow aktif anggota lain.
 
 Patch member3-ci-compatibility.patch ditujukan pada dua workflow dalam branch itu.
-Perubahan: Node24 sesuai runtime yang sudah diuji, npm ci tanpa fallback, build
+Perubahan: Node 22 sesuai source terbaru yang sudah diuji kandidat, npm ci tanpa fallback, build
 strict memakai source/Dockerfile yang sekarang tersedia. Workflow Gitea hanya
 publish saat push main; push/scan failure tidak disamarkan sebagai sukses. Scan
 vulnerability tetap reporting gate exit0, terpisah dari kegagalan alat.
@@ -74,3 +74,12 @@ ini tetap perlu direview kelompok; tidak diklaim sudah memenuhi pemisahan terseb
 
 Referensi: [Argo CD sync options](https://argo-cd.readthedocs.io/en/stable/user-guide/sync-options/)
 dan [getting started](https://argo-cd.readthedocs.io/en/stable/getting_started/).
+
+Pembaruan review F 2026-11-10: source kelompok beralih Node 22 Alpine. Patch
+kompatibilitas kini menyelaraskan CI ke Node 22; 10 tes image kandidat lulus.
+Temuan prefix YAML pada commit 5b63bc1 sudah diperbaiki oleh tim melalui
+commit a9d5993 dan masuk origin/main 280a866 pada fetch terakhir. Parser YAML pada
+versi main lulus. Perintah tes main juga menjadi `node --test` (a8923ea).
+Feature branch ini belum menggabungkan main tersebut; patch tetap bahan review,
+bukan instruksi untuk menimpa workflow terbaru. Rebase/adaptasi patch perlu review
+terhadap versi workflow tujuan. Sinkronisasi Argo live tetap belum terverifikasi.

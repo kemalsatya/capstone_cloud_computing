@@ -6,6 +6,10 @@ server dry-run lulus pada cluster capstone. Setelah pengguna mengizinkan inisial
 lokal dari schema.sql Anggota 1, database siap dan deployment manual awal berhasil:
 dua replica Ready, PVC Bound, health HTTP 200, upload DOCX HTTP 201 dan laporan HTTP 200.
 
+Source Dockerfile terbaru di branch adalah Node 22 Alpine, sudah diuji kandidat
+secara terpisah; artifact Kubernetes yang direkam tetap 3bdf305 (Node 24).
+Lihat [ringkasan versi dan kontribusi](../evidence/platform/RINGKASAN_M3_ANGGOTA_2.md).
+
 ## Fungsi file
 
 | File | Fungsi |
@@ -43,9 +47,13 @@ hasil ini belum membuktikan workload aplikasi bisa berjalan.
   penyimpanan. Semua replica dijadwalkan di node tersebut untuk berbagi PVC lokal.
   Tanpa label, pod akan Pending. Izin tulis volume harus dibuktikan dengan UID 10001.
 - Buat database journalfit dan enam tabel melalui koordinasi Anggota 1. Buktikan
-  koneksi dari pod ke host.k3d.internal:5432. Readiness SELECT 1 tidak memeriksa tabel.
+  koneksi dari pod ke host.docker.internal:5432. Readiness SELECT 1 tidak memeriksa tabel.
   Langkah ini sudah dilakukan menggunakan schema.sql tanpa perubahan pada 2026-11-10;
   jangan menginisialisasi ulang atau menimpa database yang sudah berisi data uji.
+- Jika pod Running tetapi tidak Ready setelah restart lingkungan, periksa pesan
+  /health/ready dari dalam pod. Alias host.k3d.internal pernah hilang dari DNS k3d;
+  ConfigMap kini memakai host.docker.internal yang diuji pada Docker Desktop Windows.
+  Jangan membuat ulang database/PVC untuk memperbaiki kegagalan DNS.
 - Siapkan Secret runtime `journalfit-backend-secret`, key `DB_PASSWORD`, dalam
   namespace default. Tidak ada Secret berisi credential dalam konfigurasi ini.
 - Artifact source commit `3bdf305d106c` sudah dibangun dan dipublikasikan dengan
@@ -67,7 +75,7 @@ Perintah apply di atas dijalankan pada tahap D setelah database siap. Setelah Ar
 perubahan runtime mengikuti repository GitOps; CI tidak menjalankan kubectl apply.
 Namespace default, tag SHA7, dan sumber Argo GitHub repository aplikasi path
 deployment/ sudah disesuaikan ke branch Anggota 3. Aktivasi Argo/CI belum diuji;
-perintah npm test Node20 dan pembaruan tag desired state memerlukan tindak lanjut
+perintah npm test Node 20 dan pembaruan tag desired state memerlukan tindak lanjut
 Anggota 1/3. Tidak ada push atau perubahan pipeline pada langkah penyelarasan ini.
 
 Data DOCX disalin ke PVC namespace default dengan checksum yang cocok, dan layanan
