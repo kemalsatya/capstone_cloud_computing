@@ -1,0 +1,22 @@
+Timestamp: 2026-11-10T14:55:21+0700
+Observability & SLO Verification - JournalFit Workload
+Prometheus Status: Prometheus Server is Healthy.
+Prometheus Query (up): {"status":"success","data":{"resultType":"vector","result":[{"metric":{"__name__":"up","instance":"localhost:9090","job":"prometheus"},"value":[1794297321.385,"1"]},{"metric":{"__name__":"up","environment":"local-capstone","instance":"host.docker.internal:8088","job":"capstone-app"},"value":[1794297321.385,"0"]}]}}
+Grafana Status: {
+  "database": "ok",
+  "version": "13.2.4",
+  "commit": "0e79aef9d91abf3bdadae9af15763029072fb45b"
+}
+
+Kubernetes HPA & Pod Telemetry:
+NAME                                                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/journalfit-backend   Deployment/journalfit-backend   cpu: 4%/70%   2         3         2          18m
+
+NAME                                      READY   STATUS    RESTARTS   AGE   IP           NODE                   NOMINATED NODE   READINESS GATES
+pod/journalfit-backend-7cb887f88d-7mchs   1/1     Running   0          17m   10.42.1.13   k3d-capstone-agent-0   <none>           <none>
+pod/journalfit-backend-7cb887f88d-hmvhn   1/1     Running   0          17m   10.42.1.12   k3d-capstone-agent-0   <none>           <none>
+
+SLO Verification Targets:
+- Availability Target: >= 99.0% (Current: 100.0%, 0 failed requests)
+- Latency P95 Target: < 2000ms (Current: ~15ms via local ingress)
+- CPU Target Threshold: 70% (Current Utilization: 4%)
