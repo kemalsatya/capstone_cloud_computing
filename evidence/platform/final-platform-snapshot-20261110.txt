@@ -1,0 +1,53 @@
+Timestamp: 2026-11-10T14:29:54.888675+07:00
+Scope: F final read-only platform snapshot, no Argo synchronization or workload image upgrade.
+Platform checkout base: 2bd84284859d88d3df4390b68c88d2842de53247
+Command: kubectl --context k3d-capstone get nodes
+NAME                    STATUS   ROLES           AGE   VERSION
+k3d-capstone-agent-0    Ready    <none>          14h   v1.35.5+k3s1
+k3d-capstone-server-0   Ready    control-plane   14h   v1.35.5+k3s1
+Command: kubectl --context k3d-capstone -n default get deployment,pods,service,ingress,pvc,hpa
+NAME                                 READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/journalfit-backend   2/2     2            2           14h
+
+NAME                                      READY   STATUS    RESTARTS   AGE
+pod/journalfit-backend-654cf96667-h876w   1/1     Running   0          46m
+pod/journalfit-backend-654cf96667-qrfh6   1/1     Running   0          46m
+
+NAME                         TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)   AGE
+service/journalfit-backend   ClusterIP   10.43.41.15   <none>        80/TCP    14h
+service/kubernetes           ClusterIP   10.43.0.1     <none>        443/TCP   14h
+
+NAME                                           CLASS     HOSTS                  ADDRESS                 PORTS   AGE
+ingress.networking.k8s.io/journalfit-backend   traefik   journalfit.localhost   172.28.0.3,172.28.0.5   80      14h
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-462818b8-6b0b-475e-9511-34f656284417   1Gi        RWO            local-path     <unset>                 14h
+
+NAME                                                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/journalfit-backend   Deployment/journalfit-backend   cpu: 1%/70%   2         3         2          13h
+Command: kubectl --context k3d-capstone -n default top pods -l app=journalfit
+NAME                                  CPU(cores)   MEMORY(bytes)   
+journalfit-backend-654cf96667-h876w   1m           32Mi            
+journalfit-backend-654cf96667-qrfh6   1m           32Mi
+Command: kubectl --context k3d-capstone -n argocd get applications.argoproj.io
+No resources found in argocd namespace.
+GET /health/live HTTP 200
+GET /health/ready HTTP 200
+GET /api/manuscripts/ms-a5430ef1/report HTTP 200
+journalfit-backend-654cf96667-h876w image=registry:5000/journalfit-backend:3bdf305
+v24.22.2
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+host.docker.internal
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+journalfit-backend-654cf96667-qrfh6 image=registry:5000/journalfit-backend:3bdf305
+v24.22.2
+uid=10001(appuser) gid=10001(appuser) groups=10001(appuser)
+host.docker.internal
+ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753  /app/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx
+SHA256 source/Dockerfile 0d1e0dc0ce667b285658a748c89995bcef6df41892df2b0b2e295872de8e1ece
+SHA256 source/.dockerignore badec248ecbf284700eacf9d3358b8c31c649292d4c5755f26e0700dc9a5d700
+SHA256 deployment/configmap.yaml 6bb234bebba2a14440297df8f749069bf5d433765828451767b3f5e30bf5422e
+SHA256 deployment/deployment.yaml 207988a00c7bf1c0958860b3517369d952be5a7f95f1bc6964ccdfaaa171e384
+SHA256 deployment/hpa.yaml 63ddb5f9a1f5c9c2f84b45ecb0cd881210318d9fcac5949ffa76bd27c5b83c46
+SHA256 deployment/pvc.yaml 0fc406fdfadb532ad273caca25623d9dc1e0f2a896c5e3e19a77c0a7337eaca2
+Conclusion: current manual workload healthy, DB_HOST host.docker.internal, original DOCX/report preserved. Source Node22 candidate differs from running Node24 image; no Argo Application exists.
