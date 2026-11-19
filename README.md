@@ -59,9 +59,9 @@ Jalankan backend Express dan database PostgreSQL JournalFit (tabel dan seed otom
    ```bash
    cp .env.example .env
    ```
-2. **Jalankan Aplikasi dan Database:**
+2. **Jalankan Aplikasi, Database, dan Keycloak:**
    ```bash
-   docker compose up -d postgres app
+   docker compose up -d postgres keycloak app
    ```
 3. **Cek kesehatan & metrik aplikasi:**
    ```bash
@@ -69,7 +69,15 @@ Jalankan backend Express dan database PostgreSQL JournalFit (tabel dan seed otom
    curl -i http://localhost:8000/health/ready
    curl -i http://localhost:8000/metrics
    ```
-4. **Hentikan service jika selesai:**
+4. **Autentikasi Keycloak:** realm `journalfit` diimpor otomatis. Ambil token lalu panggil API:
+   ```bash
+   TOKEN=$(curl -s -X POST "http://localhost:8081/realms/journalfit/protocol/openid-connect/token" \
+     -d "grant_type=password&client_id=journalfit-app&username=author.a&password=author.a&scope=openid profile email" \
+     | jq -r .access_token)
+   curl -i -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/auth/me
+   ```
+   Detail realm, user demo, dan `AUTH_MODE` ada di [`source/AUTH.md`](./source/AUTH.md).
+5. **Hentikan service jika selesai:**
    ```bash
    docker compose down
    ```

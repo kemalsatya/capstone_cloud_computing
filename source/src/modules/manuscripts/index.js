@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { manuscriptController } from './controllers/manuscript.controller.js';
-import { requireTenant } from '../../common/middlewares/tenant.js';
+import { authenticate, requireTenantClaim, requireRoles } from '../../common/middlewares/auth.js';
 
 const router = Router();
 const upload = multer({
@@ -11,10 +11,16 @@ const upload = multer({
     },
 });
 
+router.use(authenticate, requireTenantClaim);
+
 // POST /api/manuscripts/upload
-router.post('/upload', requireTenant, upload.single('file'), manuscriptController.upload);
+router.post('/upload', requireRoles('author'), upload.single('file'), manuscriptController.upload);
 
 // GET /api/manuscripts/:id/report
-router.get('/:id/report', requireTenant, manuscriptController.getReport);
+router.get(
+    '/:id/report',
+    requireRoles('author', 'editor', 'tenant_admin'),
+    manuscriptController.getReport
+);
 
 export default router;

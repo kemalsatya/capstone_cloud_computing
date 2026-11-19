@@ -5,7 +5,7 @@ export const manuscriptController = {
         try {
             const tenantId = req.tenantId;
             const file = req.file;
-            const authorId = req.body?.authorId || null;
+            const authorId = req.auth?.user?.id || req.body?.authorId || null;
 
             const result = await manuscriptService.processUpload({
                 tenantId,
@@ -26,9 +26,9 @@ export const manuscriptController = {
     async getReport(req, res, next) {
         try {
             const manuscriptId = req.params.id;
-            const tenantId = req.tenantId;
+            const auth = req.auth || { tenantId: req.tenantId, roles: ['tenant_admin'], user: null };
 
-            const report = await manuscriptService.getReport(manuscriptId, tenantId);
+            const report = await manuscriptService.getReport(manuscriptId, auth);
 
             return res.status(200).json({
                 success: true,

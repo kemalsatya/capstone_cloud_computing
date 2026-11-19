@@ -1,0 +1,110 @@
+{
+  "realm": "capstone",
+  "enabled": true,
+  "registrationAllowed": false,
+  "roles": {
+    "realm": [
+      {
+        "name": "user"
+      },
+      {
+        "name": "operator"
+      },
+      {
+        "name": "admin"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "tenant-a"
+    },
+    {
+      "name": "tenant-b"
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "capstone-app",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "redirectUris": [
+        "http://localhost:8080/*",
+        "http://capstone.localhost:8088/*",
+        "http://127.0.0.1:8088/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8080",
+        "http://capstone.localhost:8088",
+        "http://127.0.0.1:8088"
+      ],
+      "protocol": "openid-connect"
+    }
+  ],
+  "users": [
+    {
+      "username": "usera",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "usera",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ],
+      "groups": [
+        "/tenant-a"
+      ]
+    },
+    {
+      "username": "userb",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "userb",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "user"
+      ],
+      "groups": [
+        "/tenant-b"
+      ]
+    },
+    {
+      "username": "operator",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "operator",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "operator"
+      ]
+    },
+    {
+      "username": "appadmin",
+      "enabled": true,
+      "credentials": [
+        {
+          "type": "password",
+          "value": "appadmin",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin"
+      ]
+    }
+  ]
+}
