@@ -21,6 +21,67 @@ Lihat [ringkasan versi dan kontribusi](../evidence/platform/RINGKASAN_M3_ANGGOTA
 | `ingress.yaml` | Routing Traefik untuk host journalfit.localhost. |
 | `kustomization.yaml` | Satu entry point manifest dan override tag image. |
 | `hpa.yaml` | HPA CPU 70%, minimum dua dan maksimum tiga replica. |
+| `keycloak/deployment.yaml` | Keycloak production mode (`start --import-realm`), probes 9000, limit 1 CPU/1Gi. |
+| `keycloak/service.yaml` | ClusterIP `keycloak:80` menuju container 8080. |
+| `keycloak/ingress.yaml` | Traefik host `keycloak.localhost`. |
+| `keycloak/configmap.yaml` | Konfigurasi non-rahasia Keycloak (DB, hostname, health, proxy). |
+| `keycloak/kustomization.yaml` | ConfigMap realm dari `realm-journalfit.json`. |
+| `keycloak/secret.example.yaml` | Bentuk Secret; nilai nyata dibuat imperatif. |
+| `keycloak/realm-journalfit.json` | Realm `journalfit` (satu-satunya salinan kanonik). |
+
+## Keycloak (auth)
+
+Backend sekarang memakai `AUTH_MODE=jwt` dengan issuer
+`http://keycloak.localhost:8088/realms/journalfit` dan JWKS internal
+`http://keycloak.default.svc.cluster.local/realms/journalfit/protocol/openid-connect/certs`.
+Keycloak berjalan sebagai Deployment satu replica dengan database terpisah `keycloak`
+di PostgreSQL bersama (tanpa PVC; state ada di Postgres).
+
+Prasyarat sebelum apply:
+
+1. Database `keycloak` dan Secret runtime:
+   ```bash
+   bash automation/scripts/setup-keycloak.sh
+   ```
+   Script membuat database (via Compose Postgres atau `psql` host) serta Secret
+   `keycloak-db-secret` (`KC_DB_PASSWORD`) dan `keycloak-admin-secret`
+   (`KC_BOOTSTRAP_ADMIN_PASSWORD`) di namespace `default`. Tidak ada nilai rahasia di Git.
+2. PostgreSQL dapat dijangkau dari pod melalui `host.docker.internal:5432` (lihat A.2).
+3. Realm diimpor otomatis saat start pertama. Strategi import adalah
+   `IGNORE_EXISTING`, jadi perubahan realm pada DB yang sudah ada tidak menimpa
+   user/role secara otomatis.
+
+Konfigurasi penting:
+
+- `KC_HOSTNAME=http://keycloak.localhost:8088` harus sama dengan `KEYCLOAK_ISSUER`
+  backend; issuer adalah URL eksternal, sedangkan JWKS diambil lewat Service internal.
+- Health check Keycloak ada di port manajemen **9000** (`KC_HEALTH_ENABLED=true`):
+  `/health/started`, `/health/live`, `/health/ready`.
+- Image resmi berjalan sebagai UID/GID **1000**. Memaksa UID 10001 gagal karena
+  `start` melakukan augmentasi Quarkus yang menulis ke `/opt/keycloak/lib`.
+  Container tetap non-root, `allowPrivilegeEscalation: false`, dan `drop: ALL`.
+- Request `250m`/`512Mi`, limit `1000m`/`1Gi`. Cold start terukur **72 detik**
+  dan **596MiB** pada batas tersebut; startup probe memberi ruang sampai 180 detik.
+- Strategi `Recreate` + satu replica untuk menghindari dua writer ke DB Keycloak.
+- Realm diekspor ke `deployment/keycloak/realm-journalfit.json` dan dirender menjadi
+  ConfigMap oleh Kustomize. Salinan di `evidence/security/` tidak dipakai runtime.
+
+Deploy:
+
+```bash
+kubectl --context k3d-capstone apply -k deployment
+kubectl --context k3d-capstone -n default rollout status deployment/keycloak
+curl -i http://keycloak.localhost:8088/realms/journalfit
+```
+
+Catatan migrasi: backend image baru memakai `AUTH_MODE=jwt`. Script/bukti lama yang
+masih mengirim `X-Tenant-ID` akan mendapat 401/400 dan harus meminta token Keycloak
+(lihat `source/AUTH.md`).
+
+Image backend juga harus dibangun ulang dari commit yang memuat `jose` dan middleware
+auth, lalu `images[].newTag` di `kustomization.yaml` diperbarui. Tag `3bdf305` yang
+tercatat sekarang belum memuat integrasi Keycloak, sehingga ConfigMap `AUTH_MODE` belum
+berpengaruh sampai image baru dipublikasikan.
 
 ## Validasi lokal
 

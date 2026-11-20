@@ -31,7 +31,21 @@ kubectl create secret generic journalfit-backend-secret \
   --from-literal=DB_PASSWORD="${DB_PASSWORD:-capstone}" \
   --dry-run=client -o yaml | kubectl apply -f -
 
-# 4. Terapkan Application manifest
+# 4. Secret Keycloak agar pod tidak Pending saat Argo menyinkronkan manifest.
+#    Database `keycloak` tetap harus dibuat lebih dulu:
+#    bash automation/scripts/setup-keycloak.sh
+echo "[INFO] Memastikan Secret Keycloak tersedia di namespace default..."
+kubectl create secret generic keycloak-db-secret \
+  --namespace default \
+  --from-literal=KC_DB_PASSWORD="${KC_DB_PASSWORD:-${DB_PASSWORD:-capstone}}" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+kubectl create secret generic keycloak-admin-secret \
+  --namespace default \
+  --from-literal=KC_BOOTSTRAP_ADMIN_PASSWORD="${KC_BOOTSTRAP_ADMIN_PASSWORD:-admin}" \
+  --dry-run=client -o yaml | kubectl apply -f -
+
+# 5. Terapkan Application manifest
 if [ -f "$APP_MANIFEST" ]; then
   echo "[INFO] Menerapkan Argo CD Application dari $APP_MANIFEST..."
   kubectl apply -f "$APP_MANIFEST"

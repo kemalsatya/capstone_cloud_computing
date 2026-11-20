@@ -404,6 +404,13 @@ if [[ "$SYNC_K8S" == "true" ]]; then
       record_fail "Gagal membuat Secret journalfit-backend-secret"
     fi
 
+    # Keycloak: database terpisah + Secret runtime sebelum manifest diterapkan
+    if bash "$ROOT_DIR/automation/scripts/setup-keycloak.sh" >/dev/null 2>&1; then
+      record_pass "Keycloak: database dan Secret runtime siap"
+    else
+      record_fail "Keycloak: gagal menyiapkan database/Secret runtime"
+    fi
+
     run_step "K8s: server dry-run manifest Kustomize" kubectl apply --dry-run=server -k "$ROOT_DIR/deployment"
     if kubectl apply -k "$ROOT_DIR/deployment" >/dev/null 2>&1; then
       record_pass "K8s: kubectl apply -k deployment/ berhasil"

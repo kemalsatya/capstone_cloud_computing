@@ -3,7 +3,7 @@
 Backend memvalidasi access token Keycloak (JWT) menggunakan JWKS yang di-cache.
 Identitas, role, dan tenant **selalu** berasal dari token — bukan body, query, atau header.
 
-- Realm: `journalfit` (`evidence/security/realm-journalfit.json`)
+- Realm: `journalfit` (`deployment/keycloak/realm-journalfit.json`)
 - Client: `journalfit-app` (public, password grant aktif untuk demo)
 - Audience: `journalfit-api`
 - Claim tenant: `tenant_id` (user attribute, dipetakan lewat protocol mapper)
