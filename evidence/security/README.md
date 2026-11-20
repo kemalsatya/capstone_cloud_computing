@@ -18,7 +18,7 @@
 | **Method** | (1) Negative HTTP tests dengan `curl` tanpa header (`400`) dan lintas-tenant (`403`), plus positive test (`200`); (2) Audit secret Git (`git grep`) & inspeksi `securityContext` pod; (3) Trivy image scan (`CRITICAL,HIGH`). |
 | **Observation** | Request tanpa `X-Tenant-ID` ditolak (`400`), akses `tenant-b` terhadap naskah `ms-001` milik `tenant-a` ditolak (`403 Forbidden`), image berjalan dengan user non-root `UID 10001` tanpa `CAP_*`, dan tidak ada password riil di Git. |
 | **Interpretation** | Batas kepercayaan (*trust boundary*) antar-tenant dan pemisahan secret runtime dari kode sumber berjalan sesuai prinsip *least privilege* dan *defense in depth*. |
-| **Limitation** | (1) Endpoint `/api/auth/token` masih memakai mock JWT internal (`mock.jwt.*`), belum memvalidasi signature JWKS Keycloak/OIDC penuh di middleware rute manuskrip; (2) Secret K8s dibuat imperatif saat inisialisasi kluster, belum memakai External Secrets Operator. |
+| **Limitation** | (1) Implementasi JWT+JWKS Keycloak sudah tersedia (`AUTH_MODE=jwt`, lihat pembaruan §5), tetapi artefak uji 400/403 di bawah belum diregenerasi memakai token Keycloak; (2) Secret K8s dibuat imperatif saat inisialisasi kluster, belum memakai External Secrets Operator. |
 | **Decision Supported** | Mendukung **ADR-002** (isolasi tenant tingkat aplikasi), **ADR-003** (non-root `UID 10001`), dan **ADR-006** (pemisahan secret & gate Trivy CI). |
 
 ---
@@ -84,3 +84,25 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:lates
 1. **Panel 1 (Auth & Negative Isolation):** Screenshot output terminal pengujian `400 Bad Request` (tanpa header), `403 Forbidden` (tenant-b akses data tenant-a), dan `200 OK` (tenant-a).
 2. **Panel 2 (Secrets & K8s SecurityContext):** Screenshot hasil audit `.env` / `git grep` bersih & status pod non-root `uid=10001` (`kubectl exec ... -- id` atau inspect YAML).
 3. **Panel 3 (Trivy Vulnerability Scan):** Screenshot output tabel Trivy dari GitHub Actions CI atau `aquasec/trivy` lokal beserta catatan singkat temuan prioritas tertinggi.
+
+---
+
+## 5. Pembaruan Implementasi 2026-11-19 (Keycloak JWT)
+
+Status implementasi di branch `feat/app-to-keycloak`:
+
+- `POST /api/auth/token` (mock) dihapus, diganti `GET /api/auth/me`.
+- Middleware memvalidasi `iss`, `aud`, signature RS256 melalui JWKS yang di-cache, dan `exp`.
+  Tenant dibaca dari claim `tenant_id`; role dari `realm_access.roles` (alias
+  `user/operator/admin` tetap dinormalisasi).
+- `X-Tenant-ID` diabaikan sepenuhnya saat `AUTH_MODE=jwt` (AC-AUTH-05).
+- Akses lintas tenant dan naskah milik author lain dijawab `404` (PRD A-03); role
+  tidak berhak dijawab `403`.
+- Provisioning user otomatis ke tabel `users` berdasarkan claim `sub`; konflik tenant
+  ditolak `403` (AC-AUTH-06).
+- Realm: `evidence/security/realm-journalfit.json`. Migrasi: `source/migrations/001_add_keycloak_auth.sql`.
+- Panduan token, user demo, dan perintah uji negatif: `source/AUTH.md`.
+
+**Catatan bukti:** hasil `curl` pada §3 (400 tanpa header, 403 lintas tenant) adalah
+snapshot sebelum perubahan ini. Bukti baru harus diambil dengan token Keycloak dan
+tidak boleh menyalin angka lama sebagai hasil pengujian terbaru.

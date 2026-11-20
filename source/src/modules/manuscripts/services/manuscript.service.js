@@ -152,17 +152,41 @@ export const manuscriptService = {
         };
     },
 
-    async getReport(manuscriptId, requestingTenantId) {
+    async getReport(manuscriptId, authOrTenant) {
+        const auth = typeof authOrTenant === 'string'
+            ? { tenantId: authOrTenant, roles: ['tenant_admin'], user: null }
+            : (authOrTenant || {});
+
         const fullReport = await manuscriptRepository.getFullReportByManuscriptId(manuscriptId);
         if (!fullReport || !fullReport.manuscript) {
-            throw new AppError(`Manuscript with ID '${manuscriptId}' not found`, 404);
+            throw new AppError(
+                `Manuscript with ID '${manuscriptId}' not found`,
+                404,
+                null,
+                'NOT_FOUND'
+            );
         }
 
-        // Multi-Tenant Isolation Enforcement (Negative Test)
-        if (fullReport.manuscript.tenant_id !== requestingTenantId) {
+        // Multi-tenant isolation: never reveal resources owned by another tenant.
+        if (fullReport.manuscript.tenant_id !== auth.tenantId) {
             throw new AppError(
-                `Access forbidden: Tenant '${requestingTenantId}' is not authorized to access manuscript '${manuscriptId}' owned by '${fullReport.manuscript.tenant_id}'`,
-                403
+                `Manuscript with ID '${manuscriptId}' not found`,
+                404,
+                null,
+                'NOT_FOUND'
+            );
+        }
+
+        // Authors may only read their own manuscripts within their tenant.
+        const roles = auth.roles || [];
+        const isAuthorOnly = roles.length > 0 && roles.every((role) => role === 'author');
+        const userId = auth.user?.id || null;
+        if (isAuthorOnly && userId && fullReport.manuscript.author_id !== userId) {
+            throw new AppError(
+                `Manuscript with ID '${manuscriptId}' not found`,
+                404,
+                null,
+                'NOT_FOUND'
             );
         }
 

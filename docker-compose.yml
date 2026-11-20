@@ -17,6 +17,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./source/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./source/migrations/001_add_keycloak_auth.sql:/docker-entrypoint-initdb.d/02-auth.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-capstone} -d ${DB_NAME:-journalfit}"]
       interval: 5s
@@ -34,6 +35,8 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      keycloak:
+        condition: service_started
     environment:
       PORT: ${PORT:-8000}
       NODE_ENV: ${NODE_ENV:-development}
@@ -42,10 +45,32 @@ services:
       DB_USER: ${DB_USER:-capstone}
       DB_PASSWORD: ${DB_PASSWORD:-capstone}
       DB_NAME: ${DB_NAME:-journalfit}
+      AUTH_MODE: ${AUTH_MODE:-jwt}
+      KEYCLOAK_ISSUER: ${KEYCLOAK_ISSUER:-http://localhost:${KEYCLOAK_PORT:-8081}/realms/journalfit}
+      KEYCLOAK_JWKS_URI: ${KEYCLOAK_JWKS_URI:-http://keycloak:8080/realms/journalfit/protocol/openid-connect/certs}
+      KEYCLOAK_AUDIENCE: ${KEYCLOAK_AUDIENCE:-journalfit-api}
     ports:
       - "127.0.0.1:${PORT:-8000}:8000"
     volumes:
       - app_uploads:/app/uploads
+    networks:
+      - capstone-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.2
+    container_name: capstone-keycloak
+    restart: unless-stopped
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HOSTNAME: http://localhost:${KEYCLOAK_PORT:-8081}
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "127.0.0.1:${KEYCLOAK_PORT:-8081}:8080"
+    volumes:
+      - ./evidence/security/realm-journalfit.json:/opt/keycloak/data/import/realm-journalfit.json:ro
+      - keycloak_data:/opt/keycloak/data
     networks:
       - capstone-net
 
@@ -138,6 +163,7 @@ networks:
 volumes:
   postgres_data:
   app_uploads:
+  keycloak_data:
   registry_data:
   gitea_data:
   prometheus_data:

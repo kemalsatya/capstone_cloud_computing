@@ -1,0 +1,243 @@
+{
+  "realm": "journalfit",
+  "enabled": true,
+  "registrationAllowed": false,
+  "sslRequired": "none",
+  "roles": {
+    "realm": [
+      {
+        "name": "author"
+      },
+      {
+        "name": "editor"
+      },
+      {
+        "name": "tenant_admin"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "name": "tenant-a"
+    },
+    {
+      "name": "tenant-b"
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "journalfit-app",
+      "name": "JournalFit App",
+      "enabled": true,
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:8088/*",
+        "http://journalfit.localhost:8088/*",
+        "http://127.0.0.1:8088/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8088",
+        "http://journalfit.localhost:8088",
+        "http://127.0.0.1:8088"
+      ],
+      "protocolMappers": [
+        {
+          "name": "tenant_id",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-usermodel-attribute-mapper",
+          "consentRequired": false,
+          "config": {
+            "user.attribute": "tenant_id",
+            "claim.name": "tenant_id",
+            "jsonType.label": "String",
+            "access.token.claim": "true",
+            "id.token.claim": "true",
+            "userinfo.token.claim": "true",
+            "introspection.token.claim": "true"
+          }
+        },
+        {
+          "name": "journalfit-api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.custom.audience": "journalfit-api",
+            "access.token.claim": "true",
+            "id.token.claim": "false",
+            "introspection.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "11111111-1111-4111-8111-000000000001",
+      "username": "author.a",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Author",
+      "lastName": "Tenant A",
+      "email": "author.a@tenant-a.test",
+      "attributes": {
+        "tenant_id": [
+          "tenant-a"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "author.a",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "author"
+      ],
+      "groups": [
+        "/tenant-a"
+      ]
+    },
+    {
+      "id": "11111111-1111-4111-8111-000000000002",
+      "username": "editor.a",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Editor",
+      "lastName": "Tenant A",
+      "email": "editor.a@tenant-a.test",
+      "attributes": {
+        "tenant_id": [
+          "tenant-a"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "editor.a",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "editor"
+      ],
+      "groups": [
+        "/tenant-a"
+      ]
+    },
+    {
+      "id": "11111111-1111-4111-8111-000000000003",
+      "username": "tenant_admin.a",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Tenant Admin",
+      "lastName": "Tenant A",
+      "email": "tenant_admin.a@tenant-a.test",
+      "attributes": {
+        "tenant_id": [
+          "tenant-a"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "tenant_admin.a",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "tenant_admin"
+      ],
+      "groups": [
+        "/tenant-a"
+      ]
+    },
+    {
+      "id": "22222222-2222-4222-8222-000000000001",
+      "username": "author.b",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Author",
+      "lastName": "Tenant B",
+      "email": "author.b@tenant-b.test",
+      "attributes": {
+        "tenant_id": [
+          "tenant-b"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "author.b",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "author"
+      ],
+      "groups": [
+        "/tenant-b"
+      ]
+    },
+    {
+      "id": "22222222-2222-4222-8222-000000000002",
+      "username": "editor.b",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Editor",
+      "lastName": "Tenant B",
+      "email": "editor.b@tenant-b.test",
+      "attributes": {
+        "tenant_id": [
+          "tenant-b"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "editor.b",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "editor"
+      ],
+      "groups": [
+        "/tenant-b"
+      ]
+    },
+    {
+      "id": "22222222-2222-4222-8222-000000000003",
+      "username": "tenant_admin.b",
+      "enabled": true,
+      "emailVerified": true,
+      "firstName": "Tenant Admin",
+      "lastName": "Tenant B",
+      "email": "tenant_admin.b@tenant-b.test",
+      "attributes": {
+        "tenant_id": [
+          "tenant-b"
+        ]
+      },
+      "credentials": [
+        {
+          "type": "password",
+          "value": "tenant_admin.b",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "tenant_admin"
+      ],
+      "groups": [
+        "/tenant-b"
+      ]
+    }
+  ]
+}
