@@ -89,6 +89,7 @@ Prasyarat sebelum menerapkan manifest Kustomize ke kluster lokal:
 1. Cluster `capstone` (`k3d-capstone`) Ready, node storage berlabel `journalfit-storage=uploads`, Metrics API & Traefik aktif.
 2. Database `journalfit` tersedia dengan 6 tabel dari `source/schema.sql`.
 3. Secret `journalfit-backend-secret` dengan key `DB_PASSWORD` tersedia di namespace `default` (jangan pernah menyimpan secret nyata di Git).
+4. Database `keycloak` dan Secret Keycloak dibuat lewat `automation/scripts/setup-keycloak.sh`.
 
 Langkah eksekusi:
 1. **Jalankan Registry lokal:**
@@ -99,15 +100,20 @@ Langkah eksekusi:
    ```bash
    bash automation/scripts/create-cluster.sh
    ```
-3. **Terapkan seluruh manifest kustomize:**
+3. **Siapkan database & Secret Keycloak:**
+   ```bash
+   bash automation/scripts/setup-keycloak.sh
+   ```
+4. **Terapkan seluruh manifest kustomize:**
    ```bash
    kubectl apply --dry-run=server -k deployment/
    kubectl apply -k deployment/
    kubectl -n default get deployment,pods,service,ingress,pvc,hpa
    ```
-4. **Akses aplikasi via Ingress:**
+5. **Akses aplikasi dan Keycloak via Ingress:**
    ```bash
    curl -i -H "Host: journalfit.localhost" http://localhost:8088/health/ready
+   curl -i -H "Host: keycloak.localhost" http://localhost:8088/realms/journalfit
    ```
 
 ---

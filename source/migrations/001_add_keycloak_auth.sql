@@ -19,7 +19,7 @@ ALTER TABLE users ADD CONSTRAINT users_role_check
     CHECK (role IN ('author', 'editor', 'tenant_admin', 'admin_platform'));
 
 -- Link seeded demo users to the deterministic Keycloak IDs from
--- evidence/security/realm-journalfit.json so manuscript ownership still resolves.
+-- deployment/keycloak/realm-journalfit.json so manuscript ownership still resolves.
 UPDATE users SET keycloak_sub = '11111111-1111-4111-8111-000000000001'
  WHERE id = 'user-a-01' AND keycloak_sub IS NULL;
 

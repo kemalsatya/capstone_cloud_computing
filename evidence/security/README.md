@@ -100,7 +100,7 @@ Status implementasi di branch `feat/app-to-keycloak`:
   tidak berhak dijawab `403`.
 - Provisioning user otomatis ke tabel `users` berdasarkan claim `sub`; konflik tenant
   ditolak `403` (AC-AUTH-06).
-- Realm: `evidence/security/realm-journalfit.json`. Migrasi: `source/migrations/001_add_keycloak_auth.sql`.
+- Realm: `deployment/keycloak/realm-journalfit.json`. Migrasi: `source/migrations/001_add_keycloak_auth.sql`.
 - Panduan token, user demo, dan perintah uji negatif: `source/AUTH.md`.
 
 **Catatan bukti:** hasil `curl` pada §3 (400 tanpa header, 403 lintas tenant) adalah
