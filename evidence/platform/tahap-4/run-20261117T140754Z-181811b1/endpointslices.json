@@ -1,0 +1,83 @@
+{
+  "apiVersion": "v1",
+  "items": [
+    {
+      "addressType": "IPv4",
+      "apiVersion": "discovery.k8s.io/v1",
+      "endpoints": [
+        {
+          "addresses": [
+            "10.42.0.108"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "k3d-capstone-agent-0",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "journalfit-backend-b84c65dd-9vd69",
+            "namespace": "default",
+            "uid": "438a966e-2a19-41c3-a272-34be91a78cb8"
+          }
+        },
+        {
+          "addresses": [
+            "10.42.0.110"
+          ],
+          "conditions": {
+            "ready": true,
+            "serving": true,
+            "terminating": false
+          },
+          "nodeName": "k3d-capstone-agent-0",
+          "targetRef": {
+            "kind": "Pod",
+            "name": "journalfit-backend-b84c65dd-9nvmp",
+            "namespace": "default",
+            "uid": "1a156b6c-0d97-4e23-8816-8c7bcc17c1db"
+          }
+        }
+      ],
+      "kind": "EndpointSlice",
+      "metadata": {
+        "annotations": {
+          "endpoints.kubernetes.io/last-change-trigger-time": "2026-11-17T13:31:00Z"
+        },
+        "creationTimestamp": "2026-11-09T17:27:44Z",
+        "generateName": "journalfit-backend-",
+        "generation": 87,
+        "labels": {
+          "endpointslice.kubernetes.io/managed-by": "endpointslice-controller.k8s.io",
+          "kubernetes.io/service-name": "journalfit-backend"
+        },
+        "name": "journalfit-backend-rhb8k",
+        "namespace": "default",
+        "ownerReferences": [
+          {
+            "apiVersion": "v1",
+            "blockOwnerDeletion": true,
+            "controller": true,
+            "kind": "Service",
+            "name": "journalfit-backend",
+            "uid": "87fc23be-78d5-41ef-8aed-9d7e47fb3f7b"
+          }
+        ],
+        "resourceVersion": "26509",
+        "uid": "abbbef22-415f-4970-b155-08a1b4d0deda"
+      },
+      "ports": [
+        {
+          "name": "http",
+          "port": 8000,
+          "protocol": "TCP"
+        }
+      ]
+    }
+  ],
+  "kind": "List",
+  "metadata": {
+    "resourceVersion": ""
+  }
+}

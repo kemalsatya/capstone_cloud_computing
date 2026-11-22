@@ -1,0 +1,10 @@
+{
+  "name": "journalfit-uploads",
+  "phase": "Bound",
+  "volumeName": "pvc-462818b8-6b0b-475e-9511-34f656284417",
+  "capacity": "1Gi",
+  "accessModes": [
+    "ReadWriteOnce"
+  ],
+  "storageClass": "local-path"
+}

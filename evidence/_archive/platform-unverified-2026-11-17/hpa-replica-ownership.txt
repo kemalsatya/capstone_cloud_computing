@@ -1,0 +1,10 @@
+﻿Timestamp: 2026-11-10T00:40:53.0135916+07:00
+Before reapply spec.replicas=3
+configmap/journalfit-backend-config unchanged
+service/journalfit-backend unchanged
+persistentvolumeclaim/journalfit-uploads unchanged
+deployment.apps/journalfit-backend configured
+horizontalpodautoscaler.autoscaling/journalfit-backend unchanged
+ingress.networking.k8s.io/journalfit-backend unchanged
+After reapply spec.replicas=3
+Interpretation: Deployment manifest omits replicas; last-applied metadata adjusted before test. This checks manual apply only, not Argo CD ownership.

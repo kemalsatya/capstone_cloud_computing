@@ -1,0 +1,31 @@
+{
+  "version": "1.0.0",
+  "name": "source",
+  "dependencies": {
+    "dotenv": {
+      "version": "18.0.10",
+      "resolved": "https://registry.npmjs.org/dotenv/-/dotenv-18.0.10.tgz",
+      "overridden": false
+    },
+    "express": {
+      "version": "5.3.0",
+      "resolved": "https://registry.npmjs.org/express/-/express-5.3.0.tgz",
+      "overridden": false
+    },
+    "mammoth": {
+      "version": "1.13.0",
+      "resolved": "https://registry.npmjs.org/mammoth/-/mammoth-1.13.0.tgz",
+      "overridden": false
+    },
+    "multer": {
+      "version": "2.5.0",
+      "resolved": "https://registry.npmjs.org/multer/-/multer-2.5.0.tgz",
+      "overridden": false
+    },
+    "pg": {
+      "version": "8.23.1",
+      "resolved": "https://registry.npmjs.org/pg/-/pg-8.23.1.tgz",
+      "overridden": false
+    }
+  }
+}

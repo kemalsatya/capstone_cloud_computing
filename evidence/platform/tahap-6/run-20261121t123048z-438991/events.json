@@ -1,0 +1,1150 @@
+[
+  {
+    "time": "2026-11-17T14:36:25Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Readiness probe failed: Get \"http://10.42.0.110:8000/health/ready\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)"
+  },
+  {
+    "time": "2026-11-17T14:36:25Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Readiness probe failed: Get \"http://10.42.0.108:8000/health/ready\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)"
+  },
+  {
+    "time": "2026-11-18T12:04:32Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:05:25Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:05:25Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:05:26Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T12:05:26Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 330ms (330ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:05:26Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T12:05:27Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:05:27Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:05:27Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 534ms (534ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:05:27Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:05:28Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:05:29Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Startup probe failed: Get \"http://10.42.0.141:8000/health/live\": dial tcp 10.42.0.141:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-18T12:05:31Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Startup probe failed: Get \"http://10.42.0.140:8000/health/live\": dial tcp 10.42.0.140:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-18T12:05:44Z",
+    "type": "Warning",
+    "reason": "FailedGetResourceMetric",
+    "object": "journalfit-backend",
+    "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-18T12:05:44Z",
+    "type": "Warning",
+    "reason": "FailedComputeMetricsReplicas",
+    "object": "journalfit-backend",
+    "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-18T12:06:01Z",
+    "type": "Normal",
+    "reason": "SuccessfulRescale",
+    "object": "journalfit-backend",
+    "message": "New size: 3; reason: cpu resource utilization (percentage of request) above target"
+  },
+  {
+    "time": "2026-11-18T12:06:01Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled up replica set journalfit-backend-b84c65dd from 2 to 3"
+  },
+  {
+    "time": "2026-11-18T12:06:02.454681Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-b84c65dd-sbzlh",
+    "message": "Successfully assigned default/journalfit-backend-b84c65dd-sbzlh to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-18T12:06:02Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Created pod: journalfit-backend-b84c65dd-sbzlh"
+  },
+  {
+    "time": "2026-11-18T12:06:03Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-sbzlh",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T12:06:03Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-sbzlh",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 188ms (188ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:06:03Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-sbzlh",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:06:03Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-sbzlh",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:07:07Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-b84c65dd-sbzlh",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-18T12:07:07Z",
+    "type": "Normal",
+    "reason": "SuccessfulDelete",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Deleted pod: journalfit-backend-b84c65dd-sbzlh"
+  },
+  {
+    "time": "2026-11-18T12:07:07Z",
+    "type": "Normal",
+    "reason": "SuccessfulRescale",
+    "object": "journalfit-backend",
+    "message": "New size: 2; reason: All metrics below target"
+  },
+  {
+    "time": "2026-11-18T12:07:07Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled down replica set journalfit-backend-b84c65dd from 3 to 2"
+  },
+  {
+    "time": "2026-11-18T12:26:01Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:26:01Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:26:07Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:26:07Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:26:12Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:26:12Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:27:02Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:27:02Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:27:06Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T12:27:06Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T12:27:07Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 723ms (723ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:27:07Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 585ms (585ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:27:08Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:27:08Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:27:08Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:27:08Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:27:09Z",
+    "type": "Warning",
+    "reason": "FailedGetResourceMetric",
+    "object": "journalfit-backend",
+    "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-18T12:27:09Z",
+    "type": "Warning",
+    "reason": "FailedComputeMetricsReplicas",
+    "object": "journalfit-backend",
+    "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-18T12:27:11Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Startup probe failed: Get \"http://10.42.0.181:8000/health/live\": dial tcp 10.42.0.181:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-18T12:27:12Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Startup probe failed: Get \"http://10.42.0.189:8000/health/live\": dial tcp 10.42.0.189:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-18T12:27:21Z",
+    "type": "Warning",
+    "reason": "BackOff",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Back-off restarting failed container backend in pod journalfit-backend-b84c65dd-9nvmp_default(1a156b6c-0d97-4e23-8816-8c7bcc17c1db)"
+  },
+  {
+    "time": "2026-11-18T12:27:22Z",
+    "type": "Warning",
+    "reason": "BackOff",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Back-off restarting failed container backend in pod journalfit-backend-b84c65dd-9vd69_default(438a966e-2a19-41c3-a272-34be91a78cb8)"
+  },
+  {
+    "time": "2026-11-18T12:27:24Z",
+    "type": "Warning",
+    "reason": "FailedGetResourceMetric",
+    "object": "journalfit-backend",
+    "message": "failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API"
+  },
+  {
+    "time": "2026-11-18T12:27:24Z",
+    "type": "Warning",
+    "reason": "FailedComputeMetricsReplicas",
+    "object": "journalfit-backend",
+    "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API"
+  },
+  {
+    "time": "2026-11-18T12:37:48Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:38:41Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:38:41Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-18T12:38:42Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 215ms (215ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:38:42Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:38:42Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 346ms (346ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:38:42Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:38:43Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:38:43Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:38:45Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Startup probe failed: Get \"http://10.42.0.209:8000/health/live\": dial tcp 10.42.0.209:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-18T12:38:46Z",
+    "type": "Warning",
+    "reason": "FailedGetResourceMetric",
+    "object": "journalfit-backend",
+    "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-18T12:38:46Z",
+    "type": "Warning",
+    "reason": "FailedComputeMetricsReplicas",
+    "object": "journalfit-backend",
+    "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-18T12:38:47Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Startup probe failed: Get \"http://10.42.0.200:8000/health/live\": dial tcp 10.42.0.200:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-18T12:39:01.902633Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-b84c65dd-2jntl",
+    "message": "Successfully assigned default/journalfit-backend-b84c65dd-2jntl to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-18T12:39:01Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Created pod: journalfit-backend-b84c65dd-2jntl"
+  },
+  {
+    "time": "2026-11-18T12:39:01Z",
+    "type": "Normal",
+    "reason": "SuccessfulRescale",
+    "object": "journalfit-backend",
+    "message": "New size: 3; reason: cpu resource utilization (percentage of request) above target"
+  },
+  {
+    "time": "2026-11-18T12:39:01Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled up replica set journalfit-backend-b84c65dd from 2 to 3"
+  },
+  {
+    "time": "2026-11-18T12:39:02Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-2jntl",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T12:39:02Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-2jntl",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 190ms (190ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-18T12:39:02Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-2jntl",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-18T12:39:03Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-2jntl",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-18T12:40:07Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-b84c65dd-2jntl",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-18T12:40:07Z",
+    "type": "Normal",
+    "reason": "SuccessfulDelete",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Deleted pod: journalfit-backend-b84c65dd-2jntl"
+  },
+  {
+    "time": "2026-11-18T12:40:07Z",
+    "type": "Normal",
+    "reason": "SuccessfulRescale",
+    "object": "journalfit-backend",
+    "message": "New size: 2; reason: All metrics below target"
+  },
+  {
+    "time": "2026-11-18T12:40:07Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled down replica set journalfit-backend-b84c65dd from 3 to 2"
+  },
+  {
+    "time": "2026-11-18T13:22:35Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T13:22:35Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Liveness probe failed: Get \"http://10.42.0.209:8000/health/live\": dial tcp 10.42.0.209:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-18T13:22:35Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-18T13:22:35Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Readiness probe failed: Get \"http://10.42.0.200:8000/health/ready\": dial tcp 10.42.0.200:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-21T12:20:39Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-21T12:20:39Z",
+    "type": "Normal",
+    "reason": "SandboxChanged",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pod sandbox changed, it will be killed and re-created."
+  },
+  {
+    "time": "2026-11-21T12:20:40Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:20:40Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 323ms (323ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:20:40Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:20:40Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 265ms (265ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:20:41Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:20:41Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:20:41Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:20:41Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:20:42Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Startup probe failed: Get \"http://10.42.0.224:8000/health/live\": dial tcp 10.42.0.224:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-21T12:20:43Z",
+    "type": "Warning",
+    "reason": "Unhealthy",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Startup probe failed: Get \"http://10.42.0.225:8000/health/live\": dial tcp 10.42.0.225:8000: connect: connection refused"
+  },
+  {
+    "time": "2026-11-21T12:20:51Z",
+    "type": "Warning",
+    "reason": "FailedGetResourceMetric",
+    "object": "journalfit-backend",
+    "message": "failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-21T12:20:51Z",
+    "type": "Warning",
+    "reason": "FailedComputeMetricsReplicas",
+    "object": "journalfit-backend",
+    "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)"
+  },
+  {
+    "time": "2026-11-21T12:21:06Z",
+    "type": "Normal",
+    "reason": "SuccessfulRescale",
+    "object": "journalfit-backend",
+    "message": "New size: 3; reason: cpu resource utilization (percentage of request) above target"
+  },
+  {
+    "time": "2026-11-21T12:21:06Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled up replica set journalfit-backend-b84c65dd from 2 to 3"
+  },
+  {
+    "time": "2026-11-21T12:21:07.179096Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-b84c65dd-jgj29",
+    "message": "Successfully assigned default/journalfit-backend-b84c65dd-jgj29 to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-21T12:21:07Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-jgj29",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:21:07Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-jgj29",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 83ms (84ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:21:07Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-jgj29",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:21:07Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Created pod: journalfit-backend-b84c65dd-jgj29"
+  },
+  {
+    "time": "2026-11-21T12:21:08Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-jgj29",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:22:12Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-b84c65dd-jgj29",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-21T12:22:12Z",
+    "type": "Normal",
+    "reason": "SuccessfulDelete",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Deleted pod: journalfit-backend-b84c65dd-jgj29"
+  },
+  {
+    "time": "2026-11-21T12:22:12Z",
+    "type": "Normal",
+    "reason": "SuccessfulRescale",
+    "object": "journalfit-backend",
+    "message": "New size: 2; reason: All metrics below target"
+  },
+  {
+    "time": "2026-11-21T12:22:12Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled down replica set journalfit-backend-b84c65dd from 3 to 2"
+  },
+  {
+    "time": "2026-11-21T12:29:41.106191Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-b84c65dd-q9bdq",
+    "message": "Successfully assigned default/journalfit-backend-b84c65dd-q9bdq to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-21T12:29:41Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-b84c65dd-9nvmp",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-21T12:29:41Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-b84c65dd-q9bdq",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:29:41Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-b84c65dd-q9bdq",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 90ms (90ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:29:41Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-b84c65dd-q9bdq",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:29:41Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Created pod: journalfit-backend-b84c65dd-q9bdq"
+  },
+  {
+    "time": "2026-11-21T12:29:42Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-b84c65dd-q9bdq",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:29:55.904925Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-7496d44d87-stdss",
+    "message": "Successfully assigned default/journalfit-backend-7496d44d87-stdss to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-21T12:29:55Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-7496d44d87",
+    "message": "Created pod: journalfit-backend-7496d44d87-stdss"
+  },
+  {
+    "time": "2026-11-21T12:29:55Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled up replica set journalfit-backend-7496d44d87 from 0 to 1"
+  },
+  {
+    "time": "2026-11-21T12:29:56Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-7496d44d87-stdss",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:29:56Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-7496d44d87-stdss",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 71ms (71ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:29:56Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-7496d44d87-stdss",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:29:56Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-7496d44d87-stdss",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:30:09.831503Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-7496d44d87-s68jp",
+    "message": "Successfully assigned default/journalfit-backend-7496d44d87-s68jp to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-21T12:30:09Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-7496d44d87",
+    "message": "Created pod: journalfit-backend-7496d44d87-s68jp"
+  },
+  {
+    "time": "2026-11-21T12:30:09Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-b84c65dd-q9bdq",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-21T12:30:09Z",
+    "type": "Normal",
+    "reason": "SuccessfulDelete",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Deleted pod: journalfit-backend-b84c65dd-q9bdq"
+  },
+  {
+    "time": "2026-11-21T12:30:09Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled down replica set journalfit-backend-b84c65dd from 2 to 1"
+  },
+  {
+    "time": "2026-11-21T12:30:09Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled up replica set journalfit-backend-7496d44d87 from 1 to 2"
+  },
+  {
+    "time": "2026-11-21T12:30:10Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-7496d44d87-s68jp",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:30:10Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-7496d44d87-s68jp",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 65ms (65ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:30:10Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-7496d44d87-s68jp",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:30:10Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-7496d44d87-s68jp",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:30:20Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-b84c65dd-9vd69",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-21T12:30:20Z",
+    "type": "Normal",
+    "reason": "SuccessfulDelete",
+    "object": "journalfit-backend-b84c65dd",
+    "message": "Deleted pod: journalfit-backend-b84c65dd-9vd69"
+  },
+  {
+    "time": "2026-11-21T12:30:20Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled down replica set journalfit-backend-b84c65dd from 1 to 0"
+  },
+  {
+    "time": "2026-11-21T12:30:24Z",
+    "type": "Warning",
+    "reason": "FailedGetResourceMetric",
+    "object": "journalfit-backend",
+    "message": "failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)"
+  },
+  {
+    "time": "2026-11-21T12:30:24Z",
+    "type": "Warning",
+    "reason": "FailedComputeMetricsReplicas",
+    "object": "journalfit-backend",
+    "message": "invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)"
+  },
+  {
+    "time": "2026-11-21T12:31:14Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-7496d44d87-s68jp",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-21T12:31:15.171220Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-7496d44d87-45bmt",
+    "message": "Successfully assigned default/journalfit-backend-7496d44d87-45bmt to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-21T12:31:15Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-7496d44d87",
+    "message": "Created pod: journalfit-backend-7496d44d87-45bmt"
+  },
+  {
+    "time": "2026-11-21T12:31:16Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-7496d44d87-45bmt",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:31:16Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-7496d44d87-45bmt",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 88ms (88ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:31:16Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-7496d44d87-45bmt",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:31:16Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-7496d44d87-45bmt",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:31:29.855492Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-6df66fd858-hl95n",
+    "message": "Successfully assigned default/journalfit-backend-6df66fd858-hl95n to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-21T12:31:29Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-6df66fd858",
+    "message": "Created pod: journalfit-backend-6df66fd858-hl95n"
+  },
+  {
+    "time": "2026-11-21T12:31:29Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled up replica set journalfit-backend-6df66fd858 from 0 to 1"
+  },
+  {
+    "time": "2026-11-21T12:31:30Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-6df66fd858-hl95n",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:31:30Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-6df66fd858-hl95n",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 104ms (104ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:31:30Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-6df66fd858-hl95n",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:31:30Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-6df66fd858-hl95n",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:31:40.058018Z",
+    "type": "Normal",
+    "reason": "Scheduled",
+    "object": "journalfit-backend-6df66fd858-gklcz",
+    "message": "Successfully assigned default/journalfit-backend-6df66fd858-gklcz to k3d-capstone-agent-0"
+  },
+  {
+    "time": "2026-11-21T12:31:40Z",
+    "type": "Normal",
+    "reason": "SuccessfulCreate",
+    "object": "journalfit-backend-6df66fd858",
+    "message": "Created pod: journalfit-backend-6df66fd858-gklcz"
+  },
+  {
+    "time": "2026-11-21T12:31:40Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-7496d44d87-45bmt",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-21T12:31:40Z",
+    "type": "Normal",
+    "reason": "SuccessfulDelete",
+    "object": "journalfit-backend-7496d44d87",
+    "message": "Deleted pod: journalfit-backend-7496d44d87-45bmt"
+  },
+  {
+    "time": "2026-11-21T12:31:40Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled down replica set journalfit-backend-7496d44d87 from 2 to 1"
+  },
+  {
+    "time": "2026-11-21T12:31:40Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "Scaled up replica set journalfit-backend-6df66fd858 from 1 to 2"
+  },
+  {
+    "time": "2026-11-21T12:31:43Z",
+    "type": "Normal",
+    "reason": "Pulling",
+    "object": "journalfit-backend-6df66fd858-gklcz",
+    "message": "Pulling image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\""
+  },
+  {
+    "time": "2026-11-21T12:31:43Z",
+    "type": "Normal",
+    "reason": "Pulled",
+    "object": "journalfit-backend-6df66fd858-gklcz",
+    "message": "Successfully pulled image \"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\" in 70ms (70ms including waiting). Image size: 64159138 bytes."
+  },
+  {
+    "time": "2026-11-21T12:31:43Z",
+    "type": "Normal",
+    "reason": "Created",
+    "object": "journalfit-backend-6df66fd858-gklcz",
+    "message": "Container created"
+  },
+  {
+    "time": "2026-11-21T12:31:43Z",
+    "type": "Normal",
+    "reason": "Started",
+    "object": "journalfit-backend-6df66fd858-gklcz",
+    "message": "Container started"
+  },
+  {
+    "time": "2026-11-21T12:31:53Z",
+    "type": "Normal",
+    "reason": "Killing",
+    "object": "journalfit-backend-7496d44d87-stdss",
+    "message": "Stopping container backend"
+  },
+  {
+    "time": "2026-11-21T12:31:53Z",
+    "type": "Normal",
+    "reason": "SuccessfulDelete",
+    "object": "journalfit-backend-7496d44d87",
+    "message": "Deleted pod: journalfit-backend-7496d44d87-stdss"
+  },
+  {
+    "time": "2026-11-21T12:31:53Z",
+    "type": "Normal",
+    "reason": "ScalingReplicaSet",
+    "object": "journalfit-backend",
+    "message": "(combined from similar events): Scaled down replica set journalfit-backend-7496d44d87 from 1 to 0"
+  }
+]

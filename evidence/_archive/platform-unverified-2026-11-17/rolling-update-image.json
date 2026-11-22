@@ -1,0 +1,5 @@
+﻿{
+    "purpose":  "test-only metadata change; backend unchanged",
+    "tag":  "3bdf305-e1-20261110003537",
+    "image":  "registry:5000/journalfit-backend:3bdf305-e1-20261110003537"
+}

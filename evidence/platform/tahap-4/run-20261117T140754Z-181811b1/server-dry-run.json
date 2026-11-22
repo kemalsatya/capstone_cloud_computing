@@ -1,0 +1,446 @@
+{
+  "ConfigMap": {
+    "apiVersion": "v1",
+    "data": {
+      "DB_HOST": "host.docker.internal",
+      "DB_NAME": "journalfit",
+      "DB_PORT": "5432",
+      "DB_USER": "capstone",
+      "NODE_ENV": "production",
+      "PORT": "8000"
+    },
+    "kind": "ConfigMap",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"data\":{\"DB_HOST\":\"host.docker.internal\",\"DB_NAME\":\"journalfit\",\"DB_PORT\":\"5432\",\"DB_USER\":\"capstone\",\"NODE_ENV\":\"production\",\"PORT\":\"8000\"},\"kind\":\"ConfigMap\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend-config\",\"namespace\":\"default\"}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:27:44Z",
+      "name": "journalfit-backend-config",
+      "namespace": "default",
+      "resourceVersion": "9732",
+      "uid": "c9f0599e-45a1-4793-804f-f6e518717e89"
+    }
+  },
+  "Service": {
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"Service\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"ports\":[{\"name\":\"http\",\"port\":80,\"targetPort\":\"http\"}],\"selector\":{\"app\":\"journalfit\"},\"type\":\"ClusterIP\"}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:27:44Z",
+      "name": "journalfit-backend",
+      "namespace": "default",
+      "resourceVersion": "1668",
+      "uid": "87fc23be-78d5-41ef-8aed-9d7e47fb3f7b"
+    },
+    "spec": {
+      "clusterIP": "10.43.41.15",
+      "clusterIPs": [
+        "10.43.41.15"
+      ],
+      "internalTrafficPolicy": "Cluster",
+      "ipFamilies": [
+        "IPv4"
+      ],
+      "ipFamilyPolicy": "SingleStack",
+      "ports": [
+        {
+          "name": "http",
+          "port": 80,
+          "protocol": "TCP",
+          "targetPort": "http"
+        }
+      ],
+      "selector": {
+        "app": "journalfit"
+      },
+      "sessionAffinity": "None",
+      "type": "ClusterIP"
+    },
+    "status": {
+      "loadBalancer": {}
+    }
+  },
+  "PersistentVolumeClaim": {
+    "apiVersion": "v1",
+    "kind": "PersistentVolumeClaim",
+    "metadata": {
+      "annotations": {
+        "argocd.argoproj.io/sync-options": "Prune=false,Delete=false",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/sync-options\":\"Prune=false,Delete=false\"},\"name\":\"journalfit-uploads\",\"namespace\":\"default\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"1Gi\"}},\"storageClassName\":\"local-path\"}}\n",
+        "pv.kubernetes.io/bind-completed": "yes",
+        "pv.kubernetes.io/bound-by-controller": "yes",
+        "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+        "volume.kubernetes.io/selected-node": "k3d-capstone-agent-0",
+        "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+      },
+      "creationTimestamp": "2026-11-09T17:25:37Z",
+      "finalizers": [
+        "kubernetes.io/pvc-protection"
+      ],
+      "name": "journalfit-uploads",
+      "namespace": "default",
+      "resourceVersion": "3286",
+      "uid": "462818b8-6b0b-475e-9511-34f656284417"
+    },
+    "spec": {
+      "accessModes": [
+        "ReadWriteOnce"
+      ],
+      "resources": {
+        "requests": {
+          "storage": "1Gi"
+        }
+      },
+      "storageClassName": "local-path",
+      "volumeMode": "Filesystem",
+      "volumeName": "pvc-462818b8-6b0b-475e-9511-34f656284417"
+    },
+    "status": {
+      "accessModes": [
+        "ReadWriteOnce"
+      ],
+      "capacity": {
+        "storage": "1Gi"
+      },
+      "phase": "Bound"
+    }
+  },
+  "Deployment": {
+    "apiVersion": "apps/v1",
+    "kind": "Deployment",
+    "metadata": {
+      "annotations": {
+        "deployment.kubernetes.io/revision": "5",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"minReadySeconds\":5,\"progressDeadlineSeconds\":180,\"revisionHistoryLimit\":3,\"selector\":{\"matchLabels\":{\"app\":\"journalfit\"}},\"strategy\":{\"rollingUpdate\":{\"maxSurge\":1,\"maxUnavailable\":0},\"type\":\"RollingUpdate\"},\"template\":{\"metadata\":{\"labels\":{\"app\":\"journalfit\"}},\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"env\":[{\"name\":\"DB_PASSWORD\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"DB_PASSWORD\",\"name\":\"journalfit-backend-secret\"}}}],\"envFrom\":[{\"configMapRef\":{\"name\":\"journalfit-backend-config\"}}],\"image\":\"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\",\"imagePullPolicy\":\"Always\",\"livenessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/health/live\",\"port\":\"http\"},\"periodSeconds\":10,\"timeoutSeconds\":2},\"name\":\"backend\",\"ports\":[{\"containerPort\":8000,\"name\":\"http\"}],\"readinessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/health/ready\",\"port\":\"http\"},\"periodSeconds\":5,\"timeoutSeconds\":2},\"resources\":{\"limits\":{\"cpu\":\"250m\",\"memory\":\"256Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"128Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]}},\"startupProbe\":{\"failureThreshold\":12,\"httpGet\":{\"path\":\"/health/live\",\"port\":\"http\"},\"periodSeconds\":5,\"timeoutSeconds\":2},\"volumeMounts\":[{\"mountPath\":\"/app/uploads\",\"name\":\"uploads\"}]}],\"nodeSelector\":{\"journalfit-storage\":\"uploads\"},\"securityContext\":{\"fsGroup\":10001,\"fsGroupChangePolicy\":\"OnRootMismatch\",\"runAsGroup\":10001,\"runAsNonRoot\":true,\"runAsUser\":10001},\"volumes\":[{\"name\":\"uploads\",\"persistentVolumeClaim\":{\"claimName\":\"journalfit-uploads\"}}]}}}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:27:44Z",
+      "generation": 13,
+      "name": "journalfit-backend",
+      "namespace": "default",
+      "resourceVersion": "26511",
+      "uid": "05acb35d-8a99-4b23-8e6f-1946791a8709"
+    },
+    "spec": {
+      "minReadySeconds": 5,
+      "progressDeadlineSeconds": 180,
+      "replicas": 2,
+      "revisionHistoryLimit": 3,
+      "selector": {
+        "matchLabels": {
+          "app": "journalfit"
+        }
+      },
+      "strategy": {
+        "rollingUpdate": {
+          "maxSurge": 1,
+          "maxUnavailable": 0
+        },
+        "type": "RollingUpdate"
+      },
+      "template": {
+        "metadata": {
+          "annotations": {
+            "kubectl.kubernetes.io/restartedAt": "2026-11-10T13:43:08+07:00"
+          },
+          "labels": {
+            "app": "journalfit"
+          }
+        },
+        "spec": {
+          "automountServiceAccountToken": false,
+          "containers": [
+            {
+              "env": [
+                {
+                  "name": "DB_PASSWORD",
+                  "valueFrom": {
+                    "secretKeyRef": {
+                      "key": "DB_PASSWORD",
+                      "name": "journalfit-backend-secret"
+                    }
+                  }
+                }
+              ],
+              "envFrom": [
+                {
+                  "configMapRef": {
+                    "name": "journalfit-backend-config"
+                  }
+                }
+              ],
+              "image": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+              "imagePullPolicy": "Always",
+              "livenessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health/live",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 10,
+                "successThreshold": 1,
+                "timeoutSeconds": 2
+              },
+              "name": "backend",
+              "ports": [
+                {
+                  "containerPort": 8000,
+                  "name": "http",
+                  "protocol": "TCP"
+                }
+              ],
+              "readinessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health/ready",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 5,
+                "successThreshold": 1,
+                "timeoutSeconds": 2
+              },
+              "resources": {
+                "limits": {
+                  "cpu": "250m",
+                  "memory": "256Mi"
+                },
+                "requests": {
+                  "cpu": "100m",
+                  "memory": "128Mi"
+                }
+              },
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                }
+              },
+              "startupProbe": {
+                "failureThreshold": 12,
+                "httpGet": {
+                  "path": "/health/live",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 5,
+                "successThreshold": 1,
+                "timeoutSeconds": 2
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "volumeMounts": [
+                {
+                  "mountPath": "/app/uploads",
+                  "name": "uploads"
+                }
+              ]
+            }
+          ],
+          "dnsPolicy": "ClusterFirst",
+          "nodeSelector": {
+            "journalfit-storage": "uploads"
+          },
+          "restartPolicy": "Always",
+          "schedulerName": "default-scheduler",
+          "securityContext": {
+            "fsGroup": 10001,
+            "fsGroupChangePolicy": "OnRootMismatch",
+            "runAsGroup": 10001,
+            "runAsNonRoot": true,
+            "runAsUser": 10001
+          },
+          "terminationGracePeriodSeconds": 30,
+          "volumes": [
+            {
+              "name": "uploads",
+              "persistentVolumeClaim": {
+                "claimName": "journalfit-uploads"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "status": {
+      "availableReplicas": 2,
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T17:27:44Z",
+          "lastUpdateTime": "2026-11-17T06:31:08Z",
+          "message": "ReplicaSet \"journalfit-backend-b84c65dd\" has successfully progressed.",
+          "reason": "NewReplicaSetAvailable",
+          "status": "True",
+          "type": "Progressing"
+        },
+        {
+          "lastTransitionTime": "2026-11-17T13:27:45Z",
+          "lastUpdateTime": "2026-11-17T13:27:45Z",
+          "message": "Deployment has minimum availability.",
+          "reason": "MinimumReplicasAvailable",
+          "status": "True",
+          "type": "Available"
+        }
+      ],
+      "observedGeneration": 13,
+      "readyReplicas": 2,
+      "replicas": 2,
+      "terminatingReplicas": 0,
+      "updatedReplicas": 2
+    }
+  },
+  "HorizontalPodAutoscaler": {
+    "apiVersion": "autoscaling/v2",
+    "kind": "HorizontalPodAutoscaler",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"autoscaling/v2\",\"kind\":\"HorizontalPodAutoscaler\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"behavior\":{\"scaleDown\":{\"policies\":[{\"periodSeconds\":30,\"type\":\"Pods\",\"value\":1}],\"stabilizationWindowSeconds\":60},\"scaleUp\":{\"policies\":[{\"periodSeconds\":30,\"type\":\"Pods\",\"value\":1}],\"stabilizationWindowSeconds\":0}},\"maxReplicas\":3,\"metrics\":[{\"resource\":{\"name\":\"cpu\",\"target\":{\"averageUtilization\":70,\"type\":\"Utilization\"}},\"type\":\"Resource\"}],\"minReplicas\":2,\"scaleTargetRef\":{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"name\":\"journalfit-backend\"}}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:38:08Z",
+      "name": "journalfit-backend",
+      "namespace": "default",
+      "resourceVersion": "27452",
+      "uid": "44bf0435-0f0c-47a2-ad86-666cf6f1ad6d"
+    },
+    "spec": {
+      "behavior": {
+        "scaleDown": {
+          "policies": [
+            {
+              "periodSeconds": 30,
+              "type": "Pods",
+              "value": 1
+            }
+          ],
+          "selectPolicy": "Max",
+          "stabilizationWindowSeconds": 60
+        },
+        "scaleUp": {
+          "policies": [
+            {
+              "periodSeconds": 30,
+              "type": "Pods",
+              "value": 1
+            }
+          ],
+          "selectPolicy": "Max",
+          "stabilizationWindowSeconds": 0
+        }
+      },
+      "maxReplicas": 3,
+      "metrics": [
+        {
+          "resource": {
+            "name": "cpu",
+            "target": {
+              "averageUtilization": 70,
+              "type": "Utilization"
+            }
+          },
+          "type": "Resource"
+        }
+      ],
+      "minReplicas": 2,
+      "scaleTargetRef": {
+        "apiVersion": "apps/v1",
+        "kind": "Deployment",
+        "name": "journalfit-backend"
+      }
+    },
+    "status": {
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T17:38:23Z",
+          "message": "recommended size matches current size",
+          "reason": "ReadyForNewScale",
+          "status": "True",
+          "type": "AbleToScale"
+        },
+        {
+          "lastTransitionTime": "2026-11-17T13:27:13Z",
+          "message": "the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)",
+          "reason": "ValidMetricFound",
+          "status": "True",
+          "type": "ScalingActive"
+        },
+        {
+          "lastTransitionTime": "2026-11-17T14:07:15Z",
+          "message": "the desired replica count is less than the minimum replica count",
+          "reason": "TooFewReplicas",
+          "status": "True",
+          "type": "ScalingLimited"
+        }
+      ],
+      "currentMetrics": [
+        {
+          "resource": {
+            "current": {
+              "averageUtilization": 1,
+              "averageValue": "1m"
+            },
+            "name": "cpu"
+          },
+          "type": "Resource"
+        }
+      ],
+      "currentReplicas": 2,
+      "desiredReplicas": 2,
+      "lastScaleTime": "2026-11-17T13:30:52Z"
+    }
+  },
+  "Ingress": {
+    "apiVersion": "networking.k8s.io/v1",
+    "kind": "Ingress",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"networking.k8s.io/v1\",\"kind\":\"Ingress\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"ingressClassName\":\"traefik\",\"rules\":[{\"host\":\"journalfit.localhost\",\"http\":{\"paths\":[{\"backend\":{\"service\":{\"name\":\"journalfit-backend\",\"port\":{\"number\":80}}},\"path\":\"/\",\"pathType\":\"Prefix\"}]}}]}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:27:55Z",
+      "generation": 1,
+      "name": "journalfit-backend",
+      "namespace": "default",
+      "resourceVersion": "13803",
+      "uid": "e8cbf00d-20df-4a8c-a082-9e892ea1c9c0"
+    },
+    "spec": {
+      "ingressClassName": "traefik",
+      "rules": [
+        {
+          "host": "journalfit.localhost",
+          "http": {
+            "paths": [
+              {
+                "backend": {
+                  "service": {
+                    "name": "journalfit-backend",
+                    "port": {
+                      "number": 80
+                    }
+                  }
+                },
+                "path": "/",
+                "pathType": "Prefix"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "loadBalancer": {
+        "ingress": [
+          {
+            "ip": "172.28.0.7"
+          },
+          {
+            "ip": "172.28.0.8"
+          }
+        ]
+      }
+    }
+  }
+}

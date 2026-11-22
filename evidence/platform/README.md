@@ -1,87 +1,98 @@
-# Evidence platform JournalFit
+# Indeks pemeriksaan platform M3
 
-Pemilik pekerjaan: Anggota 2, Platform & Kubernetes Engineer. Pengujian berlangsung
-pada 2026-11-09 dan 2026-11-10 (Asia/Jakarta). Source aplikasi awal `747c958`,
-artifact bertag source `3bdf305`, dan perubahan platform ditelusuri melalui branch
-`feat/k8s-manifests`. Timestamp serta revisi setiap pengujian dicatat pada log terkait.
+**Status per 2026-11-22:** Tahap 7 menghasilkan paket panduan, demo, dan handoff;
+rehearsal lokal lulus. Uji laptop kedua dan penerimaan M4 masih terbuka. Core
+transaksi DOCX Tahap 5 lulus dengan temuan M2; persistensi dan rollout Tahap 6
+lulus 13/13 check.
+Seluruh isi platform terdahulu telah dipindahkan ke
+[arsip belum terverifikasi](../_archive/platform-unverified-2026-11-17/ARCHIVE_STATUS.md).
 
-## Dokumen pengantar F
+## Hasil penataan Tahap 0
 
-- [Ringkasan capaian M3 dan versi source/runtime](RINGKASAN_M3_ANGGOTA_2.md)
-- [Panduan demo dan screenshot](../../demo/panduan-demo-m3.md)
-- [Draft deskripsi PR, belum diterbitkan](../../demo/draft-deskripsi-pr-platform.md)
+**Tahap 0 selesai.** Pemeriksaan baru pada tahap ini terbatas pada arsip dan
+dokumentasi.
 
-## Pengujian yang sudah dilakukan
+- 48 file asli, total 273.265 byte, telah diarsipkan.
+- SHA-256, ukuran, dan waktu modifikasi cocok sebelum dan setelah pemindahan.
+- [Manifest checksum](../_archive/platform-unverified-2026-11-17/SHA256SUMS.txt)
+  cocok dengan seluruh file asli di arsip.
+- Pemeriksaan ini membuktikan integritas pengarsipan, bukan kebenaran hasil
+  pengujian aplikasi atau kondisi Docker/Kubernetes.
+- Kedua blok command PowerShell Tahap 0 pada panduan telah dijalankan dan berhasil.
+- Pemeriksaan 33 tautan lokal pada delapan dokumen aktif tidak menemukan target
+  yang hilang. Tautan historis di dalam file arsip asli tidak termasuk cakupan.
 
-| File | Metode dan hasil | Batas bukti |
+## Penelusuran Tahap 1
+
+[Catatan kontrak M2](tahap-1-kontrak-m2.md) menjelaskan temuan source beserta revision,
+metode, rujukan baris, interpretasi, keterbatasan, dan keputusan yang didukung.
+Pemeriksaan ini tidak menjalankan aplikasi atau test. Penelusuran source, command
+metadata, dan dokumentasi Tahap 1 telah selesai diperiksa. Hasil runtime berikutnya
+dicatat terpisah sesuai cakupannya.
+
+## Pengujian Tahap 2
+
+[Evidence image/container](tahap-2/README.md) mencatat build utama dan build ulang,
+Node 22.23.5, UID/GID 10001, filesystem produksi, 10 test lulus, health positif/
+negatif, serta marker volume Docker. Raw metadata, TAP, JSON, dan log baru tersedia
+pada folder tersebut. Pengujian Kubernetes dan transaksi DOCX tetap terbuka.
+
+## Daftar pemeriksaan
+
+[Tahap 7](tahap-7/README.md) mencatat rehearsal demo (upload 201, report 200,
+checksum cocok), impor schema pada PostgreSQL terpisah, serta build/push dan
+server dry-run enam resource. [Handoff M4](../../automation/handoff/M3_TO_M4.md)
+siap direview; bukti pipeline live dan uji laptop kedua masih terbuka.
+
+[Pengujian Tahap 5](tahap-5/README.md) memakai tenant/fixture QA baru. Empat skenario
+DOCX lulus, API/database/file cocok, tetapi TXT masih diterima dan error ukuran
+masih 500. Status needs_attention serta [handoff M2](../../automation/handoff/STAGE5_APPLICATION_FINDINGS.md)
+dipertahankan; hasil tidak dinyatakan semua lulus.
+
+[Pengujian Tahap 6](tahap-6/README.md) mengukur satu penggantian pod dan rolling
+update. Laporan, database, dan byte file tetap sama; 117/117 probe berhasil; PVC
+tetap Bound. Batas PVC RWO satu node serta observasi resume lab dicatat.
+
+[Review manifest Tahap 4](tahap-4/README.md) lulus 26 check dengan server dry-run,
+diff exit 0, environment kedua pod sesuai, Service/Ingress dapat diakses, dan
+folder upload writable. Batas resource, storage, serta handoff tetap dicatat.
+
+[Audit lingkungan Tahap 3](tahap-3/README.md) memeriksa lima area secara terstruktur.
+Status needs_attention mempertahankan temuan Gitea yang belum diinisialisasi;
+dependency aplikasi tetap siap untuk review manifest. Metrik aplikasi dan role
+database juga mempunyai tindak lanjut yang dicatat.
+
+[Verifikasi langsung M3](m3-live-20261117/README.md) berisi snapshot workload dan
+transaksi baru. Hasil ini menjadi dasar presentasi progress deployment.
+
+| Tahap | Kemampuan yang akan diperiksa | Status baru |
 | --- | --- | --- |
-| `lab-preflight.txt` | Doctor paket dosen exit 0, inventaris container dan context lama. | Doctor tidak memeriksa seluruh konflik port. |
-| `legacy-lab-stop.txt` | 15 container lab lama dihentikan, restart policy `no`; port yang bentrok tidak lagi memiliki listener. | Container/volume tidak dihapus; restart Docker Desktop belum diuji. |
-| `compose-validation.txt` | `.env` lokal dibuat di luar Git; `docker compose config --quiet` exit 0. | Validasi konfigurasi saja. |
-| `core-services.txt` | Compose menyalakan Gitea, PostgreSQL, Keycloak dan registry, exit 0. | Log unduhan/startup; bukan bukti kesiapan seluruh layanan. |
-| `core-health.txt` | PostgreSQL healthy dan pg_isready exit 0; registry, Gitea dan OIDC realm Keycloak HTTP 200. | Keycloak perlu waktu startup; percobaan awal gagal dan pengulangan tercatat. |
-| `docker-build.txt` | Build `journalfit-backend:platform-dev` exit 0; digest hasil build tercatat. | Build lokal, belum dipublikasikan ke registry atau dideploy ke Kubernetes. |
-| `docker-runtime.txt` | UID/GID 10001, uploads writable, liveness dan readiness HTTP 200. | Memakai database lab yang ada tanpa perubahan skema. Bukan pengujian transaksi atau persistensi file. |
-| `application-tests-container.txt` | `npm test` dalam image, 10 lulus dan 0 gagal; tests dipasang read-only. | Sebagian pengujian memakai mock. Tidak menggantikan uji tenant dengan database nyata. |
-| `integration-audit.txt` | Inventaris database read-only: journalfit belum tersedia, keenam tabel belum ada pada database lab. | Bukan migrasi atau bukti kesiapan skema aplikasi. |
-| `manifest-validation.txt` | Kustomize merender enam resource; pemeriksaan statis selector, port, konfigurasi, referensi Secret/volume dan baseline resource lulus. | Belum ada validasi API server, apply atau pengujian runtime Kubernetes. |
-| `cluster-setup.txt` / `cluster-api.txt` | Cluster capstone baru terbentuk; endpoint API Windows dikoreksi ke localhost; dua node Ready. | Percobaan endpoint awal gagal dan dihentikan; hanya cluster baru yang dikoreksi. |
-| `deployment-prerequisites.txt` | Namespace, label node storage dan Secret runtime dibuat; server dry-run enam resource lulus. | Nilai Secret tidak dicetak; workload aplikasi belum diterapkan. |
-| `registry-image.txt` | Build/push tag 3bdf305d106c berhasil, digest dan OCI revision tercatat. | Percobaan format metadata awal gagal; verifikasi ulang melalui parsing JSON berhasil. |
-| `registry-smoke-test.txt` | Smoke image paket dosen dipublikasikan, ditarik cluster dan melayani Ingress HTTP 200. | Request awal belum siap; hasil pengulangan tercatat. Tidak membuktikan kesehatan JournalFit. |
-| `cluster-image-network.txt` | Probe non-root UID 10001 menarik image aplikasi dengan digest cocok dan berhasil koneksi TCP PostgreSQL. | Tidak autentikasi/SQL; bukan health probe atau transaksi backend. |
-| `database-gate.txt` | Snapshot sebelum inisialisasi: journalfit belum tersedia dan pengguna saat itu meminta menunggu Anggota 1. | Status historis; lihat database-initialization.txt dan application-deployment.txt untuk kondisi berikutnya. |
-| `database-initialization.txt` | Setelah pengguna mengizinkan, journalfit dibuat dan schema.sql diterapkan dalam transaksi; enam tabel/seed terverifikasi, hash SQL sama. | Menggantikan status tertunda pada database-gate.txt; bukan perubahan desain skema. |
-| `application-deployment.txt` | Apply Kustomize dan rollout berhasil; dua pod Ready, PVC Bound, Service/Ingress tersedia. | Deployment manual awal, belum melalui Argo CD. |
-| `application-transaction.txt` / `.json` | Health 200, upload DOCX referensi asli 201 dan report 200 melalui Ingress; ID/path/checksum tersimpan. | Fixture panduan lokal, bukan bukti seluruh variasi DOCX atau authorization lengkap. |
-| `pod-replacement-persistence.txt` | Dua replica memiliki checksum DOCX sama; satu pod diganti normal, UID baru, dua Ready, report tetap 200; observasi 32.5 detik. | Termasuk overhead polling, tanpa pengukuran trafik kontinu, node failure atau backup/restore. |
-| `member3-alignment.txt` | Namespace default, tag SHA7 dan sumber GitHub diselaraskan; DOCX disalin dengan checksum cocok dan health/report tetap 200. | PVC lama dipertahankan, replica lama nol; kegagalan metadata tar awal tercatat. Belum aktivasi Argo. |
-| `member3-node20-compatibility.txt` | npm test Node 20 gagal menemukan glob; 10 tes lulus dengan path eksplisit. | Ini diagnosis lokal, bukan run CI sukses; package.json/pipeline tidak diubah. |
-| `rolling-update-image.txt` / `.json` | Artifact metadata-only bertag uji dibangun dan dipush sebelum rollout. | Backend tidak berubah; bukan rilis fitur baru atau tag SHA source baru. |
-| `rolling-update-requests.csv` / `rolling-update-result.json` | 777 request, 0 gagal teramati, durasi 31.58s; rollout 22.53s, p95 latensi 26.73ms. | Sampling readiness/report satu run lokal; tidak menjamin tanpa downtime universal. |
-| `metrics-api-preflight.txt` / `hpa-setup.txt` | Metrics API tersedia, metrik pod terbaca, HPA CPU 70% min 2/max 3 diaktifkan. | Baseline lab, belum hasil rightsizing atau optimasi. |
-| `hpa-replica-ownership.txt` | Reapply Kustomize saat tiga replica tetap mempertahankan tiga. | Manual apply saja; integrasi Argo CD belum diuji. |
-| `hpa-timeline.jsonl` / `hpa-result.json` / `hpa-load-generator.txt` | Beban 64 worker membaca report; 19.865 request selesai tanpa kegagalan; HPA 2->3->2. | Scale dibatasi 3, CPU sempat 249% dari request; bukan bukti target CPU/SLO terpenuhi pada beban tersebut. |
-| `stage-e-final-state.txt` | Catatan pengembalian artifact ke SHA7 normal dan pemeriksaan akhir. | Cleanup lab, bukan bukti rollback pipeline Anggota 3. |
-| `argocd-installation.txt` | Argo CD v3.5.6 dari manifest resmi pinned dipasang; controller dan komponen utama Ready. | Instalasi controller saja, bukan sync aplikasi. |
-| `delivery-preflight.txt` | Application server dry-run lulus, branch belum dipublikasikan; helper menerima tag valid dan menolak tag invalid tanpa perubahan. | Application belum diterapkan; tidak ada credential atau push. |
-| `delivery-validation.txt` | Patch CI cf78b0d dapat diterapkan pada salinan terisolasi; YAML/shell dan konfigurasi Application/HPA/PVC konsisten. | Static checks, bukan run CI atau delivery end-to-end. |
-| `readiness-dns-recovery-20261110.txt` | Diagnosis readiness 503 ENOTFOUND setelah restart; DB_HOST disesuaikan ke host.docker.internal yang terbukti terhubung ke database. | Perbaikan rute Docker Desktop Windows, bukan migrasi database atau uji DR. Lihat hasil akhir pada log yang sama. |
+| 1 | Kontrak runtime dan alur aplikasi M2 berdasarkan source | Selesai: pembacaan source dan pemeriksaan dokumentasi |
+| 2 | Build image, user container, izin upload, dan runtime Docker | Selesai: build ulang dan skenario Docker lulus |
+| 3 | Tools, layanan inti, database, registry, jaringan, dan cluster | Audit selesai dengan temuan; siap review manifest |
+| 4 | Konsistensi manifest, probes, resource, konfigurasi, dan volume | Selesai: 26 check dan no-drift pada waktu review |
+| 5 | Transaksi DOCX nyata melalui endpoint Kubernetes | Pengujian selesai; core lulus, dua temuan input M2 terbuka |
+| 6 | Persistensi setelah penggantian pod dan perilaku rollout | Selesai: 13/13 check; penggantian 13,23 dtk dan rollout 22,44 dtk |
+| Tambahan | HPA setelah deployment dasar stabil | Belum dimulai |
+| 7 | Panduan lengkap, demo, portabilitas, dan handoff ke M4 | Paket siap direview, rehearsal lokal lulus; laptop kedua dan penerimaan M4 terbuka |
 
-| `final-source-validation-20261110.txt` | Source Node 22 baru dibangun; non-root default 1000, 10 tes, serta UID 10001/mount sementara dan health 200 lulus. | Kandidat Docker lokal, belum mengganti artifact Kubernetes Node 24. |
-| `final-integration-review-20261110.txt` | Review refs terbaru, temuan YAML Argo, serta keberadaan evidence anggota lain. | Review teknis, bukan persetujuan pemilik branch atau pengujian ulang security/restore. |
-| `final-platform-snapshot-20261110.txt` | Kondisi workload dan health/laporan akhir untuk penutupan dokumentasi F. | Snapshot bertimestamp, bukan jaminan kondisi selamanya atau sync GitOps. |
+Evidence runtime Docker baru tersedia pada Tahap 2. Daftar ini diperbarui setelah
+pemeriksaan nyata selesai, termasuk jika hasilnya gagal atau perlu perbaikan.
 
-## Interpretasi dan keputusan
+## Format setiap evidence baru
 
-Tahap persiapan dan pengujian dasar Docker sudah selesai. Pengguna menyetujui
-Node.js/Express sebagai runtime. Uji awal memakai Dockerfile node:24-bookworm-slim.
-Source terbaru dari kelompok memakai Node 22 Alpine; build/tes kandidat dilakukan
-terpisah dan tidak dipakai untuk melabeli ulang evidence lama. Direktori uploads dimiliki
-appuser, sedangkan konfigurasi database diberikan saat runtime. Build context
-pada awal hanya memasukkan package.json, package-lock.json dan src. Tambahan
-aturan dari kelompok mengizinkan .env.example sebagai contoh; .env aktual tetap
-dikecualikan dan Dockerfile tidak menyalinnya ke image.
+1. **Scope:** komponen atau kemampuan yang diuji.
+2. **Owner:** pelaksana dan peninjau.
+3. **Source/version:** commit dan perubahan lokal, konfigurasi, versi tools, tag
+   serta digest image yang relevan.
+4. **Timestamp:** waktu aktual pengujian dengan zona waktu.
+5. **Method:** command, prasyarat, fixture, dan skenario.
+6. **Observation:** output, exit code, dan hasil yang benar-benar teramati.
+7. **Interpretation:** arti hasil terhadap kemampuan yang diuji.
+8. **Limitation:** batas kesimpulan dan kondisi yang belum diuji.
+9. **Decision supported:** keputusan yang dipertahankan atau diperbaiki.
 
-CI Anggota 3 perlu menggunakan build context `source/`, misalnya
-`docker build -t <image>:<commit-sha> ./source`. Tag `platform-dev` hanya untuk
-pengujian lokal, bukan tag rilis. Pemilihan database aplikasi, penyimpanan DOCX,
-repository GitOps dan konfigurasi deployment ditetapkan sementara di
-`deployment/INTEGRATION_CONTRACT.md` sesuai instruksi pengguna. Perbedaan branch
-CI/CD `cf78b0d` dicatat untuk penyelarasan sebelum integrasi; baseline sementara
-bukan persetujuan seluruh kelompok atau bukti database/storage/GitOps siap.
+Hasil yang diharapkan pada panduan berbeda dari observasi aktual pada evidence.
+Pengujian baru memakai waktu dan versi aktual; isi arsip tetap menjadi rekaman lama.
 
-Container uji Docker menggunakan `--rm` dan sudah dihentikan. Empat layanan inti
-lab masih berjalan. Cluster capstone baru dan smoke workload tersedia; probe pod
-platform berstatus Completed. Database aplikasi telah diinisialisasi atas izin pengguna;
-Deployment JournalFit memiliki dua pod Ready dan PVC Bound. Satu penggantian pod
-normal sudah diuji beserta persistensi file dan akses laporan. Workload aktif sekarang
-di default; workload capstone lama nol replica dengan PVC tetap disimpan. Rolling
-update artifact metadata dan HPA sudah diuji. Controller Argo CD sudah dipasang,
-tetapi Application belum disinkronkan. Pada preflight D.8 branch source masih lokal; tidak ada klaim
-perubahan fitur aplikasi, high availability lintas node atau tanpa downtime universal.
-
-Log awal PowerShell memiliki campuran encoding UTF-8/UTF-16LE dari Tee-Object.
-Encoding telah dinormalisasi ke UTF-8 tanpa mengubah observasi. Pesan progress
-Docker pada stderr dapat dibungkus sebagai NativeCommandError oleh PowerShell;
-nilai exit code dan hasil verifikasi layanan dicatat terpisah.
+Urutan kerja dan command utama ada di [PANDUAN_M3.md](../../deployment/PANDUAN_M3.md).

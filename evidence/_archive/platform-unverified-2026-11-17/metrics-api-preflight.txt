@@ -1,0 +1,11 @@
+﻿Timestamp: 2026-11-10T00:37:09.7757520+07:00
+Command: kubectl --context k3d-capstone get apiservice v1beta1.metrics.k8s.io
+NAME                     SERVICE                      AVAILABLE   AGE
+v1beta1.metrics.k8s.io   kube-system/metrics-server   True        38m
+NAME                                  CPU(cores)   MEMORY(bytes)   
+journalfit-backend-7678669685-9h87r   58m          25Mi            
+journalfit-backend-7cb887f88d-8blzs   24m          25Mi            
+journalfit-backend-7cb887f88d-glc7k   18m          25Mi            
+Command: kubectl --context k3d-capstone api-resources --api-group=argoproj.io
+NAME   SHORTNAMES   APIVERSION   NAMESPACED   KIND
+Interpretation: Metrics API available, pod CPU/memory metrics present. No Argo Application API installed; HPA test is manual, GitOps handoff remains separate.

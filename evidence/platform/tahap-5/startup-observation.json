@@ -1,0 +1,38 @@
+{
+  "recordType": "observed-terminal-summary",
+  "date": "2026-11-18",
+  "scope": "Environment preparation before Stage 5; existing stopped lab resumed",
+  "initialObservation": {
+    "runningDockerContainers": 0,
+    "kubernetesApi": "Connection refused at 127.0.0.1:6550",
+    "application": "Connection refused at journalfit.localhost:8088"
+  },
+  "command": ".\\start-presentasi.ps1",
+  "transientReadinessErrorsObserved": [
+    "Connection refused while the cluster endpoint was starting",
+    "Connection reset while the Ingress path was becoming available"
+  ],
+  "existingContainersStarted": [
+    "capstone-postgres",
+    "capstone-registry",
+    "k3d-capstone-server-0",
+    "k3d-capstone-agent-0",
+    "k3d-capstone-serverlb"
+  ],
+  "readinessObserved": {
+    "status": "ready",
+    "database": "connected",
+    "timestamp": "2026-11-18T12:38:52.954Z"
+  },
+  "otherObservations": {
+    "nodesReady": 2,
+    "pvcPhase": "Bound",
+    "existingDemoManuscript": "ms-519b3203",
+    "existingReportStatus": "COMPLETED",
+    "rolloutStableBeforeTests": true
+  },
+  "limitations": [
+    "Summary is based on the actual terminal output; full startup duration was not separately instrumented.",
+    "This resumed existing containers and stored data; it was not fresh-laptop provisioning or backup restore."
+  ]
+}

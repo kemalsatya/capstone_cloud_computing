@@ -1,0 +1,21 @@
+{
+  "identity": {
+    "database": "journalfit",
+    "role": "capstone",
+    "read_only": "on"
+  },
+  "tenants": [],
+  "templates": [],
+  "manuscripts": [],
+  "results": [],
+  "findings": [],
+  "demo": [
+    {
+      "id": "ms-519b3203",
+      "tenant_id": "tenant-m3-demo",
+      "title": "M3_Demo_JournalFit.docx",
+      "file_path": "/uploads/ms-519b3203-M3_Demo_JournalFit.docx",
+      "upload_time": "2026-11-17T06:38:19.608Z"
+    }
+  ]
+}

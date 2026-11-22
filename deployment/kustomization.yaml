@@ -9,4 +9,4 @@ resources:
   - hpa.yaml
 images:
   - name: registry:5000/journalfit-backend
-    newTag: 3bdf305
+    newTag: stage2-20261117t055120z-d9ab35a

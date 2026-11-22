@@ -1,0 +1,213 @@
+{
+  "startedAt": "2026-11-17T13:38:03.225512+07:00",
+  "status": "passed",
+  "live": {
+    "httpStatus": 200,
+    "body": {
+      "status": "alive",
+      "timestamp": "2026-11-17T06:38:03.602Z"
+    }
+  },
+  "ready": {
+    "httpStatus": 200,
+    "body": {
+      "status": "ready",
+      "database": "connected",
+      "timestamp": "2026-11-17T06:38:03.732Z"
+    }
+  },
+  "root": {
+    "httpStatus": 200,
+    "body": {
+      "name": "JournalFit Backend API",
+      "version": "1.0.0",
+      "description": "Multi-Tenant Journal Manuscript Pre-Submission Checker (Modular Monolith)",
+      "endpoints": {
+        "healthLive": "GET /health/live",
+        "healthReady": "GET /health/ready",
+        "uploadManuscript": "POST /api/manuscripts/upload",
+        "getReport": "GET /api/manuscripts/:id/report",
+        "issueToken": "POST /api/auth/token"
+      }
+    }
+  },
+  "runtime": {
+    "image": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+    "uid": "uid=10001(journalfit) gid=10001(journalfit) groups=10001(journalfit)",
+    "nodeVersion": "v22.23.5"
+  },
+  "fixture": {
+    "path": "reference-docs/Cloud_Computing_Common_Capstone_Infrastructure_Guide.docx",
+    "bytes": 273068,
+    "sha256": "fe24b63fd62481742ac0b437a8b3983850a0e14dbb42a7524522e793bbba4d11"
+  },
+  "upload": {
+    "httpStatus": 201,
+    "body": {
+      "success": true,
+      "message": "Manuscript uploaded and format validation completed successfully.",
+      "data": {
+        "manuscript": {
+          "id": "ms-519b3203",
+          "tenant_id": "tenant-m3-demo",
+          "author_id": null,
+          "title": "M3_Demo_JournalFit.docx",
+          "file_path": "/uploads/ms-519b3203-M3_Demo_JournalFit.docx",
+          "upload_time": "2026-11-17T06:38:19.608Z"
+        },
+        "checkResult": {
+          "id": "cr-6ce5006c",
+          "manuscript_id": "ms-519b3203",
+          "status": "COMPLETED",
+          "format_score": 50,
+          "created_at": "2026-11-17T06:38:19.705Z"
+        },
+        "findings": [
+          {
+            "id": "f-6ce5006c-1",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (2143) is below minimum requirement of 3000 words.",
+            "created_at": "2026-11-17T06:38:19.716Z"
+          },
+          {
+            "id": "f-6ce5006c-2",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "WARNING",
+            "message": "Abstract section is required but was not found.",
+            "created_at": "2026-11-17T06:38:19.726Z"
+          },
+          {
+            "id": "f-6ce5006c-3",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "WARNING",
+            "message": "Keywords section is required but was not found.",
+            "created_at": "2026-11-17T06:38:19.738Z"
+          }
+        ]
+      }
+    }
+  },
+  "manuscriptId": "ms-519b3203",
+  "tenantId": "tenant-m3-demo",
+  "reportBefore": {
+    "httpStatus": 200,
+    "body": {
+      "success": true,
+      "message": "Manuscript report retrieved successfully.",
+      "data": {
+        "manuscript": {
+          "id": "ms-519b3203",
+          "tenant_id": "tenant-m3-demo",
+          "author_id": null,
+          "title": "M3_Demo_JournalFit.docx",
+          "file_path": "/uploads/ms-519b3203-M3_Demo_JournalFit.docx",
+          "upload_time": "2026-11-17T06:38:19.608Z",
+          "tenant_name": "Tenant tenant-m3-demo"
+        },
+        "checkResult": {
+          "id": "cr-6ce5006c",
+          "manuscript_id": "ms-519b3203",
+          "status": "COMPLETED",
+          "format_score": 50,
+          "created_at": "2026-11-17T06:38:19.705Z"
+        },
+        "findings": [
+          {
+            "id": "f-6ce5006c-1",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (2143) is below minimum requirement of 3000 words.",
+            "created_at": "2026-11-17T06:38:19.716Z"
+          },
+          {
+            "id": "f-6ce5006c-2",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "WARNING",
+            "message": "Abstract section is required but was not found.",
+            "created_at": "2026-11-17T06:38:19.726Z"
+          },
+          {
+            "id": "f-6ce5006c-3",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "WARNING",
+            "message": "Keywords section is required but was not found.",
+            "created_at": "2026-11-17T06:38:19.738Z"
+          }
+        ]
+      }
+    }
+  },
+  "checksumBefore": "fe24b63fd62481742ac0b437a8b3983850a0e14dbb42a7524522e793bbba4d11",
+  "replacement": {
+    "deletedPod": "journalfit-backend-b84c65dd-4n7v9",
+    "deletedUid": "651b1266-c74b-4bd0-90dd-f984a23b145a",
+    "observedSeconds": 13.36,
+    "readyPodsAfter": [
+      "journalfit-backend-b84c65dd-9nvmp",
+      "journalfit-backend-b84c65dd-9vd69"
+    ]
+  },
+  "checksumsAfter": {
+    "journalfit-backend-b84c65dd-9nvmp": "fe24b63fd62481742ac0b437a8b3983850a0e14dbb42a7524522e793bbba4d11",
+    "journalfit-backend-b84c65dd-9vd69": "fe24b63fd62481742ac0b437a8b3983850a0e14dbb42a7524522e793bbba4d11"
+  },
+  "reportAfter": {
+    "httpStatus": 200,
+    "body": {
+      "success": true,
+      "message": "Manuscript report retrieved successfully.",
+      "data": {
+        "manuscript": {
+          "id": "ms-519b3203",
+          "tenant_id": "tenant-m3-demo",
+          "author_id": null,
+          "title": "M3_Demo_JournalFit.docx",
+          "file_path": "/uploads/ms-519b3203-M3_Demo_JournalFit.docx",
+          "upload_time": "2026-11-17T06:38:19.608Z",
+          "tenant_name": "Tenant tenant-m3-demo"
+        },
+        "checkResult": {
+          "id": "cr-6ce5006c",
+          "manuscript_id": "ms-519b3203",
+          "status": "COMPLETED",
+          "format_score": 50,
+          "created_at": "2026-11-17T06:38:19.705Z"
+        },
+        "findings": [
+          {
+            "id": "f-6ce5006c-1",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (2143) is below minimum requirement of 3000 words.",
+            "created_at": "2026-11-17T06:38:19.716Z"
+          },
+          {
+            "id": "f-6ce5006c-2",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "WARNING",
+            "message": "Abstract section is required but was not found.",
+            "created_at": "2026-11-17T06:38:19.726Z"
+          },
+          {
+            "id": "f-6ce5006c-3",
+            "check_result_id": "cr-6ce5006c",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "WARNING",
+            "message": "Keywords section is required but was not found.",
+            "created_at": "2026-11-17T06:38:19.738Z"
+          }
+        ]
+      }
+    }
+  },
+  "finishedAt": "2026-11-17T13:38:36.831696+07:00"
+}

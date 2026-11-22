@@ -1,0 +1,12 @@
+{
+  "minReplicas": 2,
+  "maxReplicas": 3,
+  "currentReplicas": 2,
+  "desiredReplicas": 2,
+  "metrics": [
+    {
+      "name": "cpu",
+      "currentUtilization": 3
+    }
+  ]
+}

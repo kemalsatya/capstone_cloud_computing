@@ -1,0 +1,2044 @@
+{
+  "startedAt": "2026-11-18T19:47:52.642518+07:00",
+  "status": "needs_attention",
+  "testExecutionCompleted": true,
+  "tenants": [
+    "s5-a-20261118t124752z-08162c",
+    "s5-b-20261118t124752z-08162c"
+  ],
+  "cases": [
+    {
+      "name": "upload_compliant_a",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        201
+      ],
+      "actualHttp": 201,
+      "expectationMet": true,
+      "elapsedSeconds": 0.794,
+      "response": {
+        "success": true,
+        "message": "Manuscript uploaded and format validation completed successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-b9ba066e",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-compliant.docx",
+            "file_path": "/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+            "upload_time": "2026-11-18T12:47:59.791Z"
+          },
+          "checkResult": {
+            "id": "cr-82b4482f",
+            "manuscript_id": "ms-b9ba066e",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:47:59.802Z"
+          },
+          "findings": [
+            {
+              "id": "f-82b4482f-1",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:47:59.813Z"
+            },
+            {
+              "id": "f-82b4482f-2",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:47:59.822Z"
+            },
+            {
+              "id": "f-82b4482f-3",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:47:59.830Z"
+            }
+          ]
+        }
+      },
+      "fixture": {
+        "case": "upload_compliant_a",
+        "tenant": "s5-a-20261118t124752z-08162c",
+        "filename": "stage5-20261118t124752z-08162c-compliant.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "expectedScore": 100,
+        "expectedWords": 3500,
+        "expectedWarnings": [],
+        "apiData": {
+          "manuscript": {
+            "id": "ms-b9ba066e",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-compliant.docx",
+            "file_path": "/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+            "upload_time": "2026-11-18T12:47:59.791Z"
+          },
+          "checkResult": {
+            "id": "cr-82b4482f",
+            "manuscript_id": "ms-b9ba066e",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:47:59.802Z"
+          },
+          "findings": [
+            {
+              "id": "f-82b4482f-1",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:47:59.813Z"
+            },
+            {
+              "id": "f-82b4482f-2",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:47:59.822Z"
+            },
+            {
+              "id": "f-82b4482f-3",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:47:59.830Z"
+            }
+          ]
+        },
+        "reportData": {
+          "manuscript": {
+            "id": "ms-b9ba066e",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-compliant.docx",
+            "file_path": "/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+            "upload_time": "2026-11-18T12:47:59.791Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-82b4482f",
+            "manuscript_id": "ms-b9ba066e",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:47:59.802Z"
+          },
+          "findings": [
+            {
+              "id": "f-82b4482f-1",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:47:59.813Z"
+            },
+            {
+              "id": "f-82b4482f-2",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:47:59.822Z"
+            },
+            {
+              "id": "f-82b4482f-3",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:47:59.830Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "upload_short_a",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        201
+      ],
+      "actualHttp": 201,
+      "expectationMet": true,
+      "elapsedSeconds": 0.715,
+      "response": {
+        "success": true,
+        "message": "Manuscript uploaded and format validation completed successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-b4a0f832",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-short.docx",
+            "file_path": "/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+            "upload_time": "2026-11-18T12:48:00.359Z"
+          },
+          "checkResult": {
+            "id": "cr-3fb1f17e",
+            "manuscript_id": "ms-b4a0f832",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.391Z"
+          },
+          "findings": [
+            {
+              "id": "f-3fb1f17e-1",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (100) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.413Z"
+            },
+            {
+              "id": "f-3fb1f17e-2",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.448Z"
+            },
+            {
+              "id": "f-3fb1f17e-3",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.471Z"
+            }
+          ]
+        }
+      },
+      "fixture": {
+        "case": "upload_short_a",
+        "tenant": "s5-a-20261118t124752z-08162c",
+        "filename": "stage5-20261118t124752z-08162c-short.docx",
+        "bytes": 972,
+        "sha256": "31cc87ef532858432c66645723bbf1a340370f759564da819070fa26eccf9728",
+        "expectedScore": 50,
+        "expectedWords": 100,
+        "expectedWarnings": [
+          "WORD_COUNT",
+          "ABSTRACT_CHECK",
+          "KEYWORDS_CHECK"
+        ],
+        "apiData": {
+          "manuscript": {
+            "id": "ms-b4a0f832",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-short.docx",
+            "file_path": "/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+            "upload_time": "2026-11-18T12:48:00.359Z"
+          },
+          "checkResult": {
+            "id": "cr-3fb1f17e",
+            "manuscript_id": "ms-b4a0f832",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.391Z"
+          },
+          "findings": [
+            {
+              "id": "f-3fb1f17e-1",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (100) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.413Z"
+            },
+            {
+              "id": "f-3fb1f17e-2",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.448Z"
+            },
+            {
+              "id": "f-3fb1f17e-3",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.471Z"
+            }
+          ]
+        },
+        "reportData": {
+          "manuscript": {
+            "id": "ms-b4a0f832",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-short.docx",
+            "file_path": "/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+            "upload_time": "2026-11-18T12:48:00.359Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-3fb1f17e",
+            "manuscript_id": "ms-b4a0f832",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.391Z"
+          },
+          "findings": [
+            {
+              "id": "f-3fb1f17e-1",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (100) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.413Z"
+            },
+            {
+              "id": "f-3fb1f17e-2",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.448Z"
+            },
+            {
+              "id": "f-3fb1f17e-3",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.471Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "upload_long_a",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        201
+      ],
+      "actualHttp": 201,
+      "expectationMet": true,
+      "elapsedSeconds": 0.214,
+      "response": {
+        "success": true,
+        "message": "Manuscript uploaded and format validation completed successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-826a5294",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-long.docx",
+            "file_path": "/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+            "upload_time": "2026-11-18T12:48:00.593Z"
+          },
+          "checkResult": {
+            "id": "cr-b2869e79",
+            "manuscript_id": "ms-826a5294",
+            "status": "COMPLETED",
+            "format_score": 85,
+            "created_at": "2026-11-18T12:48:00.624Z"
+          },
+          "findings": [
+            {
+              "id": "f-b2869e79-1",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (8500) exceeds maximum limit of 8000 words.",
+              "created_at": "2026-11-18T12:48:00.658Z"
+            },
+            {
+              "id": "f-b2869e79-2",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.677Z"
+            },
+            {
+              "id": "f-b2869e79-3",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.683Z"
+            }
+          ]
+        }
+      },
+      "fixture": {
+        "case": "upload_long_a",
+        "tenant": "s5-a-20261118t124752z-08162c",
+        "filename": "stage5-20261118t124752z-08162c-long.docx",
+        "bytes": 1293,
+        "sha256": "10f4c3d773ce5e2d51dc698e010cc3643853437c79e0a54ab3ec8e0692170321",
+        "expectedScore": 85,
+        "expectedWords": 8500,
+        "expectedWarnings": [
+          "WORD_COUNT"
+        ],
+        "apiData": {
+          "manuscript": {
+            "id": "ms-826a5294",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-long.docx",
+            "file_path": "/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+            "upload_time": "2026-11-18T12:48:00.593Z"
+          },
+          "checkResult": {
+            "id": "cr-b2869e79",
+            "manuscript_id": "ms-826a5294",
+            "status": "COMPLETED",
+            "format_score": 85,
+            "created_at": "2026-11-18T12:48:00.624Z"
+          },
+          "findings": [
+            {
+              "id": "f-b2869e79-1",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (8500) exceeds maximum limit of 8000 words.",
+              "created_at": "2026-11-18T12:48:00.658Z"
+            },
+            {
+              "id": "f-b2869e79-2",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.677Z"
+            },
+            {
+              "id": "f-b2869e79-3",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.683Z"
+            }
+          ]
+        },
+        "reportData": {
+          "manuscript": {
+            "id": "ms-826a5294",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-long.docx",
+            "file_path": "/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+            "upload_time": "2026-11-18T12:48:00.593Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-b2869e79",
+            "manuscript_id": "ms-826a5294",
+            "status": "COMPLETED",
+            "format_score": 85,
+            "created_at": "2026-11-18T12:48:00.624Z"
+          },
+          "findings": [
+            {
+              "id": "f-b2869e79-1",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (8500) exceeds maximum limit of 8000 words.",
+              "created_at": "2026-11-18T12:48:00.658Z"
+            },
+            {
+              "id": "f-b2869e79-2",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.677Z"
+            },
+            {
+              "id": "f-b2869e79-3",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.683Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "upload_compliant_b",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s5-b-20261118t124752z-08162c",
+      "expectedHttp": [
+        201
+      ],
+      "actualHttp": 201,
+      "expectationMet": true,
+      "elapsedSeconds": 0.068,
+      "response": {
+        "success": true,
+        "message": "Manuscript uploaded and format validation completed successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-556f34cf",
+            "tenant_id": "s5-b-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-tenant-b.docx",
+            "file_path": "/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+            "upload_time": "2026-11-18T12:48:00.721Z"
+          },
+          "checkResult": {
+            "id": "cr-07712837",
+            "manuscript_id": "ms-556f34cf",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:48:00.727Z"
+          },
+          "findings": [
+            {
+              "id": "f-07712837-1",
+              "check_result_id": "cr-07712837",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:48:00.734Z"
+            },
+            {
+              "id": "f-07712837-2",
+              "check_result_id": "cr-07712837",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.739Z"
+            },
+            {
+              "id": "f-07712837-3",
+              "check_result_id": "cr-07712837",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.744Z"
+            }
+          ]
+        }
+      },
+      "fixture": {
+        "case": "upload_compliant_b",
+        "tenant": "s5-b-20261118t124752z-08162c",
+        "filename": "stage5-20261118t124752z-08162c-tenant-b.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "expectedScore": 100,
+        "expectedWords": 3500,
+        "expectedWarnings": [],
+        "apiData": {
+          "manuscript": {
+            "id": "ms-556f34cf",
+            "tenant_id": "s5-b-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-tenant-b.docx",
+            "file_path": "/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+            "upload_time": "2026-11-18T12:48:00.721Z"
+          },
+          "checkResult": {
+            "id": "cr-07712837",
+            "manuscript_id": "ms-556f34cf",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:48:00.727Z"
+          },
+          "findings": [
+            {
+              "id": "f-07712837-1",
+              "check_result_id": "cr-07712837",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:48:00.734Z"
+            },
+            {
+              "id": "f-07712837-2",
+              "check_result_id": "cr-07712837",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.739Z"
+            },
+            {
+              "id": "f-07712837-3",
+              "check_result_id": "cr-07712837",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.744Z"
+            }
+          ]
+        },
+        "reportData": {
+          "manuscript": {
+            "id": "ms-556f34cf",
+            "tenant_id": "s5-b-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-tenant-b.docx",
+            "file_path": "/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+            "upload_time": "2026-11-18T12:48:00.721Z",
+            "tenant_name": "Tenant s5-b-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-07712837",
+            "manuscript_id": "ms-556f34cf",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:48:00.727Z"
+          },
+          "findings": [
+            {
+              "id": "f-07712837-1",
+              "check_result_id": "cr-07712837",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:48:00.734Z"
+            },
+            {
+              "id": "f-07712837-2",
+              "check_result_id": "cr-07712837",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.739Z"
+            },
+            {
+              "id": "f-07712837-3",
+              "check_result_id": "cr-07712837",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.744Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "cross_tenant_b_reads_a",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-b9ba066e/report",
+      "tenant": "s5-b-20261118t124752z-08162c",
+      "expectedHttp": [
+        403
+      ],
+      "actualHttp": 403,
+      "expectationMet": true,
+      "elapsedSeconds": 0.028,
+      "response": {
+        "success": false,
+        "status": 403,
+        "message": "Access forbidden: Tenant 's5-b-20261118t124752z-08162c' is not authorized to access manuscript 'ms-b9ba066e' owned by 's5-a-20261118t124752z-08162c'"
+      }
+    },
+    {
+      "name": "cross_tenant_a_reads_b",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-556f34cf/report",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        403
+      ],
+      "actualHttp": 403,
+      "expectationMet": true,
+      "elapsedSeconds": 0.024,
+      "response": {
+        "success": false,
+        "status": 403,
+        "message": "Access forbidden: Tenant 's5-a-20261118t124752z-08162c' is not authorized to access manuscript 'ms-556f34cf' owned by 's5-b-20261118t124752z-08162c'"
+      }
+    },
+    {
+      "name": "missing_tenant",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": null,
+      "expectedHttp": [
+        400
+      ],
+      "actualHttp": 400,
+      "expectationMet": true,
+      "elapsedSeconds": 0.009,
+      "response": {
+        "success": false,
+        "message": "Header X-Tenant-ID is required for tenant-scoped operations."
+      },
+      "fixture": {
+        "case": "missing_tenant",
+        "tenant": null,
+        "filename": "stage5-20261118t124752z-08162c-no-tenant.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "expectedScore": null,
+        "expectedWords": null,
+        "expectedWarnings": null
+      }
+    },
+    {
+      "name": "missing_file",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        400
+      ],
+      "actualHttp": 400,
+      "expectationMet": true,
+      "elapsedSeconds": 0.01,
+      "response": {
+        "success": false,
+        "status": 400,
+        "message": "File is required (.docx format)"
+      }
+    },
+    {
+      "name": "missing_report",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-missing-bc63c3a8/report",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        404
+      ],
+      "actualHttp": 404,
+      "expectationMet": true,
+      "elapsedSeconds": 0.01,
+      "response": {
+        "success": false,
+        "status": 404,
+        "message": "Manuscript with ID 'ms-missing-bc63c3a8' not found"
+      }
+    },
+    {
+      "name": "reject_non_docx",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        400,
+        415,
+        422
+      ],
+      "actualHttp": 201,
+      "expectationMet": false,
+      "elapsedSeconds": 0.043,
+      "response": {
+        "success": true,
+        "message": "Manuscript uploaded and format validation completed successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-9e217e9d",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-not-docx.txt",
+            "file_path": "/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+            "upload_time": "2026-11-18T12:48:00.842Z"
+          },
+          "checkResult": {
+            "id": "cr-3ccf483d",
+            "manuscript_id": "ms-9e217e9d",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.847Z"
+          },
+          "findings": [
+            {
+              "id": "f-3ccf483d-1",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (9) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.852Z"
+            },
+            {
+              "id": "f-3ccf483d-2",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.857Z"
+            },
+            {
+              "id": "f-3ccf483d-3",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.861Z"
+            }
+          ]
+        }
+      },
+      "fixture": {
+        "case": "reject_non_docx",
+        "tenant": "s5-a-20261118t124752z-08162c",
+        "filename": "stage5-20261118t124752z-08162c-not-docx.txt",
+        "bytes": 45,
+        "sha256": "4daf60a07ca3643e18fd144f4f67fbe719f23eac2fffe264b7b91afa0497d6b5",
+        "expectedScore": null,
+        "expectedWords": null,
+        "expectedWarnings": null,
+        "apiData": {
+          "manuscript": {
+            "id": "ms-9e217e9d",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-not-docx.txt",
+            "file_path": "/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+            "upload_time": "2026-11-18T12:48:00.842Z"
+          },
+          "checkResult": {
+            "id": "cr-3ccf483d",
+            "manuscript_id": "ms-9e217e9d",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.847Z"
+          },
+          "findings": [
+            {
+              "id": "f-3ccf483d-1",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (9) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.852Z"
+            },
+            {
+              "id": "f-3ccf483d-2",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.857Z"
+            },
+            {
+              "id": "f-3ccf483d-3",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.861Z"
+            }
+          ]
+        },
+        "reportData": {
+          "manuscript": {
+            "id": "ms-9e217e9d",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-not-docx.txt",
+            "file_path": "/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+            "upload_time": "2026-11-18T12:48:00.842Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-3ccf483d",
+            "manuscript_id": "ms-9e217e9d",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.847Z"
+          },
+          "findings": [
+            {
+              "id": "f-3ccf483d-1",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (9) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.852Z"
+            },
+            {
+              "id": "f-3ccf483d-2",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.857Z"
+            },
+            {
+              "id": "f-3ccf483d-3",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.861Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "reject_oversized",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        400,
+        413
+      ],
+      "actualHttp": 500,
+      "expectationMet": false,
+      "elapsedSeconds": 1.183,
+      "response": {
+        "success": false,
+        "status": 500,
+        "message": "File too large"
+      },
+      "fixture": {
+        "case": "reject_oversized",
+        "tenant": "s5-a-20261118t124752z-08162c",
+        "filename": "stage5-20261118t124752z-08162c-oversize.docx",
+        "bytes": 20971521,
+        "sha256": "b0849bc28f66b0531cd1789a8e5c38abfca458a7997f39210814ec6f861d5378",
+        "expectedScore": null,
+        "expectedWords": null,
+        "expectedWarnings": null
+      }
+    },
+    {
+      "name": "report_upload_compliant_a",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-b9ba066e/report",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.022,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-b9ba066e",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-compliant.docx",
+            "file_path": "/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+            "upload_time": "2026-11-18T12:47:59.791Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-82b4482f",
+            "manuscript_id": "ms-b9ba066e",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:47:59.802Z"
+          },
+          "findings": [
+            {
+              "id": "f-82b4482f-1",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:47:59.813Z"
+            },
+            {
+              "id": "f-82b4482f-2",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:47:59.822Z"
+            },
+            {
+              "id": "f-82b4482f-3",
+              "check_result_id": "cr-82b4482f",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:47:59.830Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "report_upload_short_a",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-b4a0f832/report",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.176,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-b4a0f832",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-short.docx",
+            "file_path": "/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+            "upload_time": "2026-11-18T12:48:00.359Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-3fb1f17e",
+            "manuscript_id": "ms-b4a0f832",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.391Z"
+          },
+          "findings": [
+            {
+              "id": "f-3fb1f17e-1",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (100) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.413Z"
+            },
+            {
+              "id": "f-3fb1f17e-2",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.448Z"
+            },
+            {
+              "id": "f-3fb1f17e-3",
+              "check_result_id": "cr-3fb1f17e",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.471Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "report_upload_long_a",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-826a5294/report",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.022,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-826a5294",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-long.docx",
+            "file_path": "/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+            "upload_time": "2026-11-18T12:48:00.593Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-b2869e79",
+            "manuscript_id": "ms-826a5294",
+            "status": "COMPLETED",
+            "format_score": 85,
+            "created_at": "2026-11-18T12:48:00.624Z"
+          },
+          "findings": [
+            {
+              "id": "f-b2869e79-1",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (8500) exceeds maximum limit of 8000 words.",
+              "created_at": "2026-11-18T12:48:00.658Z"
+            },
+            {
+              "id": "f-b2869e79-2",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.677Z"
+            },
+            {
+              "id": "f-b2869e79-3",
+              "check_result_id": "cr-b2869e79",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.683Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "report_upload_compliant_b",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-556f34cf/report",
+      "tenant": "s5-b-20261118t124752z-08162c",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.034,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-556f34cf",
+            "tenant_id": "s5-b-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-tenant-b.docx",
+            "file_path": "/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+            "upload_time": "2026-11-18T12:48:00.721Z",
+            "tenant_name": "Tenant s5-b-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-07712837",
+            "manuscript_id": "ms-556f34cf",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-18T12:48:00.727Z"
+          },
+          "findings": [
+            {
+              "id": "f-07712837-1",
+              "check_result_id": "cr-07712837",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-18T12:48:00.734Z"
+            },
+            {
+              "id": "f-07712837-2",
+              "check_result_id": "cr-07712837",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-18T12:48:00.739Z"
+            },
+            {
+              "id": "f-07712837-3",
+              "check_result_id": "cr-07712837",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-18T12:48:00.744Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "report_reject_non_docx",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-9e217e9d/report",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.017,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-9e217e9d",
+            "tenant_id": "s5-a-20261118t124752z-08162c",
+            "author_id": null,
+            "title": "stage5-20261118t124752z-08162c-not-docx.txt",
+            "file_path": "/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+            "upload_time": "2026-11-18T12:48:00.842Z",
+            "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+          },
+          "checkResult": {
+            "id": "cr-3ccf483d",
+            "manuscript_id": "ms-9e217e9d",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-18T12:48:00.847Z"
+          },
+          "findings": [
+            {
+              "id": "f-3ccf483d-1",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (9) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-18T12:48:00.852Z"
+            },
+            {
+              "id": "f-3ccf483d-2",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.857Z"
+            },
+            {
+              "id": "f-3ccf483d-3",
+              "check_result_id": "cr-3ccf483d",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-18T12:48:00.861Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "health_after",
+      "method": "GET",
+      "path": "/health/ready",
+      "tenant": null,
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.009,
+      "response": {
+        "status": "ready",
+        "database": "connected",
+        "timestamp": "2026-11-18T12:48:05.256Z"
+      }
+    }
+  ],
+  "uploads": [
+    {
+      "case": "upload_compliant_a",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "filename": "stage5-20261118t124752z-08162c-compliant.docx",
+      "bytes": 1127,
+      "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+      "expectedScore": 100,
+      "expectedWords": 3500,
+      "expectedWarnings": [],
+      "apiData": {
+        "manuscript": {
+          "id": "ms-b9ba066e",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-compliant.docx",
+          "file_path": "/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+          "upload_time": "2026-11-18T12:47:59.791Z"
+        },
+        "checkResult": {
+          "id": "cr-82b4482f",
+          "manuscript_id": "ms-b9ba066e",
+          "status": "COMPLETED",
+          "format_score": 100,
+          "created_at": "2026-11-18T12:47:59.802Z"
+        },
+        "findings": [
+          {
+            "id": "f-82b4482f-1",
+            "check_result_id": "cr-82b4482f",
+            "rule_type": "WORD_COUNT",
+            "severity": "INFO",
+            "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+            "created_at": "2026-11-18T12:47:59.813Z"
+          },
+          {
+            "id": "f-82b4482f-2",
+            "check_result_id": "cr-82b4482f",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "INFO",
+            "message": "Abstract section is present.",
+            "created_at": "2026-11-18T12:47:59.822Z"
+          },
+          {
+            "id": "f-82b4482f-3",
+            "check_result_id": "cr-82b4482f",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "INFO",
+            "message": "Keywords section is present.",
+            "created_at": "2026-11-18T12:47:59.830Z"
+          }
+        ]
+      },
+      "reportData": {
+        "manuscript": {
+          "id": "ms-b9ba066e",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-compliant.docx",
+          "file_path": "/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+          "upload_time": "2026-11-18T12:47:59.791Z",
+          "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+        },
+        "checkResult": {
+          "id": "cr-82b4482f",
+          "manuscript_id": "ms-b9ba066e",
+          "status": "COMPLETED",
+          "format_score": 100,
+          "created_at": "2026-11-18T12:47:59.802Z"
+        },
+        "findings": [
+          {
+            "id": "f-82b4482f-1",
+            "check_result_id": "cr-82b4482f",
+            "rule_type": "WORD_COUNT",
+            "severity": "INFO",
+            "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+            "created_at": "2026-11-18T12:47:59.813Z"
+          },
+          {
+            "id": "f-82b4482f-2",
+            "check_result_id": "cr-82b4482f",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "INFO",
+            "message": "Abstract section is present.",
+            "created_at": "2026-11-18T12:47:59.822Z"
+          },
+          {
+            "id": "f-82b4482f-3",
+            "check_result_id": "cr-82b4482f",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "INFO",
+            "message": "Keywords section is present.",
+            "created_at": "2026-11-18T12:47:59.830Z"
+          }
+        ]
+      }
+    },
+    {
+      "case": "upload_short_a",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "filename": "stage5-20261118t124752z-08162c-short.docx",
+      "bytes": 972,
+      "sha256": "31cc87ef532858432c66645723bbf1a340370f759564da819070fa26eccf9728",
+      "expectedScore": 50,
+      "expectedWords": 100,
+      "expectedWarnings": [
+        "WORD_COUNT",
+        "ABSTRACT_CHECK",
+        "KEYWORDS_CHECK"
+      ],
+      "apiData": {
+        "manuscript": {
+          "id": "ms-b4a0f832",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-short.docx",
+          "file_path": "/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+          "upload_time": "2026-11-18T12:48:00.359Z"
+        },
+        "checkResult": {
+          "id": "cr-3fb1f17e",
+          "manuscript_id": "ms-b4a0f832",
+          "status": "COMPLETED",
+          "format_score": 50,
+          "created_at": "2026-11-18T12:48:00.391Z"
+        },
+        "findings": [
+          {
+            "id": "f-3fb1f17e-1",
+            "check_result_id": "cr-3fb1f17e",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (100) is below minimum requirement of 3000 words.",
+            "created_at": "2026-11-18T12:48:00.413Z"
+          },
+          {
+            "id": "f-3fb1f17e-2",
+            "check_result_id": "cr-3fb1f17e",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "WARNING",
+            "message": "Abstract section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.448Z"
+          },
+          {
+            "id": "f-3fb1f17e-3",
+            "check_result_id": "cr-3fb1f17e",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "WARNING",
+            "message": "Keywords section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.471Z"
+          }
+        ]
+      },
+      "reportData": {
+        "manuscript": {
+          "id": "ms-b4a0f832",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-short.docx",
+          "file_path": "/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+          "upload_time": "2026-11-18T12:48:00.359Z",
+          "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+        },
+        "checkResult": {
+          "id": "cr-3fb1f17e",
+          "manuscript_id": "ms-b4a0f832",
+          "status": "COMPLETED",
+          "format_score": 50,
+          "created_at": "2026-11-18T12:48:00.391Z"
+        },
+        "findings": [
+          {
+            "id": "f-3fb1f17e-1",
+            "check_result_id": "cr-3fb1f17e",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (100) is below minimum requirement of 3000 words.",
+            "created_at": "2026-11-18T12:48:00.413Z"
+          },
+          {
+            "id": "f-3fb1f17e-2",
+            "check_result_id": "cr-3fb1f17e",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "WARNING",
+            "message": "Abstract section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.448Z"
+          },
+          {
+            "id": "f-3fb1f17e-3",
+            "check_result_id": "cr-3fb1f17e",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "WARNING",
+            "message": "Keywords section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.471Z"
+          }
+        ]
+      }
+    },
+    {
+      "case": "upload_long_a",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "filename": "stage5-20261118t124752z-08162c-long.docx",
+      "bytes": 1293,
+      "sha256": "10f4c3d773ce5e2d51dc698e010cc3643853437c79e0a54ab3ec8e0692170321",
+      "expectedScore": 85,
+      "expectedWords": 8500,
+      "expectedWarnings": [
+        "WORD_COUNT"
+      ],
+      "apiData": {
+        "manuscript": {
+          "id": "ms-826a5294",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-long.docx",
+          "file_path": "/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+          "upload_time": "2026-11-18T12:48:00.593Z"
+        },
+        "checkResult": {
+          "id": "cr-b2869e79",
+          "manuscript_id": "ms-826a5294",
+          "status": "COMPLETED",
+          "format_score": 85,
+          "created_at": "2026-11-18T12:48:00.624Z"
+        },
+        "findings": [
+          {
+            "id": "f-b2869e79-1",
+            "check_result_id": "cr-b2869e79",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (8500) exceeds maximum limit of 8000 words.",
+            "created_at": "2026-11-18T12:48:00.658Z"
+          },
+          {
+            "id": "f-b2869e79-2",
+            "check_result_id": "cr-b2869e79",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "INFO",
+            "message": "Abstract section is present.",
+            "created_at": "2026-11-18T12:48:00.677Z"
+          },
+          {
+            "id": "f-b2869e79-3",
+            "check_result_id": "cr-b2869e79",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "INFO",
+            "message": "Keywords section is present.",
+            "created_at": "2026-11-18T12:48:00.683Z"
+          }
+        ]
+      },
+      "reportData": {
+        "manuscript": {
+          "id": "ms-826a5294",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-long.docx",
+          "file_path": "/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+          "upload_time": "2026-11-18T12:48:00.593Z",
+          "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+        },
+        "checkResult": {
+          "id": "cr-b2869e79",
+          "manuscript_id": "ms-826a5294",
+          "status": "COMPLETED",
+          "format_score": 85,
+          "created_at": "2026-11-18T12:48:00.624Z"
+        },
+        "findings": [
+          {
+            "id": "f-b2869e79-1",
+            "check_result_id": "cr-b2869e79",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (8500) exceeds maximum limit of 8000 words.",
+            "created_at": "2026-11-18T12:48:00.658Z"
+          },
+          {
+            "id": "f-b2869e79-2",
+            "check_result_id": "cr-b2869e79",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "INFO",
+            "message": "Abstract section is present.",
+            "created_at": "2026-11-18T12:48:00.677Z"
+          },
+          {
+            "id": "f-b2869e79-3",
+            "check_result_id": "cr-b2869e79",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "INFO",
+            "message": "Keywords section is present.",
+            "created_at": "2026-11-18T12:48:00.683Z"
+          }
+        ]
+      }
+    },
+    {
+      "case": "upload_compliant_b",
+      "tenant": "s5-b-20261118t124752z-08162c",
+      "filename": "stage5-20261118t124752z-08162c-tenant-b.docx",
+      "bytes": 1127,
+      "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+      "expectedScore": 100,
+      "expectedWords": 3500,
+      "expectedWarnings": [],
+      "apiData": {
+        "manuscript": {
+          "id": "ms-556f34cf",
+          "tenant_id": "s5-b-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-tenant-b.docx",
+          "file_path": "/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+          "upload_time": "2026-11-18T12:48:00.721Z"
+        },
+        "checkResult": {
+          "id": "cr-07712837",
+          "manuscript_id": "ms-556f34cf",
+          "status": "COMPLETED",
+          "format_score": 100,
+          "created_at": "2026-11-18T12:48:00.727Z"
+        },
+        "findings": [
+          {
+            "id": "f-07712837-1",
+            "check_result_id": "cr-07712837",
+            "rule_type": "WORD_COUNT",
+            "severity": "INFO",
+            "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+            "created_at": "2026-11-18T12:48:00.734Z"
+          },
+          {
+            "id": "f-07712837-2",
+            "check_result_id": "cr-07712837",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "INFO",
+            "message": "Abstract section is present.",
+            "created_at": "2026-11-18T12:48:00.739Z"
+          },
+          {
+            "id": "f-07712837-3",
+            "check_result_id": "cr-07712837",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "INFO",
+            "message": "Keywords section is present.",
+            "created_at": "2026-11-18T12:48:00.744Z"
+          }
+        ]
+      },
+      "reportData": {
+        "manuscript": {
+          "id": "ms-556f34cf",
+          "tenant_id": "s5-b-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-tenant-b.docx",
+          "file_path": "/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+          "upload_time": "2026-11-18T12:48:00.721Z",
+          "tenant_name": "Tenant s5-b-20261118t124752z-08162c"
+        },
+        "checkResult": {
+          "id": "cr-07712837",
+          "manuscript_id": "ms-556f34cf",
+          "status": "COMPLETED",
+          "format_score": 100,
+          "created_at": "2026-11-18T12:48:00.727Z"
+        },
+        "findings": [
+          {
+            "id": "f-07712837-1",
+            "check_result_id": "cr-07712837",
+            "rule_type": "WORD_COUNT",
+            "severity": "INFO",
+            "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+            "created_at": "2026-11-18T12:48:00.734Z"
+          },
+          {
+            "id": "f-07712837-2",
+            "check_result_id": "cr-07712837",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "INFO",
+            "message": "Abstract section is present.",
+            "created_at": "2026-11-18T12:48:00.739Z"
+          },
+          {
+            "id": "f-07712837-3",
+            "check_result_id": "cr-07712837",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "INFO",
+            "message": "Keywords section is present.",
+            "created_at": "2026-11-18T12:48:00.744Z"
+          }
+        ]
+      }
+    },
+    {
+      "case": "reject_non_docx",
+      "tenant": "s5-a-20261118t124752z-08162c",
+      "filename": "stage5-20261118t124752z-08162c-not-docx.txt",
+      "bytes": 45,
+      "sha256": "4daf60a07ca3643e18fd144f4f67fbe719f23eac2fffe264b7b91afa0497d6b5",
+      "expectedScore": null,
+      "expectedWords": null,
+      "expectedWarnings": null,
+      "apiData": {
+        "manuscript": {
+          "id": "ms-9e217e9d",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-not-docx.txt",
+          "file_path": "/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+          "upload_time": "2026-11-18T12:48:00.842Z"
+        },
+        "checkResult": {
+          "id": "cr-3ccf483d",
+          "manuscript_id": "ms-9e217e9d",
+          "status": "COMPLETED",
+          "format_score": 50,
+          "created_at": "2026-11-18T12:48:00.847Z"
+        },
+        "findings": [
+          {
+            "id": "f-3ccf483d-1",
+            "check_result_id": "cr-3ccf483d",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (9) is below minimum requirement of 3000 words.",
+            "created_at": "2026-11-18T12:48:00.852Z"
+          },
+          {
+            "id": "f-3ccf483d-2",
+            "check_result_id": "cr-3ccf483d",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "WARNING",
+            "message": "Abstract section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.857Z"
+          },
+          {
+            "id": "f-3ccf483d-3",
+            "check_result_id": "cr-3ccf483d",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "WARNING",
+            "message": "Keywords section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.861Z"
+          }
+        ]
+      },
+      "reportData": {
+        "manuscript": {
+          "id": "ms-9e217e9d",
+          "tenant_id": "s5-a-20261118t124752z-08162c",
+          "author_id": null,
+          "title": "stage5-20261118t124752z-08162c-not-docx.txt",
+          "file_path": "/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+          "upload_time": "2026-11-18T12:48:00.842Z",
+          "tenant_name": "Tenant s5-a-20261118t124752z-08162c"
+        },
+        "checkResult": {
+          "id": "cr-3ccf483d",
+          "manuscript_id": "ms-9e217e9d",
+          "status": "COMPLETED",
+          "format_score": 50,
+          "created_at": "2026-11-18T12:48:00.847Z"
+        },
+        "findings": [
+          {
+            "id": "f-3ccf483d-1",
+            "check_result_id": "cr-3ccf483d",
+            "rule_type": "WORD_COUNT",
+            "severity": "WARNING",
+            "message": "Word count (9) is below minimum requirement of 3000 words.",
+            "created_at": "2026-11-18T12:48:00.852Z"
+          },
+          {
+            "id": "f-3ccf483d-2",
+            "check_result_id": "cr-3ccf483d",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "WARNING",
+            "message": "Abstract section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.857Z"
+          },
+          {
+            "id": "f-3ccf483d-3",
+            "check_result_id": "cr-3ccf483d",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "WARNING",
+            "message": "Keywords section is required but was not found.",
+            "created_at": "2026-11-18T12:48:00.861Z"
+          }
+        ]
+      }
+    }
+  ],
+  "findings": [
+    {
+      "id": "non-docx-accepted",
+      "owner": "M2 application",
+      "actualHttp": 201,
+      "action": "Add strict DOCX validation and remove/restrict the raw-text fallback in production."
+    },
+    {
+      "id": "oversize-error-mapping",
+      "owner": "M2 application",
+      "actualHttp": 500,
+      "action": "Map the upload size error to a client response such as 413 instead of an unhandled server error."
+    }
+  ],
+  "source": {
+    "head": "d9ab35a10eab8e9c67e45bc53f8a22522846b038",
+    "scriptSha256": "2ce226132f9be3e438cb3baf41459c2291be3d127109249cd0c0b64d95269f06",
+    "applicationFiles": {
+      "source/src/app.js": "52fef0c3b0ab30d165184bb29df8e01e20b5aa94a7c7bb88b09bc2bc4b8d3701",
+      "source/src/common/middlewares/errorHandler.js": "8e78db17582d6a3093209ebed63caf447d5c73c1c2142b7277fc7eed17040426",
+      "source/src/common/middlewares/tenant.js": "32e935e7e9d05f45db62a5ecaffa4c33adb11852d2e28d7c0956274d5a3ecb6c",
+      "source/src/common/utils/response.js": "f2602503618b0a487aa53d221bfba7b13ebd0e09ba6f84b1500f0675657b13d4",
+      "source/src/config/database.js": "1f43688208a16e4a961b1b259af46fad5ff60b22277dcaec7e8ddfaf3fb7f7f9",
+      "source/src/config/env.js": "95af002b32d870b847e8d0ef0d9546aeb5a1cceff6bc33104c927411a1487c0c",
+      "source/src/index.js": "a315eb24e71effaa2a99bd222da40d77eccd4d0fe8e1f430bf52f6b90d723233",
+      "source/src/modules/auth/controllers/auth.controller.js": "61a900b727e804b38cdf484f0f403a1f22d365dea2346174d6fa39af51da4865",
+      "source/src/modules/auth/index.js": "d3282badddc04682761701c2360ede22ec69b3e95aa75965b625815f807a9438",
+      "source/src/modules/health/controllers/health.controller.js": "b389019a63cbb493fd1748015f0c5441a9305ec5fd298b3415873a18ba7664f4",
+      "source/src/modules/health/index.js": "6b0d80191a75106b9f90bde028ab820ea32683b62f1230d16e8b41778bf2a535",
+      "source/src/modules/manuscripts/controllers/manuscript.controller.js": "32a93b4093a5e4bb8e14e8520dbb1d76aea2116e50f11b0702f08116c611651c",
+      "source/src/modules/manuscripts/index.js": "9071c24ed0fecb246740b423a3b269b9667e59203c32a204c48c5620b5a513d1",
+      "source/src/modules/manuscripts/repositories/manuscript.repository.js": "0f43458d009810dc4ec42573427b7577ca495db23383859a7e930243729a2fe4",
+      "source/src/modules/manuscripts/services/manuscript.service.js": "f42c07ca3304030c299a3c8a0a129ccdf80d31f7dc075077e5a6e7b4cea362a6"
+    }
+  },
+  "podsBefore": [
+    {
+      "name": "journalfit-backend-b84c65dd-9nvmp",
+      "uid": "1a156b6c-0d97-4e23-8816-8c7bcc17c1db",
+      "node": "k3d-capstone-agent-0",
+      "ready": true,
+      "containers": [
+        {
+          "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+          "restarts": 4,
+          "lastState": {
+            "terminated": {
+              "containerID": "containerd://50ee4b034fbb9b794b7f3aaf93e8e26edad07b4ce69f8b9d9750b57bc3b18c10",
+              "exitCode": 1,
+              "finishedAt": "2026-11-18T12:27:19Z",
+              "reason": "Error",
+              "startedAt": "2026-11-18T12:27:08Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "journalfit-backend-b84c65dd-9vd69",
+      "uid": "438a966e-2a19-41c3-a272-34be91a78cb8",
+      "node": "k3d-capstone-agent-0",
+      "ready": true,
+      "containers": [
+        {
+          "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+          "restarts": 4,
+          "lastState": {
+            "terminated": {
+              "containerID": "containerd://314686327072b43599e384a74e3a019f8cd1f24ee8be0811846211f75a2008c6",
+              "exitCode": 1,
+              "finishedAt": "2026-11-18T12:27:19Z",
+              "reason": "Error",
+              "startedAt": "2026-11-18T12:27:08Z"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "imageDigest": "sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+  "coreResults": [
+    {
+      "case": "upload_compliant_a",
+      "manuscriptId": "ms-b9ba066e",
+      "passed": true,
+      "expectedScore": 100,
+      "actualScore": 100,
+      "expectedWords": 3500,
+      "observedWords": 3500
+    },
+    {
+      "case": "upload_short_a",
+      "manuscriptId": "ms-b4a0f832",
+      "passed": true,
+      "expectedScore": 50,
+      "actualScore": 50,
+      "expectedWords": 100,
+      "observedWords": 100
+    },
+    {
+      "case": "upload_long_a",
+      "manuscriptId": "ms-826a5294",
+      "passed": true,
+      "expectedScore": 85,
+      "actualScore": 85,
+      "expectedWords": 8500,
+      "observedWords": 8500
+    },
+    {
+      "case": "upload_compliant_b",
+      "manuscriptId": "ms-556f34cf",
+      "passed": true,
+      "expectedScore": 100,
+      "actualScore": 100,
+      "expectedWords": 3500,
+      "observedWords": 3500
+    }
+  ],
+  "podsAfter": [
+    {
+      "name": "journalfit-backend-b84c65dd-9nvmp",
+      "uid": "1a156b6c-0d97-4e23-8816-8c7bcc17c1db",
+      "node": "k3d-capstone-agent-0",
+      "ready": true,
+      "containers": [
+        {
+          "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+          "restarts": 4,
+          "lastState": {
+            "terminated": {
+              "containerID": "containerd://50ee4b034fbb9b794b7f3aaf93e8e26edad07b4ce69f8b9d9750b57bc3b18c10",
+              "exitCode": 1,
+              "finishedAt": "2026-11-18T12:27:19Z",
+              "reason": "Error",
+              "startedAt": "2026-11-18T12:27:08Z"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "journalfit-backend-b84c65dd-9vd69",
+      "uid": "438a966e-2a19-41c3-a272-34be91a78cb8",
+      "node": "k3d-capstone-agent-0",
+      "ready": true,
+      "containers": [
+        {
+          "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+          "restarts": 4,
+          "lastState": {
+            "terminated": {
+              "containerID": "containerd://314686327072b43599e384a74e3a019f8cd1f24ee8be0811846211f75a2008c6",
+              "exitCode": 1,
+              "finishedAt": "2026-11-18T12:27:19Z",
+              "reason": "Error",
+              "startedAt": "2026-11-18T12:27:08Z"
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "databaseAgreement": {
+    "ms-b9ba066e": true,
+    "ms-b4a0f832": true,
+    "ms-826a5294": true,
+    "ms-556f34cf": true,
+    "ms-9e217e9d": true
+  },
+  "fileChecks": {
+    "journalfit-backend-b84c65dd-9nvmp": {
+      "uid": 10001,
+      "files": [
+        {
+          "id": "ms-556f34cf",
+          "path": "/app/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+          "bytes": 1127,
+          "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-826a5294",
+          "path": "/app/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+          "bytes": 1293,
+          "sha256": "10f4c3d773ce5e2d51dc698e010cc3643853437c79e0a54ab3ec8e0692170321",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-9e217e9d",
+          "path": "/app/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+          "bytes": 45,
+          "sha256": "4daf60a07ca3643e18fd144f4f67fbe719f23eac2fffe264b7b91afa0497d6b5",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-b4a0f832",
+          "path": "/app/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+          "bytes": 972,
+          "sha256": "31cc87ef532858432c66645723bbf1a340370f759564da819070fa26eccf9728",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-b9ba066e",
+          "path": "/app/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+          "bytes": 1127,
+          "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+          "uid": 10001,
+          "gid": 10001
+        }
+      ],
+      "matchingNames": [
+        "ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+        "ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+        "ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+        "ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+        "ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx"
+      ]
+    },
+    "journalfit-backend-b84c65dd-9vd69": {
+      "uid": 10001,
+      "files": [
+        {
+          "id": "ms-556f34cf",
+          "path": "/app/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+          "bytes": 1127,
+          "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-826a5294",
+          "path": "/app/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+          "bytes": 1293,
+          "sha256": "10f4c3d773ce5e2d51dc698e010cc3643853437c79e0a54ab3ec8e0692170321",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-9e217e9d",
+          "path": "/app/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+          "bytes": 45,
+          "sha256": "4daf60a07ca3643e18fd144f4f67fbe719f23eac2fffe264b7b91afa0497d6b5",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-b4a0f832",
+          "path": "/app/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+          "bytes": 972,
+          "sha256": "31cc87ef532858432c66645723bbf1a340370f759564da819070fa26eccf9728",
+          "uid": 10001,
+          "gid": 10001
+        },
+        {
+          "id": "ms-b9ba066e",
+          "path": "/app/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+          "bytes": 1127,
+          "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+          "uid": 10001,
+          "gid": 10001
+        }
+      ],
+      "matchingNames": [
+        "ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+        "ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+        "ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+        "ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+        "ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx"
+      ]
+    }
+  },
+  "healthAfter": {
+    "name": "health_after",
+    "method": "GET",
+    "path": "/health/ready",
+    "tenant": null,
+    "expectedHttp": [
+      200
+    ],
+    "actualHttp": 200,
+    "expectationMet": true,
+    "elapsedSeconds": 0.009,
+    "response": {
+      "status": "ready",
+      "database": "connected",
+      "timestamp": "2026-11-18T12:48:05.256Z"
+    }
+  },
+  "restartDeltas": {
+    "journalfit-backend-b84c65dd-9nvmp": 0,
+    "journalfit-backend-b84c65dd-9vd69": 0
+  },
+  "checks": {
+    "fourCoreDocxScenarios": true,
+    "acceptedReportsMatchDatabase": true,
+    "noUnexpectedDatabaseRecords": true,
+    "fileBytesMatchAllPods": true,
+    "noOrphanFixtureFiles": true,
+    "defaultTemplatesVerified": true,
+    "tenantHeaderMismatchDenied": true,
+    "requiredInputAndMissingRecord": true,
+    "noObservedRestartDuringTests": true,
+    "healthRemainsReady": true,
+    "nonDocxRejected": false,
+    "oversizeClientError": false,
+    "oversizeNotPersisted": true
+  },
+  "coreWorkflowPassed": true,
+  "finishedAt": "2026-11-18T19:48:02.454715+07:00"
+}

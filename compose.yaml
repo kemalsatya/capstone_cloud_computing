@@ -1,0 +1,62 @@
+name: journalfit-m3-presentasi
+
+services:
+  # Startup job for the existing lab. JournalFit itself stays in Kubernetes.
+  start-m3:
+    image: docker:29-cli@sha256:34507eb5069d8be82c95dd3b6987d4250fd5fee49b82e2509b7d7a7030740d6d
+    restart: "no"
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - capstone
+    entrypoint: ["/bin/sh", "-ec"]
+    command:
+      - |
+        containers="capstone-postgres capstone-registry k3d-capstone-server-0 k3d-capstone-agent-0 k3d-capstone-serverlb"
+
+        echo "[M3] Memeriksa container lab yang sudah disiapkan..."
+        for name in $$containers; do
+          if ! docker container inspect "$$name" > /dev/null 2>&1; then
+            echo "[M3] Container belum tersedia: $$name"
+            echo "[M3] Starter ini memerlukan lingkungan capstone yang sudah disiapkan."
+            exit 1
+          fi
+        done
+
+        for name in $$containers; do
+          running="$$(docker inspect --format '{{.State.Running}}' "$$name")"
+          if [ "$$running" = "true" ]; then
+            echo "[M3] Sudah aktif: $$name"
+          else
+            echo "[M3] Menyalakan: $$name"
+            docker start "$$name" > /dev/null
+          fi
+        done
+
+        echo "[M3] Menunggu registry dan readiness aplikasi melalui Ingress..."
+        attempt=0
+        while [ "$$attempt" -lt 90 ]; do
+          if wget -q -T 3 -O /dev/null http://capstone-registry:5000/v2/ && \
+             wget -q -T 3 -O /tmp/journalfit-ready.json \
+               --header "Host: journalfit.localhost" \
+               http://k3d-capstone-serverlb/health/ready; then
+            echo ""
+            echo "[M3 SIAP] http://journalfit.localhost:8088/"
+            cat /tmp/journalfit-ready.json
+            echo ""
+            echo "[M3] Job startup selesai. Backend tetap berjalan sebagai Pod Kubernetes."
+            exit 0
+          fi
+          attempt=$$((attempt + 1))
+          sleep 2
+        done
+
+        echo "[M3] Endpoint belum siap. Periksa node, pod, database, dan log workload."
+        exit 1
+
+networks:
+  capstone:
+    external: true
+    name: capstone-net

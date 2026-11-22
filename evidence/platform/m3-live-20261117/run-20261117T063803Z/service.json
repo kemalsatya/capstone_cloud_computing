@@ -1,0 +1,41 @@
+{
+  "apiVersion": "v1",
+  "kind": "Service",
+  "metadata": {
+    "annotations": {
+      "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"Service\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"ports\":[{\"name\":\"http\",\"port\":80,\"targetPort\":\"http\"}],\"selector\":{\"app\":\"journalfit\"},\"type\":\"ClusterIP\"}}\n"
+    },
+    "creationTimestamp": "2026-11-09T17:27:44Z",
+    "name": "journalfit-backend",
+    "namespace": "default",
+    "resourceVersion": "1668",
+    "uid": "87fc23be-78d5-41ef-8aed-9d7e47fb3f7b"
+  },
+  "spec": {
+    "clusterIP": "10.43.41.15",
+    "clusterIPs": [
+      "10.43.41.15"
+    ],
+    "internalTrafficPolicy": "Cluster",
+    "ipFamilies": [
+      "IPv4"
+    ],
+    "ipFamilyPolicy": "SingleStack",
+    "ports": [
+      {
+        "name": "http",
+        "port": 80,
+        "protocol": "TCP",
+        "targetPort": "http"
+      }
+    ],
+    "selector": {
+      "app": "journalfit"
+    },
+    "sessionAffinity": "None",
+    "type": "ClusterIP"
+  },
+  "status": {
+    "loadBalancer": {}
+  }
+}

@@ -9,7 +9,6 @@ npm-debug.log
 .gitignore
 .env
 .env.*
-!.env.example
 tests
 instructions
 uploads

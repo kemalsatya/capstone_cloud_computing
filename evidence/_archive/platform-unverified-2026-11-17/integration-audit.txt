@@ -1,0 +1,18 @@
+﻿Timestamp: 2026-11-09T23:20:33.0796764+07:00
+Command: docker exec capstone-postgres sh -c <psql read-only database/schema inventory using configured lab user>
+ datname  
+----------
+ capstone
+(1 row)
+
+ table_schema | table_name 
+--------------+------------
+(0 rows)
+
+Inventory exit code: 0
+Command: k3d cluster list
+NAME              SERVERS   AGENTS   LOADBALANCER
+campus-cloud      0/1       0/1      true
+campus-cloud-v3   0/1       0/1      true
+funqy-lab         0/1       0/0      true
+Interpretation: read-only inventory, no database/schema creation or migration executed.

@@ -1,0 +1,240 @@
+{
+  "identity": {
+    "database": "journalfit",
+    "role": "capstone",
+    "read_only": "on"
+  },
+  "tenants": [
+    {
+      "id": "s5-a-20261118t124752z-08162c",
+      "name": "Tenant s5-a-20261118t124752z-08162c"
+    },
+    {
+      "id": "s5-b-20261118t124752z-08162c",
+      "name": "Tenant s5-b-20261118t124752z-08162c"
+    }
+  ],
+  "templates": [
+    {
+      "id": "tpl-s5-a-20261118t124752z-08162c-default",
+      "tenant_id": "s5-a-20261118t124752z-08162c",
+      "template_name": "Standard Default Template",
+      "min_words": 3000,
+      "max_words": 8000,
+      "require_abstract": true,
+      "require_keywords": true,
+      "created_at": "2026-11-18T12:47:59.277Z"
+    },
+    {
+      "id": "tpl-s5-b-20261118t124752z-08162c-default",
+      "tenant_id": "s5-b-20261118t124752z-08162c",
+      "template_name": "Standard Default Template",
+      "min_words": 3000,
+      "max_words": 8000,
+      "require_abstract": true,
+      "require_keywords": true,
+      "created_at": "2026-11-18T12:48:00.708Z"
+    }
+  ],
+  "manuscripts": [
+    {
+      "id": "ms-556f34cf",
+      "tenant_id": "s5-b-20261118t124752z-08162c",
+      "author_id": null,
+      "title": "stage5-20261118t124752z-08162c-tenant-b.docx",
+      "file_path": "/uploads/ms-556f34cf-stage5-20261118t124752z-08162c-tenant-b.docx",
+      "upload_time": "2026-11-18T12:48:00.721Z"
+    },
+    {
+      "id": "ms-826a5294",
+      "tenant_id": "s5-a-20261118t124752z-08162c",
+      "author_id": null,
+      "title": "stage5-20261118t124752z-08162c-long.docx",
+      "file_path": "/uploads/ms-826a5294-stage5-20261118t124752z-08162c-long.docx",
+      "upload_time": "2026-11-18T12:48:00.593Z"
+    },
+    {
+      "id": "ms-9e217e9d",
+      "tenant_id": "s5-a-20261118t124752z-08162c",
+      "author_id": null,
+      "title": "stage5-20261118t124752z-08162c-not-docx.txt",
+      "file_path": "/uploads/ms-9e217e9d-stage5-20261118t124752z-08162c-not-docx.txt",
+      "upload_time": "2026-11-18T12:48:00.842Z"
+    },
+    {
+      "id": "ms-b4a0f832",
+      "tenant_id": "s5-a-20261118t124752z-08162c",
+      "author_id": null,
+      "title": "stage5-20261118t124752z-08162c-short.docx",
+      "file_path": "/uploads/ms-b4a0f832-stage5-20261118t124752z-08162c-short.docx",
+      "upload_time": "2026-11-18T12:48:00.359Z"
+    },
+    {
+      "id": "ms-b9ba066e",
+      "tenant_id": "s5-a-20261118t124752z-08162c",
+      "author_id": null,
+      "title": "stage5-20261118t124752z-08162c-compliant.docx",
+      "file_path": "/uploads/ms-b9ba066e-stage5-20261118t124752z-08162c-compliant.docx",
+      "upload_time": "2026-11-18T12:47:59.791Z"
+    }
+  ],
+  "results": [
+    {
+      "id": "cr-07712837",
+      "manuscript_id": "ms-556f34cf",
+      "status": "COMPLETED",
+      "format_score": 100,
+      "created_at": "2026-11-18T12:48:00.727Z"
+    },
+    {
+      "id": "cr-3ccf483d",
+      "manuscript_id": "ms-9e217e9d",
+      "status": "COMPLETED",
+      "format_score": 50,
+      "created_at": "2026-11-18T12:48:00.847Z"
+    },
+    {
+      "id": "cr-3fb1f17e",
+      "manuscript_id": "ms-b4a0f832",
+      "status": "COMPLETED",
+      "format_score": 50,
+      "created_at": "2026-11-18T12:48:00.391Z"
+    },
+    {
+      "id": "cr-82b4482f",
+      "manuscript_id": "ms-b9ba066e",
+      "status": "COMPLETED",
+      "format_score": 100,
+      "created_at": "2026-11-18T12:47:59.802Z"
+    },
+    {
+      "id": "cr-b2869e79",
+      "manuscript_id": "ms-826a5294",
+      "status": "COMPLETED",
+      "format_score": 85,
+      "created_at": "2026-11-18T12:48:00.624Z"
+    }
+  ],
+  "findings": [
+    {
+      "id": "f-07712837-1",
+      "check_result_id": "cr-07712837",
+      "rule_type": "WORD_COUNT",
+      "severity": "INFO",
+      "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+      "created_at": "2026-11-18T12:48:00.734Z"
+    },
+    {
+      "id": "f-07712837-2",
+      "check_result_id": "cr-07712837",
+      "rule_type": "ABSTRACT_CHECK",
+      "severity": "INFO",
+      "message": "Abstract section is present.",
+      "created_at": "2026-11-18T12:48:00.739Z"
+    },
+    {
+      "id": "f-07712837-3",
+      "check_result_id": "cr-07712837",
+      "rule_type": "KEYWORDS_CHECK",
+      "severity": "INFO",
+      "message": "Keywords section is present.",
+      "created_at": "2026-11-18T12:48:00.744Z"
+    },
+    {
+      "id": "f-3ccf483d-1",
+      "check_result_id": "cr-3ccf483d",
+      "rule_type": "WORD_COUNT",
+      "severity": "WARNING",
+      "message": "Word count (9) is below minimum requirement of 3000 words.",
+      "created_at": "2026-11-18T12:48:00.852Z"
+    },
+    {
+      "id": "f-3ccf483d-2",
+      "check_result_id": "cr-3ccf483d",
+      "rule_type": "ABSTRACT_CHECK",
+      "severity": "WARNING",
+      "message": "Abstract section is required but was not found.",
+      "created_at": "2026-11-18T12:48:00.857Z"
+    },
+    {
+      "id": "f-3ccf483d-3",
+      "check_result_id": "cr-3ccf483d",
+      "rule_type": "KEYWORDS_CHECK",
+      "severity": "WARNING",
+      "message": "Keywords section is required but was not found.",
+      "created_at": "2026-11-18T12:48:00.861Z"
+    },
+    {
+      "id": "f-3fb1f17e-1",
+      "check_result_id": "cr-3fb1f17e",
+      "rule_type": "WORD_COUNT",
+      "severity": "WARNING",
+      "message": "Word count (100) is below minimum requirement of 3000 words.",
+      "created_at": "2026-11-18T12:48:00.413Z"
+    },
+    {
+      "id": "f-3fb1f17e-2",
+      "check_result_id": "cr-3fb1f17e",
+      "rule_type": "ABSTRACT_CHECK",
+      "severity": "WARNING",
+      "message": "Abstract section is required but was not found.",
+      "created_at": "2026-11-18T12:48:00.448Z"
+    },
+    {
+      "id": "f-3fb1f17e-3",
+      "check_result_id": "cr-3fb1f17e",
+      "rule_type": "KEYWORDS_CHECK",
+      "severity": "WARNING",
+      "message": "Keywords section is required but was not found.",
+      "created_at": "2026-11-18T12:48:00.471Z"
+    },
+    {
+      "id": "f-82b4482f-1",
+      "check_result_id": "cr-82b4482f",
+      "rule_type": "WORD_COUNT",
+      "severity": "INFO",
+      "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+      "created_at": "2026-11-18T12:47:59.813Z"
+    },
+    {
+      "id": "f-82b4482f-2",
+      "check_result_id": "cr-82b4482f",
+      "rule_type": "ABSTRACT_CHECK",
+      "severity": "INFO",
+      "message": "Abstract section is present.",
+      "created_at": "2026-11-18T12:47:59.822Z"
+    },
+    {
+      "id": "f-82b4482f-3",
+      "check_result_id": "cr-82b4482f",
+      "rule_type": "KEYWORDS_CHECK",
+      "severity": "INFO",
+      "message": "Keywords section is present.",
+      "created_at": "2026-11-18T12:47:59.830Z"
+    },
+    {
+      "id": "f-b2869e79-1",
+      "check_result_id": "cr-b2869e79",
+      "rule_type": "WORD_COUNT",
+      "severity": "WARNING",
+      "message": "Word count (8500) exceeds maximum limit of 8000 words.",
+      "created_at": "2026-11-18T12:48:00.658Z"
+    },
+    {
+      "id": "f-b2869e79-2",
+      "check_result_id": "cr-b2869e79",
+      "rule_type": "ABSTRACT_CHECK",
+      "severity": "INFO",
+      "message": "Abstract section is present.",
+      "created_at": "2026-11-18T12:48:00.677Z"
+    },
+    {
+      "id": "f-b2869e79-3",
+      "check_result_id": "cr-b2869e79",
+      "rule_type": "KEYWORDS_CHECK",
+      "severity": "INFO",
+      "message": "Keywords section is present.",
+      "created_at": "2026-11-18T12:48:00.683Z"
+    }
+  ]
+}

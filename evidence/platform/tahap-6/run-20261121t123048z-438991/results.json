@@ -1,0 +1,798 @@
+{
+  "startedAt": "2026-11-21T19:30:48.428858+07:00",
+  "status": "passed",
+  "testExecutionCompleted": true,
+  "tenant": "s6-20261121t123048z-438991",
+  "cases": [
+    {
+      "name": "demo_report_after_resume",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-519b3203/report",
+      "tenant": "tenant-m3-demo",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.097,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-519b3203",
+            "tenant_id": "tenant-m3-demo",
+            "author_id": null,
+            "title": "M3_Demo_JournalFit.docx",
+            "file_path": "/uploads/ms-519b3203-M3_Demo_JournalFit.docx",
+            "upload_time": "2026-11-17T06:38:19.608Z",
+            "tenant_name": "Tenant tenant-m3-demo"
+          },
+          "checkResult": {
+            "id": "cr-6ce5006c",
+            "manuscript_id": "ms-519b3203",
+            "status": "COMPLETED",
+            "format_score": 50,
+            "created_at": "2026-11-17T06:38:19.705Z"
+          },
+          "findings": [
+            {
+              "id": "f-6ce5006c-1",
+              "check_result_id": "cr-6ce5006c",
+              "rule_type": "WORD_COUNT",
+              "severity": "WARNING",
+              "message": "Word count (2143) is below minimum requirement of 3000 words.",
+              "created_at": "2026-11-17T06:38:19.716Z"
+            },
+            {
+              "id": "f-6ce5006c-2",
+              "check_result_id": "cr-6ce5006c",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "WARNING",
+              "message": "Abstract section is required but was not found.",
+              "created_at": "2026-11-17T06:38:19.726Z"
+            },
+            {
+              "id": "f-6ce5006c-3",
+              "check_result_id": "cr-6ce5006c",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "WARNING",
+              "message": "Keywords section is required but was not found.",
+              "created_at": "2026-11-17T06:38:19.738Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "upload_persistence_fixture",
+      "method": "POST",
+      "path": "/api/manuscripts/upload",
+      "tenant": "s6-20261121t123048z-438991",
+      "expectedHttp": [
+        201
+      ],
+      "actualHttp": 201,
+      "expectationMet": true,
+      "elapsedSeconds": 0.322,
+      "response": {
+        "success": true,
+        "message": "Manuscript uploaded and format validation completed successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-d124d319",
+            "tenant_id": "s6-20261121t123048z-438991",
+            "author_id": null,
+            "title": "stage6-20261121t123048z-438991-persistence.docx",
+            "file_path": "/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+            "upload_time": "2026-11-21T12:31:11.218Z"
+          },
+          "checkResult": {
+            "id": "cr-a96a1380",
+            "manuscript_id": "ms-d124d319",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-21T12:31:11.300Z"
+          },
+          "findings": [
+            {
+              "id": "f-a96a1380-1",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-21T12:31:11.307Z"
+            },
+            {
+              "id": "f-a96a1380-2",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-21T12:31:11.313Z"
+            },
+            {
+              "id": "f-a96a1380-3",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-21T12:31:11.319Z"
+            }
+          ]
+        }
+      },
+      "request": {
+        "filename": "stage6-20261121t123048z-438991-persistence.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "manuscriptId": "ms-d124d319",
+        "filePath": "/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx"
+      }
+    },
+    {
+      "name": "report_before_disruption",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-d124d319/report",
+      "tenant": "s6-20261121t123048z-438991",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.021,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-d124d319",
+            "tenant_id": "s6-20261121t123048z-438991",
+            "author_id": null,
+            "title": "stage6-20261121t123048z-438991-persistence.docx",
+            "file_path": "/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+            "upload_time": "2026-11-21T12:31:11.218Z",
+            "tenant_name": "Tenant s6-20261121t123048z-438991"
+          },
+          "checkResult": {
+            "id": "cr-a96a1380",
+            "manuscript_id": "ms-d124d319",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-21T12:31:11.300Z"
+          },
+          "findings": [
+            {
+              "id": "f-a96a1380-1",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-21T12:31:11.307Z"
+            },
+            {
+              "id": "f-a96a1380-2",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-21T12:31:11.313Z"
+            },
+            {
+              "id": "f-a96a1380-3",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-21T12:31:11.319Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "report_after_pod_delete",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-d124d319/report",
+      "tenant": "s6-20261121t123048z-438991",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.018,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-d124d319",
+            "tenant_id": "s6-20261121t123048z-438991",
+            "author_id": null,
+            "title": "stage6-20261121t123048z-438991-persistence.docx",
+            "file_path": "/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+            "upload_time": "2026-11-21T12:31:11.218Z",
+            "tenant_name": "Tenant s6-20261121t123048z-438991"
+          },
+          "checkResult": {
+            "id": "cr-a96a1380",
+            "manuscript_id": "ms-d124d319",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-21T12:31:11.300Z"
+          },
+          "findings": [
+            {
+              "id": "f-a96a1380-1",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-21T12:31:11.307Z"
+            },
+            {
+              "id": "f-a96a1380-2",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-21T12:31:11.313Z"
+            },
+            {
+              "id": "f-a96a1380-3",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-21T12:31:11.319Z"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "report_after_rollout",
+      "method": "GET",
+      "path": "/api/manuscripts/ms-d124d319/report",
+      "tenant": "s6-20261121t123048z-438991",
+      "expectedHttp": [
+        200
+      ],
+      "actualHttp": 200,
+      "expectationMet": true,
+      "elapsedSeconds": 0.015,
+      "response": {
+        "success": true,
+        "message": "Manuscript report retrieved successfully.",
+        "data": {
+          "manuscript": {
+            "id": "ms-d124d319",
+            "tenant_id": "s6-20261121t123048z-438991",
+            "author_id": null,
+            "title": "stage6-20261121t123048z-438991-persistence.docx",
+            "file_path": "/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+            "upload_time": "2026-11-21T12:31:11.218Z",
+            "tenant_name": "Tenant s6-20261121t123048z-438991"
+          },
+          "checkResult": {
+            "id": "cr-a96a1380",
+            "manuscript_id": "ms-d124d319",
+            "status": "COMPLETED",
+            "format_score": 100,
+            "created_at": "2026-11-21T12:31:11.300Z"
+          },
+          "findings": [
+            {
+              "id": "f-a96a1380-1",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "WORD_COUNT",
+              "severity": "INFO",
+              "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+              "created_at": "2026-11-21T12:31:11.307Z"
+            },
+            {
+              "id": "f-a96a1380-2",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "ABSTRACT_CHECK",
+              "severity": "INFO",
+              "message": "Abstract section is present.",
+              "created_at": "2026-11-21T12:31:11.313Z"
+            },
+            {
+              "id": "f-a96a1380-3",
+              "check_result_id": "cr-a96a1380",
+              "rule_type": "KEYWORDS_CHECK",
+              "severity": "INFO",
+              "message": "Keywords section is present.",
+              "created_at": "2026-11-21T12:31:11.319Z"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "checks": {
+    "baselineStableAndHpaSettled": true,
+    "demoDataReadableAfterResume": true,
+    "uploadAccepted": true,
+    "podDeleteReconciled": true,
+    "dataUnchangedAfterPodDelete": true,
+    "fileUnchangedAfterPodDelete": true,
+    "rolloutCompleted": true,
+    "rolloutReplacedAllPods": true,
+    "serviceAvailableDuringRollout": true,
+    "dataUnchangedAfterRollout": true,
+    "fileUnchangedAfterRollout": true,
+    "newPodsWithoutRestarts": true,
+    "pvcStillBound": true
+  },
+  "findings": [],
+  "source": {
+    "head": "d9ab35a10eab8e9c67e45bc53f8a22522846b038",
+    "scriptSha256": "2c217e644b0414253f958e3077b5103479bd066b9e2b79f02a08775306b02d24",
+    "applicationFiles": {
+      "source/src/app.js": "52fef0c3b0ab30d165184bb29df8e01e20b5aa94a7c7bb88b09bc2bc4b8d3701",
+      "source/src/common/middlewares/errorHandler.js": "8e78db17582d6a3093209ebed63caf447d5c73c1c2142b7277fc7eed17040426",
+      "source/src/common/middlewares/tenant.js": "32e935e7e9d05f45db62a5ecaffa4c33adb11852d2e28d7c0956274d5a3ecb6c",
+      "source/src/common/utils/response.js": "f2602503618b0a487aa53d221bfba7b13ebd0e09ba6f84b1500f0675657b13d4",
+      "source/src/config/database.js": "1f43688208a16e4a961b1b259af46fad5ff60b22277dcaec7e8ddfaf3fb7f7f9",
+      "source/src/config/env.js": "95af002b32d870b847e8d0ef0d9546aeb5a1cceff6bc33104c927411a1487c0c",
+      "source/src/index.js": "a315eb24e71effaa2a99bd222da40d77eccd4d0fe8e1f430bf52f6b90d723233",
+      "source/src/modules/auth/controllers/auth.controller.js": "61a900b727e804b38cdf484f0f403a1f22d365dea2346174d6fa39af51da4865",
+      "source/src/modules/auth/index.js": "d3282badddc04682761701c2360ede22ec69b3e95aa75965b625815f807a9438",
+      "source/src/modules/health/controllers/health.controller.js": "b389019a63cbb493fd1748015f0c5441a9305ec5fd298b3415873a18ba7664f4",
+      "source/src/modules/health/index.js": "6b0d80191a75106b9f90bde028ab820ea32683b62f1230d16e8b41778bf2a535",
+      "source/src/modules/manuscripts/controllers/manuscript.controller.js": "32a93b4093a5e4bb8e14e8520dbb1d76aea2116e50f11b0702f08116c611651c",
+      "source/src/modules/manuscripts/index.js": "9071c24ed0fecb246740b423a3b269b9667e59203c32a204c48c5620b5a513d1",
+      "source/src/modules/manuscripts/repositories/manuscript.repository.js": "0f43458d009810dc4ec42573427b7577ca495db23383859a7e930243729a2fe4",
+      "source/src/modules/manuscripts/services/manuscript.service.js": "f42c07ca3304030c299a3c8a0a129ccdf80d31f7dc075077e5a6e7b4cea362a6"
+    }
+  },
+  "imageDigest": "sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+  "baseline": {
+    "deployment": {
+      "generation": 20,
+      "observedGeneration": 20,
+      "replicas": 2,
+      "updatedReplicas": 2,
+      "readyReplicas": 2,
+      "availableReplicas": 2,
+      "unavailableReplicas": 0,
+      "strategy": {
+        "rollingUpdate": {
+          "maxSurge": 1,
+          "maxUnavailable": 0
+        },
+        "type": "RollingUpdate"
+      },
+      "minReadySeconds": 5,
+      "image": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+      "restartedAt": "2026-11-21T19:29:56+07:00",
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-21T12:29:51Z",
+          "lastUpdateTime": "2026-11-21T12:29:51Z",
+          "message": "Deployment has minimum availability.",
+          "reason": "MinimumReplicasAvailable",
+          "status": "True",
+          "type": "Available"
+        },
+        {
+          "lastTransitionTime": "2026-11-09T17:27:44Z",
+          "lastUpdateTime": "2026-11-21T12:30:20Z",
+          "message": "ReplicaSet \"journalfit-backend-7496d44d87\" has successfully progressed.",
+          "reason": "NewReplicaSetAvailable",
+          "status": "True",
+          "type": "Progressing"
+        }
+      ]
+    },
+    "hpa": {
+      "minReplicas": 2,
+      "maxReplicas": 3,
+      "currentReplicas": 2,
+      "desiredReplicas": 2,
+      "metrics": [
+        {
+          "name": "cpu",
+          "currentUtilization": 3
+        }
+      ]
+    },
+    "pods": [
+      {
+        "name": "journalfit-backend-7496d44d87-s68jp",
+        "uid": "c9391e69-3d29-4925-a9d5-f8bf5fef1c2d",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:30:09Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:30:10Z",
+            "lastState": {}
+          }
+        ]
+      },
+      {
+        "name": "journalfit-backend-7496d44d87-stdss",
+        "uid": "4953f4dc-b7fa-4784-b66a-308d6f583980",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:29:55Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:29:56Z",
+            "lastState": {}
+          }
+        ]
+      }
+    ],
+    "pvc": {
+      "name": "journalfit-uploads",
+      "phase": "Bound",
+      "volumeName": "pvc-462818b8-6b0b-475e-9511-34f656284417",
+      "capacity": "1Gi",
+      "accessModes": [
+        "ReadWriteOnce"
+      ],
+      "storageClass": "local-path"
+    },
+    "nodes": [
+      {
+        "name": "k3d-capstone-agent-0",
+        "ready": true,
+        "version": "v1.35.5+k3s1"
+      },
+      {
+        "name": "k3d-capstone-server-0",
+        "ready": true,
+        "version": "v1.35.5+k3s1"
+      }
+    ],
+    "hpaSettled": true,
+    "hpaSettleSeconds": 17.181
+  },
+  "resumeObservation": {
+    "note": "Lab containers stopped 2026-11-18 and resumed 2026-11-21; the 2026-11-17 demo record is read after the gap.",
+    "report": {
+      "http": 200,
+      "id": "ms-519b3203",
+      "tenant": "tenant-m3-demo",
+      "score": 50,
+      "status": "COMPLETED",
+      "findings": [
+        "ABSTRACT_CHECK",
+        "KEYWORDS_CHECK",
+        "WORD_COUNT"
+      ]
+    },
+    "databaseRow": {
+      "id": "ms-519b3203",
+      "tenant_id": "tenant-m3-demo",
+      "title": "M3_Demo_JournalFit.docx",
+      "file_path": "/uploads/ms-519b3203-M3_Demo_JournalFit.docx",
+      "upload_time": "2026-11-17T06:38:19.608Z"
+    },
+    "file": {
+      "bytes": 273068,
+      "mode": 33188,
+      "uid": 10001,
+      "gid": 10001,
+      "mtime": "2026-11-17T06:38:13.811Z",
+      "modeOctal": "0o644"
+    },
+    "podStartHistory": [
+      {
+        "name": "journalfit-backend-7496d44d87-s68jp",
+        "startedAt": "2026-11-21T12:30:10Z",
+        "lastState": {}
+      },
+      {
+        "name": "journalfit-backend-7496d44d87-stdss",
+        "startedAt": "2026-11-21T12:29:56Z",
+        "lastState": {}
+      }
+    ]
+  },
+  "upload": {
+    "name": "upload_persistence_fixture",
+    "method": "POST",
+    "path": "/api/manuscripts/upload",
+    "tenant": "s6-20261121t123048z-438991",
+    "expectedHttp": [
+      201
+    ],
+    "actualHttp": 201,
+    "expectationMet": true,
+    "elapsedSeconds": 0.322,
+    "response": {
+      "success": true,
+      "message": "Manuscript uploaded and format validation completed successfully.",
+      "data": {
+        "manuscript": {
+          "id": "ms-d124d319",
+          "tenant_id": "s6-20261121t123048z-438991",
+          "author_id": null,
+          "title": "stage6-20261121t123048z-438991-persistence.docx",
+          "file_path": "/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+          "upload_time": "2026-11-21T12:31:11.218Z"
+        },
+        "checkResult": {
+          "id": "cr-a96a1380",
+          "manuscript_id": "ms-d124d319",
+          "status": "COMPLETED",
+          "format_score": 100,
+          "created_at": "2026-11-21T12:31:11.300Z"
+        },
+        "findings": [
+          {
+            "id": "f-a96a1380-1",
+            "check_result_id": "cr-a96a1380",
+            "rule_type": "WORD_COUNT",
+            "severity": "INFO",
+            "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+            "created_at": "2026-11-21T12:31:11.307Z"
+          },
+          {
+            "id": "f-a96a1380-2",
+            "check_result_id": "cr-a96a1380",
+            "rule_type": "ABSTRACT_CHECK",
+            "severity": "INFO",
+            "message": "Abstract section is present.",
+            "created_at": "2026-11-21T12:31:11.313Z"
+          },
+          {
+            "id": "f-a96a1380-3",
+            "check_result_id": "cr-a96a1380",
+            "rule_type": "KEYWORDS_CHECK",
+            "severity": "INFO",
+            "message": "Keywords section is present.",
+            "created_at": "2026-11-21T12:31:11.319Z"
+          }
+        ]
+      }
+    },
+    "request": {
+      "filename": "stage6-20261121t123048z-438991-persistence.docx",
+      "bytes": 1127,
+      "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+      "manuscriptId": "ms-d124d319",
+      "filePath": "/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx"
+    }
+  },
+  "podDelete": {
+    "target": "journalfit-backend-7496d44d87-s68jp",
+    "targetUid": "c9391e69-3d29-4925-a9d5-f8bf5fef1c2d",
+    "gracePeriodSeconds": 30,
+    "replacementReadySeconds": 13.226,
+    "oldPodGoneSeconds": 13.226,
+    "replacementSeconds": 0.317,
+    "pods": [
+      {
+        "name": "journalfit-backend-7496d44d87-45bmt",
+        "uid": "a549a994-926a-4b1a-8543-f9cce652c36a",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:31:15Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:31:16Z",
+            "lastState": {}
+          }
+        ]
+      },
+      {
+        "name": "journalfit-backend-7496d44d87-stdss",
+        "uid": "4953f4dc-b7fa-4784-b66a-308d6f583980",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:29:55Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:29:56Z",
+            "lastState": {}
+          }
+        ]
+      }
+    ],
+    "newUids": [
+      "a549a994-926a-4b1a-8543-f9cce652c36a"
+    ],
+    "oldUidAbsent": true,
+    "report": {
+      "http": 200,
+      "id": "ms-d124d319",
+      "tenant": "s6-20261121t123048z-438991",
+      "score": 100,
+      "status": "COMPLETED",
+      "findings": [
+        "ABSTRACT_CHECK",
+        "KEYWORDS_CHECK",
+        "WORD_COUNT"
+      ]
+    },
+    "databaseUnchanged": true,
+    "files": {
+      "journalfit-backend-7496d44d87-45bmt": {
+        "uid": 10001,
+        "path": "/app/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "mode": 33188,
+        "fileUid": 10001,
+        "fileGid": 10001,
+        "matching": [
+          "ms-d124d319-stage6-20261121t123048z-438991-persistence.docx"
+        ],
+        "modeOctal": "0o644",
+        "matchesExpected": true,
+        "noOrphans": true
+      },
+      "journalfit-backend-7496d44d87-stdss": {
+        "uid": 10001,
+        "path": "/app/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "mode": 33188,
+        "fileUid": 10001,
+        "fileGid": 10001,
+        "matching": [
+          "ms-d124d319-stage6-20261121t123048z-438991-persistence.docx"
+        ],
+        "modeOctal": "0o644",
+        "matchesExpected": true,
+        "noOrphans": true
+      }
+    }
+  },
+  "rollout": {
+    "generationBefore": 20,
+    "generationAfter": 21,
+    "restartedAt": "2026-11-21T19:31:30+07:00",
+    "seconds": 22.441,
+    "statusOutput": "Waiting for deployment \"journalfit-backend\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 out of 2 new replicas have been updated...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 2 old replicas are pending termination...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 old replicas are pending termination...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 old replicas are pending termination...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 old replicas are pending termination...\nWaiting for deployment \"journalfit-backend\" rollout to finish: 1 old replicas are pending termination...\ndeployment \"journalfit-backend\" successfully rolled out",
+    "succeeded": true,
+    "podsBefore": [
+      {
+        "name": "journalfit-backend-7496d44d87-45bmt",
+        "uid": "a549a994-926a-4b1a-8543-f9cce652c36a",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:31:15Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:31:16Z",
+            "lastState": {}
+          }
+        ]
+      },
+      {
+        "name": "journalfit-backend-7496d44d87-stdss",
+        "uid": "4953f4dc-b7fa-4784-b66a-308d6f583980",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:29:55Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:29:56Z",
+            "lastState": {}
+          }
+        ]
+      }
+    ],
+    "podsAfter": [
+      {
+        "name": "journalfit-backend-6df66fd858-gklcz",
+        "uid": "198290c8-8cb8-4212-a4ea-6a82c6aea29e",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:31:40Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:31:43Z",
+            "lastState": {}
+          }
+        ]
+      },
+      {
+        "name": "journalfit-backend-6df66fd858-hl95n",
+        "uid": "4bf1eeb3-84dd-47b3-9d8b-c2c1142ddbf6",
+        "node": "k3d-capstone-agent-0",
+        "createdAt": "2026-11-21T12:31:29Z",
+        "ready": true,
+        "containers": [
+          {
+            "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+            "restarts": 0,
+            "startedAt": "2026-11-21T12:31:30Z",
+            "lastState": {}
+          }
+        ]
+      }
+    ],
+    "oldPodsAbsent": true,
+    "newUids": [
+      "198290c8-8cb8-4212-a4ea-6a82c6aea29e",
+      "4bf1eeb3-84dd-47b3-9d8b-c2c1142ddbf6"
+    ],
+    "probes": {
+      "readiness": {
+        "total": 94,
+        "success": 94,
+        "failed": 0,
+        "successPercent": 100.0,
+        "maxConsecutiveFailures": 0,
+        "failures": []
+      },
+      "report": {
+        "total": 23,
+        "success": 23,
+        "failed": 0,
+        "successPercent": 100.0,
+        "maxConsecutiveFailures": 0,
+        "failures": []
+      }
+    },
+    "probeLog": "rollout-probes.json",
+    "report": {
+      "http": 200,
+      "id": "ms-d124d319",
+      "tenant": "s6-20261121t123048z-438991",
+      "score": 100,
+      "status": "COMPLETED",
+      "findings": [
+        "ABSTRACT_CHECK",
+        "KEYWORDS_CHECK",
+        "WORD_COUNT"
+      ]
+    },
+    "databaseUnchanged": true,
+    "files": {
+      "journalfit-backend-6df66fd858-gklcz": {
+        "uid": 10001,
+        "path": "/app/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "mode": 33188,
+        "fileUid": 10001,
+        "fileGid": 10001,
+        "matching": [
+          "ms-d124d319-stage6-20261121t123048z-438991-persistence.docx"
+        ],
+        "modeOctal": "0o644",
+        "matchesExpected": true,
+        "noOrphans": true
+      },
+      "journalfit-backend-6df66fd858-hl95n": {
+        "uid": 10001,
+        "path": "/app/uploads/ms-d124d319-stage6-20261121t123048z-438991-persistence.docx",
+        "bytes": 1127,
+        "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+        "mode": 33188,
+        "fileUid": 10001,
+        "fileGid": 10001,
+        "matching": [
+          "ms-d124d319-stage6-20261121t123048z-438991-persistence.docx"
+        ],
+        "modeOctal": "0o644",
+        "matchesExpected": true,
+        "noOrphans": true
+      }
+    }
+  },
+  "finishedAt": "2026-11-21T19:31:59.823076+07:00"
+}

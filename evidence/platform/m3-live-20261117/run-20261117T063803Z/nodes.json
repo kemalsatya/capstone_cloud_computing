@@ -1,0 +1,110 @@
+{
+  "items": [
+    {
+      "name": "k3d-capstone-agent-0",
+      "storageLabel": "uploads",
+      "nodeInfo": {
+        "architecture": "amd64",
+        "bootID": "78970183-0d6a-44d9-bdb0-b45443ded8c5",
+        "containerRuntimeVersion": "containerd://2.2.3-k3s1",
+        "kernelVersion": "6.6.87.2-microsoft-standard-WSL2",
+        "kubeProxyVersion": "",
+        "kubeletVersion": "v1.35.5+k3s1",
+        "machineID": "",
+        "operatingSystem": "linux",
+        "osImage": "K3s v1.35.5+k3s1",
+        "swap": {
+          "capacity": 2147483648
+        },
+        "systemUUID": ""
+      },
+      "conditions": [
+        {
+          "lastHeartbeatTime": "2026-11-17T06:31:07Z",
+          "lastTransitionTime": "2026-11-09T16:59:00Z",
+          "message": "kubelet has sufficient memory available",
+          "reason": "KubeletHasSufficientMemory",
+          "status": "False",
+          "type": "MemoryPressure"
+        },
+        {
+          "lastHeartbeatTime": "2026-11-17T06:31:07Z",
+          "lastTransitionTime": "2026-11-09T16:59:00Z",
+          "message": "kubelet has no disk pressure",
+          "reason": "KubeletHasNoDiskPressure",
+          "status": "False",
+          "type": "DiskPressure"
+        },
+        {
+          "lastHeartbeatTime": "2026-11-17T06:31:07Z",
+          "lastTransitionTime": "2026-11-09T16:59:00Z",
+          "message": "kubelet has sufficient PID available",
+          "reason": "KubeletHasSufficientPID",
+          "status": "False",
+          "type": "PIDPressure"
+        },
+        {
+          "lastHeartbeatTime": "2026-11-17T06:31:07Z",
+          "lastTransitionTime": "2026-11-10T07:49:25Z",
+          "message": "kubelet is posting ready status",
+          "reason": "KubeletReady",
+          "status": "True",
+          "type": "Ready"
+        }
+      ]
+    },
+    {
+      "name": "k3d-capstone-server-0",
+      "storageLabel": null,
+      "nodeInfo": {
+        "architecture": "amd64",
+        "bootID": "78970183-0d6a-44d9-bdb0-b45443ded8c5",
+        "containerRuntimeVersion": "containerd://2.2.3-k3s1",
+        "kernelVersion": "6.6.87.2-microsoft-standard-WSL2",
+        "kubeProxyVersion": "",
+        "kubeletVersion": "v1.35.5+k3s1",
+        "machineID": "",
+        "operatingSystem": "linux",
+        "osImage": "K3s v1.35.5+k3s1",
+        "swap": {
+          "capacity": 2147483648
+        },
+        "systemUUID": ""
+      },
+      "conditions": [
+        {
+          "lastHeartbeatTime": "2026-11-17T06:34:53Z",
+          "lastTransitionTime": "2026-11-09T16:58:57Z",
+          "message": "kubelet has sufficient memory available",
+          "reason": "KubeletHasSufficientMemory",
+          "status": "False",
+          "type": "MemoryPressure"
+        },
+        {
+          "lastHeartbeatTime": "2026-11-17T06:34:53Z",
+          "lastTransitionTime": "2026-11-09T16:58:57Z",
+          "message": "kubelet has no disk pressure",
+          "reason": "KubeletHasNoDiskPressure",
+          "status": "False",
+          "type": "DiskPressure"
+        },
+        {
+          "lastHeartbeatTime": "2026-11-17T06:34:53Z",
+          "lastTransitionTime": "2026-11-09T16:58:57Z",
+          "message": "kubelet has sufficient PID available",
+          "reason": "KubeletHasSufficientPID",
+          "status": "False",
+          "type": "PIDPressure"
+        },
+        {
+          "lastHeartbeatTime": "2026-11-17T06:34:53Z",
+          "lastTransitionTime": "2026-11-09T16:58:57Z",
+          "message": "kubelet is posting ready status",
+          "reason": "KubeletReady",
+          "status": "True",
+          "type": "Ready"
+        }
+      ]
+    }
+  ]
+}

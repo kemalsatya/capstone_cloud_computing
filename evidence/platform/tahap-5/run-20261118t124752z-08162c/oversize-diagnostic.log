@@ -1,0 +1,16 @@
+[pod/journalfit-backend-b84c65dd-9nvmp/backend] [Unhandled Error] MulterError: File too large
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at abortWithCode (/app/node_modules/multer/lib/make-middleware.js:225:22)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at FileStream.<anonymous> (/app/node_modules/multer/lib/make-middleware.js:330:11)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at FileStream.emit (node:events:519:28)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at SBMH.ssCb [as _cb] (/app/node_modules/busboy/lib/types/multipart.js:479:32)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at feed (/app/node_modules/streamsearch/lib/sbmh.js:219:14)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at SBMH.push (/app/node_modules/streamsearch/lib/sbmh.js:104:16)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at Multipart._write (/app/node_modules/busboy/lib/types/multipart.js:567:19)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at writeOrBuffer (node:internal/streams/writable:572:12)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at _write (node:internal/streams/writable:501:10)
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]     at Writable.write (node:internal/streams/writable:510:10) {
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]   code: 'LIMIT_FILE_SIZE',
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]   field: 'file',
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]   filename: 'stage5-20261118t124752z-08162c-oversize.docx',
+[pod/journalfit-backend-b84c65dd-9nvmp/backend]   storageErrors: []
+[pod/journalfit-backend-b84c65dd-9nvmp/backend] }

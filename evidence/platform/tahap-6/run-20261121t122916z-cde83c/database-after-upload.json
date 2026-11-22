@@ -1,0 +1,79 @@
+{
+  "identity": {
+    "database": "journalfit",
+    "role": "capstone",
+    "read_only": "on"
+  },
+  "tenants": [
+    {
+      "id": "s6-20261121t122916z-cde83c",
+      "name": "Tenant s6-20261121t122916z-cde83c"
+    }
+  ],
+  "templates": [
+    {
+      "id": "tpl-s6-20261121t122916z-cde83c-default",
+      "tenant_id": "s6-20261121t122916z-cde83c",
+      "template_name": "Standard Default Template",
+      "min_words": 3000,
+      "max_words": 8000,
+      "require_abstract": true,
+      "require_keywords": true,
+      "created_at": "2026-11-21T12:29:37.963Z"
+    }
+  ],
+  "manuscripts": [
+    {
+      "id": "ms-6c850b2c",
+      "tenant_id": "s6-20261121t122916z-cde83c",
+      "author_id": null,
+      "title": "stage6-20261121t122916z-cde83c-persistence.docx",
+      "file_path": "/uploads/ms-6c850b2c-stage6-20261121t122916z-cde83c-persistence.docx",
+      "upload_time": "2026-11-21T12:29:38.128Z"
+    }
+  ],
+  "results": [
+    {
+      "id": "cr-40bcdff2",
+      "manuscript_id": "ms-6c850b2c",
+      "status": "COMPLETED",
+      "format_score": 100,
+      "created_at": "2026-11-21T12:29:38.173Z"
+    }
+  ],
+  "findings": [
+    {
+      "id": "f-40bcdff2-1",
+      "check_result_id": "cr-40bcdff2",
+      "rule_type": "WORD_COUNT",
+      "severity": "INFO",
+      "message": "Word count is 3500 words (compliant: 3000-8000 words).",
+      "created_at": "2026-11-21T12:29:38.179Z"
+    },
+    {
+      "id": "f-40bcdff2-2",
+      "check_result_id": "cr-40bcdff2",
+      "rule_type": "ABSTRACT_CHECK",
+      "severity": "INFO",
+      "message": "Abstract section is present.",
+      "created_at": "2026-11-21T12:29:38.185Z"
+    },
+    {
+      "id": "f-40bcdff2-3",
+      "check_result_id": "cr-40bcdff2",
+      "rule_type": "KEYWORDS_CHECK",
+      "severity": "INFO",
+      "message": "Keywords section is present.",
+      "created_at": "2026-11-21T12:29:38.213Z"
+    }
+  ],
+  "demo": [
+    {
+      "id": "ms-519b3203",
+      "tenant_id": "tenant-m3-demo",
+      "title": "M3_Demo_JournalFit.docx",
+      "file_path": "/uploads/ms-519b3203-M3_Demo_JournalFit.docx",
+      "upload_time": "2026-11-17T06:38:19.608Z"
+    }
+  ]
+}

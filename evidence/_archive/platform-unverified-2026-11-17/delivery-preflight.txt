@@ -1,0 +1,64 @@
+﻿Timestamp: 2026-11-10T01:01:59.8832728+07:00
+Command: git ls-remote --heads origin refs/heads/feat/k8s-manifests
+Remote branch not published; no Argo sync proof possible from local-only files.
+Command: validate Argo Application via server dry-run (do not apply yet)
+application.argoproj.io/journalfit-backend created (server dry run)
+PVC annotation only: keep data outside automatic prune/delete.
+persistentvolumeclaim/journalfit-uploads configured
+NAME                                               READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/argocd-applicationset-controller   1/1     1            1           3m36s
+deployment.apps/argocd-dex-server                  1/1     1            1           3m36s
+deployment.apps/argocd-notifications-controller    1/1     1            1           3m36s
+deployment.apps/argocd-redis                       1/1     1            1           3m36s
+deployment.apps/argocd-repo-server                 1/1     1            1           3m36s
+deployment.apps/argocd-server                      1/1     1            1           3m36s
+
+NAME                                             READY   AGE
+statefulset.apps/argocd-application-controller   1/1     3m36s
+kubectl : No resources found in argocd namespace.
+At line:15 char:1
++ kubectl --context k3d-capstone -n argocd get applications.argoproj.io ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (No resources found in argocd namespace.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Image update helper positive test: existing published source tag 3bdf305
+bash.exe : warning: in the working copy of 'deployment/kustomization.yaml', LF will be replaced by CRLF the next time 
+Git touches it
+At line:17 char:1
++ & 'C:\Program Files\Git\bin\bash.exe' automation/scripts/prepare-imag ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (warning: in the... Git touches it:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+warning: in the working copy of 'deployment/kustomization.yaml', LF will be replaced by CRLF the next time Git touches 
+it
+diff --git a/deployment/kustomization.yaml b/deployment/kustomization.yaml
+index 0de4a0d..f14cc2d 100644
+--- a/deployment/kustomization.yaml
++++ b/deployment/kustomization.yaml
+@@ -1,12 +1,12 @@
+ apiVersion: kustomize.config.k8s.io/v1beta1
+ kind: Kustomization
+ resources:
+-  - namespace.yaml
+   - configmap.yaml
+   - pvc.yaml
+   - deployment.yaml
+   - service.yaml
+   - ingress.yaml
++  - hpa.yaml
+ images:
+   - name: registry:5000/journalfit-backend
+-    newTag: platform-dev
++    newTag: 3bdf305
+Desired-state change prepared. Review through a feature branch and PR; no direct commit to main.
+Helper positive exit code: 0
+bash.exe : Expected a seven-character hexadecimal source SHA.
+At line:21 char:1
++ & 'C:\Program Files\Git\bin\bash.exe' automation/scripts/prepare-imag ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Expected a seve...mal source SHA.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+Invalid tag rejection exit code: 1

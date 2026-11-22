@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-11-10T00:18:35.321008+07:00",
+  "fixture_name": "Panduan_Eksekusi_Capstone_JournalFit_v2.docx",
+  "fixture_sha256": "ab93dff100416e06235c16f297d8d53b61e7b9c95bfd444f22e572fef2b8d753",
+  "manuscript_id": "ms-a5430ef1",
+  "stored_path": "/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx",
+  "upload_http_status": 201,
+  "report_http_status": 200,
+  "report": {
+    "success": true,
+    "message": "Manuscript report retrieved successfully.",
+    "data": {
+      "manuscript": {
+        "id": "ms-a5430ef1",
+        "tenant_id": "tenant-a",
+        "author_id": null,
+        "title": "Panduan_Eksekusi_Capstone_JournalFit_v2.docx",
+        "file_path": "/uploads/ms-a5430ef1-Panduan_Eksekusi_Capstone_JournalFit_v2.docx",
+        "upload_time": "2026-11-09T17:18:35.268Z",
+        "tenant_name": "Journal Fitra Journal (Tenant A)"
+      },
+      "checkResult": {
+        "id": "cr-2441838a",
+        "manuscript_id": "ms-a5430ef1",
+        "status": "COMPLETED",
+        "format_score": 80,
+        "created_at": "2026-11-09T17:18:35.275Z"
+      },
+      "findings": [
+        {
+          "id": "f-2441838a-1",
+          "check_result_id": "cr-2441838a",
+          "rule_type": "WORD_COUNT",
+          "severity": "WARNING",
+          "message": "Word count (1233) is below minimum requirement of 3000 words.",
+          "created_at": "2026-11-09T17:18:35.280Z"
+        },
+        {
+          "id": "f-2441838a-2",
+          "check_result_id": "cr-2441838a",
+          "rule_type": "ABSTRACT_CHECK",
+          "severity": "INFO",
+          "message": "Abstract section is present.",
+          "created_at": "2026-11-09T17:18:35.285Z"
+        },
+        {
+          "id": "f-2441838a-3",
+          "check_result_id": "cr-2441838a",
+          "rule_type": "KEYWORDS_CHECK",
+          "severity": "INFO",
+          "message": "Keywords section is present.",
+          "created_at": "2026-11-09T17:18:35.290Z"
+        }
+      ]
+    }
+  }
+}

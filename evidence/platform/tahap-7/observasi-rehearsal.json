@@ -1,0 +1,64 @@
+{
+  "recordType": "observed-terminal-summary",
+  "dateLocal": "2026-11-22",
+  "context": "k3d-capstone",
+  "namespace": "default",
+  "localRehearsalPassed": true,
+  "secondLaptopVerified": false,
+  "m4HandoffAccepted": false,
+  "source": {
+    "head": "d9ab35a10eab8e9c67e45bc53f8a22522846b038",
+    "revisionState": "working-tree",
+    "starterSha256": "5fe9ea89b8bf219d3053eefe5499b5c95aa7b848f653afc40f467a08cfc386ac"
+  },
+  "initialUploadAttempt": {
+    "readinessAt": "2026-11-22T03:49:18.601Z",
+    "uploadHttp": 500,
+    "postgresSqlState": "22001",
+    "diagnosis": "Auto-generated template ID was 52 characters for a VARCHAR(50) column"
+  },
+  "freshUpload": {
+    "readinessAt": "2026-11-22T03:50:37.223Z",
+    "readinessHttp": 200,
+    "uploadTime": "2026-11-22T03:50:38.947Z",
+    "tenant": "s7-8cf3fdc37c094436a9be51c1db7d8c10",
+    "manuscriptId": "ms-1f8ebbf7",
+    "uploadHttp": 201,
+    "reportHttp": 200,
+    "reportStatus": "COMPLETED",
+    "formatScore": 100,
+    "wordCount": 3500,
+    "fixtureBytes": 1127,
+    "fixtureSha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+    "hashMatchesOn": [
+      "journalfit-backend-6df66fd858-gklcz",
+      "journalfit-backend-6df66fd858-hl95n"
+    ]
+  },
+  "existingReport": {
+    "readinessAt": "2026-11-22T03:50:43.739Z",
+    "readinessHttp": 200,
+    "manuscriptId": "ms-519b3203",
+    "reportHttp": 200,
+    "reportStatus": "COMPLETED",
+    "formatScore": 50
+  },
+  "runtime": {
+    "readyNodes": 2,
+    "readyReplicas": 2,
+    "pvcPhase": "Bound",
+    "imageDigest": "sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557"
+  },
+  "isolatedSchemaTrial": {
+    "postgresImage": "postgres:17-alpine",
+    "database": "journalfit",
+    "tables": ["check_results", "findings", "format_rule_templates", "manuscripts", "tenants", "users"]
+  },
+  "localRebuild": {
+    "imageTag": "local-d9ab35a-20261122035309838",
+    "manifestDigest": "sha256:58e1c7370074bc370e1425e5757dd1d7682018b3b97c8737aa782e6dbe918a87",
+    "buildAndPushPassed": true,
+    "serverDryRunResources": ["ConfigMap", "Service", "PersistentVolumeClaim", "Deployment", "HorizontalPodAutoscaler", "Ingress"],
+    "rolloutApplied": false
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "startedAt": "2026-11-17T21:07:54.162538+07:00",
+  "status": "passed",
+  "source": {
+    "head": "d9ab35a10eab8e9c67e45bc53f8a22522846b038",
+    "scriptSha256": "6331ce2fd65eaea86a155c9bda6e9f0d468d7d8a36adf9e4a6cf89905b233db4",
+    "manifestSha256": {
+      "deployment/configmap.yaml": "6bb234bebba2a14440297df8f749069bf5d433765828451767b3f5e30bf5422e",
+      "deployment/deployment.yaml": "9ed103f43d8ded1fc79199e0468a1ba2972882b91fa8949cee71ceee6f390edb",
+      "deployment/hpa.yaml": "63ddb5f9a1f5c9c2f84b45ecb0cd881210318d9fcac5949ffa76bd27c5b83c46",
+      "deployment/ingress.yaml": "5f3cf7e6b23c0fcbb6a66c59632a0c2cdba6cd4fb51f1511fcbb07811d3ac766",
+      "deployment/kustomization.yaml": "0554f5e191fe71ddaac1f70c37ddea6280be882fa80f3ac5a1070cfa9d7ac294",
+      "deployment/pvc.yaml": "0fc406fdfadb532ad273caca25623d9dc1e0f2a896c5e3e19a77c0a7337eaca2",
+      "deployment/service.yaml": "c96fccf88ebcce6d5f6543a0945939cacc6c6c8d789e3d3d42a6c7cd41cce8cd"
+    }
+  },
+  "serverDryRun": {
+    "exitCode": 0,
+    "resourceCount": 6
+  },
+  "diff": {
+    "exitCode": 0,
+    "stdout": "",
+    "stderr": "",
+    "executable": "C:\\Program Files\\Git\\usr\\bin\\diff.exe",
+    "scope": "child process PATH only"
+  },
+  "secretReference": {
+    "name": "journalfit-backend-secret",
+    "namespace": "default",
+    "keys": [
+      "DB_PASSWORD"
+    ]
+  },
+  "readyEndpointPods": [
+    "journalfit-backend-b84c65dd-9vd69",
+    "journalfit-backend-b84c65dd-9nvmp"
+  ],
+  "storage": {
+    "pvcStatus": "Bound",
+    "pvName": "pvc-462818b8-6b0b-475e-9511-34f656284417",
+    "reclaimPolicy": "Delete",
+    "local": {
+      "path": "/var/lib/rancher/k3s/storage/pvc-462818b8-6b0b-475e-9511-34f656284417_default_journalfit-uploads"
+    },
+    "hostPath": null,
+    "nodeAffinity": {
+      "required": {
+        "nodeSelectorTerms": [
+          {
+            "matchExpressions": [
+              {
+                "key": "kubernetes.io/hostname",
+                "operator": "In",
+                "values": [
+                  "k3d-capstone-agent-0"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
+  },
+  "storageNode": {
+    "name": "k3d-capstone-agent-0",
+    "labels": {
+      "journalfit-storage": "uploads"
+    }
+  },
+  "runtimes": {
+    "journalfit-backend-b84c65dd-9nvmp": {
+      "uid": 10001,
+      "gid": 10001,
+      "groups": [
+        10001
+      ],
+      "cwd": "/app",
+      "port": "8000",
+      "environment": {
+        "PORT": "8000",
+        "NODE_ENV": "production",
+        "DB_HOST": "host.docker.internal",
+        "DB_PORT": "5432",
+        "DB_USER": "capstone",
+        "DB_NAME": "journalfit"
+      },
+      "uploads": {
+        "uid": 0,
+        "gid": 10001,
+        "mode": "2777",
+        "writable": true
+      },
+      "serviceRequest": {
+        "url": "http://journalfit-backend.default.svc.cluster.local:80/health/ready",
+        "status": 200,
+        "body": {
+          "status": "ready",
+          "database": "connected",
+          "timestamp": "2026-11-17T14:08:05.481Z"
+        }
+      }
+    },
+    "journalfit-backend-b84c65dd-9vd69": {
+      "uid": 10001,
+      "gid": 10001,
+      "groups": [
+        10001
+      ],
+      "cwd": "/app",
+      "port": "8000",
+      "environment": {
+        "PORT": "8000",
+        "NODE_ENV": "production",
+        "DB_HOST": "host.docker.internal",
+        "DB_PORT": "5432",
+        "DB_USER": "capstone",
+        "DB_NAME": "journalfit"
+      },
+      "uploads": {
+        "uid": 0,
+        "gid": 10001,
+        "mode": "2777",
+        "writable": true
+      },
+      "serviceRequest": {
+        "url": "http://journalfit-backend.default.svc.cluster.local:80/health/ready",
+        "status": 200,
+        "body": {
+          "status": "ready",
+          "database": "connected",
+          "timestamp": "2026-11-17T14:08:06.919Z"
+        }
+      }
+    }
+  },
+  "runtime": {
+    "uid": 10001,
+    "gid": 10001,
+    "groups": [
+      10001
+    ],
+    "cwd": "/app",
+    "port": "8000",
+    "environment": {
+      "PORT": "8000",
+      "NODE_ENV": "production",
+      "DB_HOST": "host.docker.internal",
+      "DB_PORT": "5432",
+      "DB_USER": "capstone",
+      "DB_NAME": "journalfit"
+    },
+    "uploads": {
+      "uid": 0,
+      "gid": 10001,
+      "mode": "2777",
+      "writable": true
+    },
+    "serviceRequest": {
+      "url": "http://journalfit-backend.default.svc.cluster.local:80/health/ready",
+      "status": 200,
+      "body": {
+        "status": "ready",
+        "database": "connected",
+        "timestamp": "2026-11-17T14:08:05.481Z"
+      }
+    }
+  },
+  "podRestarts": [
+    {
+      "pod": "journalfit-backend-b84c65dd-9nvmp",
+      "restarts": 1,
+      "lastState": {
+        "terminated": {
+          "containerID": "containerd://250ee5ac1188e24f5614ae190ed7f1b92c70f6af897a593bdc055ef11d0bc26c",
+          "exitCode": 143,
+          "finishedAt": "2026-11-17T13:26:23Z",
+          "reason": "Error",
+          "startedAt": "2026-11-17T06:38:23Z"
+        }
+      }
+    },
+    {
+      "pod": "journalfit-backend-b84c65dd-9vd69",
+      "restarts": 1,
+      "lastState": {
+        "terminated": {
+          "containerID": "containerd://d8a723514f6f37955f81e0ceff9ff90c1307ceb93965e9711d7556e2d98f07b2",
+          "exitCode": 143,
+          "finishedAt": "2026-11-17T13:26:23Z",
+          "reason": "Error",
+          "startedAt": "2026-11-17T06:30:47Z"
+        }
+      }
+    }
+  ],
+  "ingressRequests": {
+    "/health/live": {
+      "status": 200,
+      "body": {
+        "status": "alive",
+        "timestamp": "2026-11-17T14:08:07.160Z"
+      }
+    },
+    "/health/ready": {
+      "status": 200,
+      "body": {
+        "status": "ready",
+        "database": "connected",
+        "timestamp": "2026-11-17T14:08:07.182Z"
+      }
+    }
+  },
+  "metricsApiAvailable": true,
+  "argoApplications": [],
+  "artifactDigest": "sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+  "replicaOwnership": {
+    "sourceHasReplicas": false,
+    "liveReplicas": 2,
+    "dryRunReplicas": 2,
+    "hpaConditions": {
+      "AbleToScale": "True",
+      "ScalingActive": "True",
+      "ScalingLimited": "True"
+    }
+  },
+  "checks": {
+    "sixExpectedResources": true,
+    "serverDryRunAccepted": true,
+    "noConfigurationDrift": true,
+    "consistentNamespaces": true,
+    "configMapMatchesContract": true,
+    "configMapReference": true,
+    "runtimeEnvironmentMatchesConfigMap": true,
+    "externalSecretReference": true,
+    "deploymentLabelsMatch": true,
+    "serviceSelectsWorkload": true,
+    "serviceTargetsNamedPort": true,
+    "readyEndpointsMatchPods": true,
+    "ingressTargetsService": true,
+    "serviceHttpReady": true,
+    "ingressHealthReady": true,
+    "nonRootIdentity": true,
+    "restrictedCapabilities": true,
+    "serviceAccountTokenNotMounted": true,
+    "uploadMountAndPermissions": true,
+    "pvcReferenceAndBinding": true,
+    "singleStorageNodePlacement": true,
+    "positiveResourceBounds": true,
+    "rollingUpdateConfigured": true,
+    "hpaOwnsReplicas": true,
+    "hpaBoundsAndMetricsAvailable": true,
+    "podArtifactMatchesBuild": true
+  },
+  "finishedAt": "2026-11-17T21:08:07.820622+07:00"
+}

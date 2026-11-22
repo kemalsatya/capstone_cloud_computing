@@ -1,0 +1,2154 @@
+{
+  "startedAt": "2026-11-17T17:01:48.572739+07:00",
+  "status": "needs_attention",
+  "auditCompleted": true,
+  "source": {
+    "head": "d9ab35a10eab8e9c67e45bc53f8a22522846b038",
+    "branch": "feat/k8s-manifests",
+    "auditScriptSha256": "874d1c007db2e589b730490ad861a383ed5f0567c7fdfdd5dec37a490917a996",
+    "schemaSha256": "73a75f57e37fa7e0ed4e45a9775daa86976367d40a13d05b4fc7499e6097d499"
+  },
+  "reference": {
+    "package": "reference-docs\\Cloud_Computing_Common_Capstone_Infrastructure_Package.zip",
+    "sha256": "6afa9ca6d7807e878071588fda1c0d9206f089c4f36dcc91094d6ec9ea06ee71",
+    "versionMatrix": "# Course Snapshot - 27 October 2026\n\n| Component | Pinned / expected version | Notes |\n|---|---:|---|\n| Gitea | 28.2.0 | Local Git + Actions server |\n| Gitea Runner | 5.1.1 | Custom classroom image; trusted local repositories only |\n| Argo CD | 3.5.6 | Non-HA install for local k3d |\n| Keycloak | 26.8.1 | `start-dev` with imported classroom realm |\n| PostgreSQL | 17-alpine | Application database major version pinned |\n| Prometheus | 3.15.1 | Optional observability profile |\n| Grafana | 13.2.4 | Optional observability profile |\n| Trivy | 0.76.0 | Invoked as a container from CI/manual scan |\n| Docker Registry | 2 | Local insecure registry, localhost only |\n| k3d | 5.9.0 recommended | Installed on student host |\n| k3s | k3d default | Record actual server version in evidence |\n| kubectl | current compatible client | Installed on student host |\n\nThe course package pins the infrastructure services that are most likely to affect reproducibility. Students must record the actual versions used in their project evidence.\n",
+    "registryConfiguration": "mirrors:\n  \"registry:5000\":\n    endpoint:\n      - \"http://registry:5000\"\n",
+    "metricsConfiguration": "global:\n  scrape_interval: 10s\n  evaluation_interval: 10s\n\nscrape_configs:\n  - job_name: capstone-app\n    metrics_path: /q/metrics\n    static_configs:\n      - targets:\n          - host.docker.internal:8088\n        labels:\n          environment: local-capstone\n\n  - job_name: prometheus\n    static_configs:\n      - targets:\n          - localhost:9090\n"
+  },
+  "tools": {
+    "docker": {
+      "Client": {
+        "Version": "29.7.2",
+        "ApiVersion": "1.55",
+        "DefaultAPIVersion": "1.55",
+        "GitCommit": "a7dcaa6",
+        "GoVersion": "go1.26.5",
+        "Os": "windows",
+        "Arch": "amd64",
+        "BuildTime": "Wed Aug  5 18:31:33 2026",
+        "Context": "desktop-linux"
+      },
+      "Server": {
+        "Platform": {
+          "Name": "Docker Desktop 4.89.0 (238018)"
+        },
+        "Version": "29.7.2",
+        "ApiVersion": "1.55",
+        "MinAPIVersion": "1.40",
+        "Os": "linux",
+        "Arch": "amd64",
+        "Components": [
+          {
+            "Name": "Engine",
+            "Version": "29.7.2",
+            "Details": {
+              "ApiVersion": "1.55",
+              "Arch": "amd64",
+              "BuildTime": "Wed Aug  5 18:28:36 2026",
+              "Experimental": "false",
+              "GitCommit": "6a43e3d",
+              "GoVersion": "go1.26.5",
+              "KernelVersion": "6.6.87.2-microsoft-standard-WSL2",
+              "MinAPIVersion": "1.40",
+              "Module": "github.com/moby/moby/v2",
+              "ModuleVersion": "v2.0.0+unknown",
+              "Os": "linux"
+            }
+          },
+          {
+            "Name": "containerd",
+            "Version": "v2.3.3",
+            "Details": {
+              "GitCommit": "aad11006b869517fcd3009450b6f82da282e1a9b"
+            }
+          },
+          {
+            "Name": "runc",
+            "Version": "1.4.3",
+            "Details": {
+              "GitCommit": "v1.4.3-0-gbb14dabe"
+            }
+          },
+          {
+            "Name": "docker-init",
+            "Version": "0.19.0",
+            "Details": {
+              "GitCommit": "de40ad0"
+            }
+          }
+        ],
+        "GitCommit": "6a43e3d",
+        "GoVersion": "go1.26.5",
+        "KernelVersion": "6.6.87.2-microsoft-standard-WSL2",
+        "BuildTime": "2026-08-05T18:28:36.000000000+00:00"
+      }
+    },
+    "compose": "5.5.0",
+    "git": "git version 2.51.2.windows.1",
+    "k3d": "k3d version v5.9.0\nk3s version v1.35.5-k3s1 (default)",
+    "kubernetes": {
+      "clientVersion": {
+        "major": "1",
+        "minor": "36",
+        "gitVersion": "v1.36.1",
+        "gitCommit": "756939600b9a7180fc2df6550a4585b638875e67",
+        "gitTreeState": "clean",
+        "buildDate": "2026-05-12T09:54:35Z",
+        "goVersion": "go1.26.2",
+        "compiler": "gc",
+        "platform": "windows/amd64"
+      },
+      "kustomizeVersion": "v5.8.1",
+      "serverVersion": {
+        "major": "1",
+        "minor": "35",
+        "emulationMajor": "1",
+        "emulationMinor": "35",
+        "minCompatibilityMajor": "1",
+        "minCompatibilityMinor": "34",
+        "gitVersion": "v1.35.5+k3s1",
+        "gitCommit": "6a4781ad53ee5cad273bedcd9462ae36ac97d798",
+        "gitTreeState": "clean",
+        "buildDate": "2026-05-20T11:15:10Z",
+        "goVersion": "go1.25.9",
+        "compiler": "gc",
+        "platform": "linux/amd64"
+      }
+    }
+  },
+  "services": {
+    "capstone-postgres": {
+      "exists": true,
+      "running": true,
+      "health": "healthy",
+      "image": "postgres:17-alpine",
+      "imageId": "sha256:b0f9560a2de083e2cc7382e75f808c7381a32852a7ec49117deedb300e552b24",
+      "startedAt": "2026-11-16T13:57:52.459655075Z",
+      "ports": {
+        "5432/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "5432"
+          }
+        ]
+      },
+      "networks": {
+        "capstone-net": {
+          "ip": "172.28.0.5",
+          "aliases": [
+            "capstone-postgres",
+            "postgres"
+          ]
+        }
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "name": "cloud-capstone_postgres_data",
+          "destination": "/var/lib/postgresql/data"
+        }
+      ]
+    },
+    "capstone-registry": {
+      "exists": true,
+      "running": true,
+      "health": null,
+      "image": "registry:2",
+      "imageId": "sha256:a3d8aaa63ed8681a604f1dea0aa03f100d5895b6a58ace528858a7b332415373",
+      "startedAt": "2026-11-16T13:57:52.456542041Z",
+      "ports": {
+        "5000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "5001"
+          }
+        ]
+      },
+      "networks": {
+        "capstone-net": {
+          "ip": "172.28.0.4",
+          "aliases": [
+            "capstone-registry",
+            "registry",
+            "registry"
+          ]
+        }
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "name": "cloud-capstone_registry_data",
+          "destination": "/var/lib/registry"
+        }
+      ]
+    },
+    "capstone-gitea": {
+      "exists": true,
+      "running": true,
+      "health": null,
+      "image": "gitea/gitea:28.2.0",
+      "imageId": "sha256:30777c91280d973fa02be48b1ade735bd6859e8f6f7af3b4444d519437852504",
+      "startedAt": "2026-11-16T13:57:52.45412418Z",
+      "ports": {
+        "22/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "2222"
+          }
+        ],
+        "3000/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "3001"
+          }
+        ]
+      },
+      "networks": {
+        "capstone-net": {
+          "ip": "172.28.0.3",
+          "aliases": [
+            "capstone-gitea",
+            "gitea"
+          ]
+        }
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "name": "cloud-capstone_gitea_data",
+          "destination": "/data"
+        }
+      ]
+    },
+    "capstone-keycloak": {
+      "exists": true,
+      "running": true,
+      "health": null,
+      "image": "quay.io/keycloak/keycloak:26.8.1",
+      "imageId": "sha256:3f3c5f8e03c614774b4bd9173b88391fefa4153bfc010d8012d59ad825377332",
+      "startedAt": "2026-11-16T13:57:52.462827734Z",
+      "ports": {
+        "8080/tcp": [
+          {
+            "HostIp": "127.0.0.1",
+            "HostPort": "8081"
+          }
+        ]
+      },
+      "networks": {
+        "capstone-net": {
+          "ip": "172.28.0.2",
+          "aliases": [
+            "capstone-keycloak",
+            "keycloak"
+          ]
+        }
+      },
+      "volumes": [
+        {
+          "type": "bind",
+          "name": null,
+          "destination": "/opt/keycloak/data/import/realm-capstone.json"
+        },
+        {
+          "type": "volume",
+          "name": "cloud-capstone_keycloak_data",
+          "destination": "/opt/keycloak/data"
+        }
+      ]
+    },
+    "capstone-gitea-runner": {
+      "exists": false
+    },
+    "capstone-prometheus": {
+      "exists": false
+    },
+    "capstone-grafana": {
+      "exists": false
+    },
+    "k3d-capstone-server-0": {
+      "exists": true,
+      "running": true,
+      "health": null,
+      "image": "docker.io/rancher/k3s:v1.35.5-k3s1",
+      "imageId": "sha256:2074403abe1bded11ef3dde09d457e13be8e0b64c218b1c4f8269b4565cfbc65",
+      "startedAt": "2026-11-17T06:24:48.199558169Z",
+      "ports": {},
+      "networks": {
+        "capstone-net": {
+          "ip": "172.28.0.7",
+          "aliases": null
+        }
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "name": "1f1c3e236dc422ed227dce9da77b6fee5bf84a9bbd2bacd53faa9990d63dd516",
+          "destination": "/var/lib/rancher/k3s"
+        },
+        {
+          "type": "volume",
+          "name": "f41cd86a8c7afe9a0121b6e277a79697a33b51f21ec3b9351e0c7c659b5d12dc",
+          "destination": "/var/log"
+        },
+        {
+          "type": "volume",
+          "name": "k3d-capstone-images",
+          "destination": "/k3d/images"
+        },
+        {
+          "type": "volume",
+          "name": "3d536e6473bab8eec63ba0807d6c8adda552618bc93a05bb2df35fda68aecb15",
+          "destination": "/var/lib/cni"
+        },
+        {
+          "type": "volume",
+          "name": "2cc84c4c02402d7482742fa74e1eb357974cb8a2bccf7029f5c7c19e8af4f32f",
+          "destination": "/var/lib/kubelet"
+        }
+      ]
+    },
+    "k3d-capstone-agent-0": {
+      "exists": true,
+      "running": true,
+      "health": null,
+      "image": "docker.io/rancher/k3s:v1.35.5-k3s1",
+      "imageId": "sha256:2074403abe1bded11ef3dde09d457e13be8e0b64c218b1c4f8269b4565cfbc65",
+      "startedAt": "2026-11-17T06:25:56.971916497Z",
+      "ports": {},
+      "networks": {
+        "capstone-net": {
+          "ip": "172.28.0.8",
+          "aliases": null
+        }
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "name": "k3d-capstone-images",
+          "destination": "/k3d/images"
+        },
+        {
+          "type": "volume",
+          "name": "acddd61e0748e09b567c20e98709267b3b4039342505be869593821b62808aa4",
+          "destination": "/var/lib/cni"
+        },
+        {
+          "type": "volume",
+          "name": "4652d2a599cb8746746eed00749f30587e6f3f6ee57cf29af38dd30839c0ac11",
+          "destination": "/var/lib/kubelet"
+        },
+        {
+          "type": "volume",
+          "name": "218f71526678818b37872168e1359aa7f7af96a1b7565d695ea4424b417b429c",
+          "destination": "/var/lib/rancher/k3s"
+        },
+        {
+          "type": "volume",
+          "name": "74d640c3eba2d6a40db161c453211a1c0de7dbc072e3520da6cfe1e441c42260",
+          "destination": "/var/log"
+        }
+      ]
+    },
+    "k3d-capstone-serverlb": {
+      "exists": true,
+      "running": true,
+      "health": null,
+      "image": "ghcr.io/k3d-io/k3d-proxy:5.9.0",
+      "imageId": "sha256:7be40abfeb6ac9a81d0d4157a7cbf3aacc68a64a1780ca2efb160f1aea915177",
+      "startedAt": "2026-11-17T06:25:11.670811736Z",
+      "ports": {
+        "443/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "8443"
+          },
+          {
+            "HostIp": "::",
+            "HostPort": "8443"
+          }
+        ],
+        "6443/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "6550"
+          }
+        ],
+        "80/tcp": [
+          {
+            "HostIp": "0.0.0.0",
+            "HostPort": "8088"
+          },
+          {
+            "HostIp": "::",
+            "HostPort": "8088"
+          }
+        ]
+      },
+      "networks": {
+        "capstone-net": {
+          "ip": "172.28.0.9",
+          "aliases": null
+        }
+      },
+      "volumes": [
+        {
+          "type": "volume",
+          "name": "k3d-capstone-images",
+          "destination": "/k3d/images"
+        }
+      ]
+    }
+  },
+  "serviceEndpoints": {
+    "gitea": {
+      "httpStatus": 404,
+      "error": "HTTP Error 404: Not Found"
+    },
+    "keycloakDiscovery": {
+      "httpStatus": 200,
+      "body": {
+        "issuer": "http://127.0.0.1:8081/realms/capstone",
+        "authorization_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/auth",
+        "token_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/token",
+        "introspection_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/token/introspect",
+        "userinfo_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/userinfo",
+        "end_session_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/logout",
+        "frontchannel_logout_session_supported": true,
+        "frontchannel_logout_supported": true,
+        "jwks_uri": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/certs",
+        "check_session_iframe": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/login-status-iframe.html",
+        "grant_types_supported": [
+          "authorization_code",
+          "client_credentials",
+          "implicit",
+          "password",
+          "refresh_token",
+          "urn:ietf:params:oauth:grant-type:device_code",
+          "urn:ietf:params:oauth:grant-type:jwt-bearer",
+          "urn:ietf:params:oauth:grant-type:token-exchange",
+          "urn:ietf:params:oauth:grant-type:uma-ticket",
+          "urn:openid:params:grant-type:ciba"
+        ],
+        "acr_values_supported": [
+          "0",
+          "1"
+        ],
+        "response_types_supported": [
+          "code",
+          "none",
+          "id_token",
+          "token",
+          "id_token token",
+          "code id_token",
+          "code token",
+          "code id_token token"
+        ],
+        "subject_types_supported": [
+          "public",
+          "pairwise"
+        ],
+        "prompt_values_supported": [
+          "none",
+          "login",
+          "consent"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "HS256",
+          "HS512",
+          "ES256",
+          "RS256",
+          "HS384",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512"
+        ],
+        "id_token_encryption_alg_values_supported": [
+          "ECDH-ES+A256KW",
+          "ECDH-ES+A192KW",
+          "ECDH-ES+A128KW",
+          "RSA-OAEP",
+          "RSA-OAEP-256",
+          "RSA1_5",
+          "ECDH-ES"
+        ],
+        "id_token_encryption_enc_values_supported": [
+          "A256GCM",
+          "A192GCM",
+          "A128GCM",
+          "A128CBC-HS256",
+          "A192CBC-HS384",
+          "A256CBC-HS512"
+        ],
+        "userinfo_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "HS256",
+          "HS512",
+          "ES256",
+          "RS256",
+          "HS384",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512",
+          "none"
+        ],
+        "userinfo_encryption_alg_values_supported": [
+          "ECDH-ES+A256KW",
+          "ECDH-ES+A192KW",
+          "ECDH-ES+A128KW",
+          "RSA-OAEP",
+          "RSA-OAEP-256",
+          "RSA1_5",
+          "ECDH-ES"
+        ],
+        "userinfo_encryption_enc_values_supported": [
+          "A256GCM",
+          "A192GCM",
+          "A128GCM",
+          "A128CBC-HS256",
+          "A192CBC-HS384",
+          "A256CBC-HS512"
+        ],
+        "request_object_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "HS256",
+          "HS512",
+          "ES256",
+          "RS256",
+          "HS384",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512",
+          "none"
+        ],
+        "request_object_encryption_alg_values_supported": [
+          "ECDH-ES+A256KW",
+          "ECDH-ES+A192KW",
+          "ECDH-ES+A128KW",
+          "RSA-OAEP",
+          "RSA-OAEP-256",
+          "RSA1_5",
+          "ECDH-ES"
+        ],
+        "request_object_encryption_enc_values_supported": [
+          "A256GCM",
+          "A192GCM",
+          "A128GCM",
+          "A128CBC-HS256",
+          "A192CBC-HS384",
+          "A256CBC-HS512"
+        ],
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post",
+          "query.jwt",
+          "fragment.jwt",
+          "form_post.jwt",
+          "jwt"
+        ],
+        "registration_endpoint": "http://127.0.0.1:8081/realms/capstone/clients-registrations/openid-connect",
+        "token_endpoint_auth_methods_supported": [
+          "private_key_jwt",
+          "client_secret_basic",
+          "client_secret_post",
+          "tls_client_auth",
+          "client_secret_jwt"
+        ],
+        "token_endpoint_auth_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "HS256",
+          "HS512",
+          "ES256",
+          "RS256",
+          "HS384",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512"
+        ],
+        "introspection_endpoint_auth_methods_supported": [
+          "private_key_jwt",
+          "client_secret_basic",
+          "client_secret_post",
+          "tls_client_auth",
+          "client_secret_jwt"
+        ],
+        "introspection_endpoint_auth_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "HS256",
+          "HS512",
+          "ES256",
+          "RS256",
+          "HS384",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512"
+        ],
+        "authorization_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "HS256",
+          "HS512",
+          "ES256",
+          "RS256",
+          "HS384",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512"
+        ],
+        "authorization_encryption_alg_values_supported": [
+          "ECDH-ES+A256KW",
+          "ECDH-ES+A192KW",
+          "ECDH-ES+A128KW",
+          "RSA-OAEP",
+          "RSA-OAEP-256",
+          "RSA1_5",
+          "ECDH-ES"
+        ],
+        "authorization_encryption_enc_values_supported": [
+          "A256GCM",
+          "A192GCM",
+          "A128GCM",
+          "A128CBC-HS256",
+          "A192CBC-HS384",
+          "A256CBC-HS512"
+        ],
+        "claims_supported": [
+          "iss",
+          "sub",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "name",
+          "given_name",
+          "family_name",
+          "preferred_username",
+          "email",
+          "acr",
+          "azp",
+          "nonce"
+        ],
+        "claim_types_supported": [
+          "normal"
+        ],
+        "claims_parameter_supported": true,
+        "scopes_supported": [
+          "openid",
+          "roles",
+          "organization",
+          "email",
+          "profile",
+          "web-origins",
+          "microprofile-jwt",
+          "service_account",
+          "offline_access",
+          "basic",
+          "acr",
+          "phone",
+          "address"
+        ],
+        "request_parameter_supported": true,
+        "request_uri_parameter_supported": true,
+        "require_request_uri_registration": true,
+        "code_challenge_methods_supported": [
+          "plain",
+          "S256"
+        ],
+        "tls_client_certificate_bound_access_tokens": true,
+        "dpop_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "ES256",
+          "RS256",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512"
+        ],
+        "revocation_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/revoke",
+        "revocation_endpoint_auth_methods_supported": [
+          "private_key_jwt",
+          "client_secret_basic",
+          "client_secret_post",
+          "tls_client_auth",
+          "client_secret_jwt"
+        ],
+        "revocation_endpoint_auth_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "HS256",
+          "HS512",
+          "ES256",
+          "RS256",
+          "HS384",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512"
+        ],
+        "backchannel_logout_supported": true,
+        "backchannel_logout_session_supported": true,
+        "device_authorization_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/auth/device",
+        "backchannel_token_delivery_modes_supported": [
+          "poll",
+          "ping"
+        ],
+        "backchannel_authentication_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/ext/ciba/auth",
+        "backchannel_authentication_request_signing_alg_values_supported": [
+          "PS384",
+          "RS384",
+          "EdDSA",
+          "ES384",
+          "ES256",
+          "RS256",
+          "ES512",
+          "PS256",
+          "PS512",
+          "RS512"
+        ],
+        "require_pushed_authorization_requests": false,
+        "pushed_authorization_request_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/ext/par/request",
+        "mtls_endpoint_aliases": {
+          "token_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/token",
+          "revocation_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/revoke",
+          "introspection_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/token/introspect",
+          "device_authorization_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/auth/device",
+          "registration_endpoint": "http://127.0.0.1:8081/realms/capstone/clients-registrations/openid-connect",
+          "userinfo_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/userinfo",
+          "pushed_authorization_request_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/ext/par/request",
+          "backchannel_authentication_endpoint": "http://127.0.0.1:8081/realms/capstone/protocol/openid-connect/ext/ciba/auth"
+        },
+        "authorization_response_iss_parameter_supported": true
+      },
+      "digestHeader": null,
+      "bodySha256": "bee6793dbcb9d56e68ac24dddf2e037055e2dcab8a6570dbcb1c615eadd33c7a"
+    },
+    "registry": {
+      "httpStatus": 200,
+      "body": {},
+      "digestHeader": null,
+      "bodySha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    },
+    "application": {
+      "httpStatus": 200,
+      "body": {
+        "status": "ready",
+        "database": "connected",
+        "timestamp": "2026-11-17T10:01:56.815Z"
+      },
+      "digestHeader": null,
+      "bodySha256": "16586fe0782a17bf5afb1482727cc5cd031f0a6492faa14e9b5d64092365440f"
+    }
+  },
+  "serviceVersions": {
+    "gitea": "gitea version 28.2.0 built with go1.27.2 : bindata, timetzdata,",
+    "registry": "/bin/registry github.com/docker/distribution 2.8.3",
+    "keycloak": "Keycloak 26.8.1\nJVM: 21.0.13 (Red Hat, Inc. OpenJDK 64-Bit Server VM 21.0.13+9-LTS)\nOS: Linux 6.6.87.2-microsoft-standard-WSL2 amd64"
+  },
+  "optionalScannerImage": {
+    "exitCode": 1,
+    "stdout": "",
+    "stderr": "Error response from daemon: No such image: aquasec/trivy:0.76.0"
+  },
+  "giteaWeb": {
+    "httpStatus": 200,
+    "url": "http://127.0.0.1:3001/",
+    "title": "Installation - Gitea: Git with a cup of tea",
+    "installationFormPresent": true
+  },
+  "applicationMetricsRoutes": {
+    "/metrics": {
+      "httpStatus": 404,
+      "error": "HTTP Error 404: Not Found"
+    },
+    "/q/metrics": {
+      "httpStatus": 404,
+      "error": "HTTP Error 404: Not Found"
+    }
+  },
+  "dockerNetwork": {
+    "name": "capstone-net",
+    "driver": "bridge",
+    "ipam": [
+      {
+        "Subnet": "172.28.0.0/16",
+        "Gateway": "172.28.0.1"
+      }
+    ],
+    "containers": [
+      {
+        "name": "capstone-gitea",
+        "ipv4": "172.28.0.3/16"
+      },
+      {
+        "name": "k3d-capstone-tools",
+        "ipv4": "172.28.0.6/16"
+      },
+      {
+        "name": "capstone-postgres",
+        "ipv4": "172.28.0.5/16"
+      },
+      {
+        "name": "capstone-registry",
+        "ipv4": "172.28.0.4/16"
+      },
+      {
+        "name": "k3d-capstone-server-0",
+        "ipv4": "172.28.0.7/16"
+      },
+      {
+        "name": "capstone-keycloak",
+        "ipv4": "172.28.0.2/16"
+      },
+      {
+        "name": "k3d-capstone-serverlb",
+        "ipv4": "172.28.0.9/16"
+      },
+      {
+        "name": "k3d-capstone-agent-0",
+        "ipv4": "172.28.0.8/16"
+      }
+    ]
+  },
+  "k3dClusters": "NAME              SERVERS   AGENTS   LOADBALANCER\ncampus-cloud      0/1       0/1      true\ncampus-cloud-v3   0/1       0/1      true\ncapstone          1/1       1/1      true\nfunqy-lab         0/1       0/0      true",
+  "nodes": [
+    {
+      "name": "k3d-capstone-agent-0",
+      "storageLabel": "uploads",
+      "ready": true,
+      "nodeInfo": {
+        "architecture": "amd64",
+        "bootID": "78970183-0d6a-44d9-bdb0-b45443ded8c5",
+        "containerRuntimeVersion": "containerd://2.2.3-k3s1",
+        "kernelVersion": "6.6.87.2-microsoft-standard-WSL2",
+        "kubeProxyVersion": "",
+        "kubeletVersion": "v1.35.5+k3s1",
+        "machineID": "",
+        "operatingSystem": "linux",
+        "osImage": "K3s v1.35.5+k3s1",
+        "swap": {
+          "capacity": 2147483648
+        },
+        "systemUUID": ""
+      },
+      "addresses": [
+        {
+          "address": "172.28.0.8",
+          "type": "InternalIP"
+        },
+        {
+          "address": "k3d-capstone-agent-0",
+          "type": "Hostname"
+        }
+      ],
+      "capacity": {
+        "cpu": "12",
+        "ephemeral-storage": "1055762868Ki",
+        "hugepages-1Gi": "0",
+        "hugepages-2Mi": "0",
+        "memory": "7742672Ki",
+        "pods": "110"
+      },
+      "allocatable": {
+        "cpu": "12",
+        "ephemeral-storage": "1027046117185",
+        "hugepages-1Gi": "0",
+        "hugepages-2Mi": "0",
+        "memory": "7742672Ki",
+        "pods": "110"
+      }
+    },
+    {
+      "name": "k3d-capstone-server-0",
+      "storageLabel": null,
+      "ready": true,
+      "nodeInfo": {
+        "architecture": "amd64",
+        "bootID": "78970183-0d6a-44d9-bdb0-b45443ded8c5",
+        "containerRuntimeVersion": "containerd://2.2.3-k3s1",
+        "kernelVersion": "6.6.87.2-microsoft-standard-WSL2",
+        "kubeProxyVersion": "",
+        "kubeletVersion": "v1.35.5+k3s1",
+        "machineID": "",
+        "operatingSystem": "linux",
+        "osImage": "K3s v1.35.5+k3s1",
+        "swap": {
+          "capacity": 2147483648
+        },
+        "systemUUID": ""
+      },
+      "addresses": [
+        {
+          "address": "172.28.0.7",
+          "type": "InternalIP"
+        },
+        {
+          "address": "k3d-capstone-server-0",
+          "type": "Hostname"
+        }
+      ],
+      "capacity": {
+        "cpu": "12",
+        "ephemeral-storage": "1055762868Ki",
+        "hugepages-1Gi": "0",
+        "hugepages-2Mi": "0",
+        "memory": "7742672Ki",
+        "pods": "110"
+      },
+      "allocatable": {
+        "cpu": "12",
+        "ephemeral-storage": "1027046117185",
+        "hugepages-1Gi": "0",
+        "hugepages-2Mi": "0",
+        "memory": "7742672Ki",
+        "pods": "110"
+      }
+    }
+  ],
+  "pods": [
+    {
+      "name": "argocd-application-controller-0",
+      "namespace": "argocd",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "quay.io/argoproj/argocd:v3.5.6",
+          "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "argocd-applicationset-controller-7567dc5fbb-vfbrg",
+      "namespace": "argocd",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "quay.io/argoproj/argocd:v3.5.6",
+          "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "argocd-dex-server-776dbb476d-6ggl5",
+      "namespace": "argocd",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "ghcr.io/dexidp/dex:v2.45.1",
+          "imageID": "ghcr.io/dexidp/dex@sha256:8499afd690c437f52301efd2b05b2455da5bd2dfc20332cd697dc9937f808462",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "argocd-notifications-controller-7fc8df5f57-smw6k",
+      "namespace": "argocd",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "quay.io/argoproj/argocd:v3.5.6",
+          "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+          "restarts": 5
+        }
+      ]
+    },
+    {
+      "name": "argocd-redis-7f849fd769-97t4f",
+      "namespace": "argocd",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "public.ecr.aws/docker/library/redis:8.2.3-alpine",
+          "imageID": "public.ecr.aws/docker/library/redis@sha256:08ad0b1d280850169a790dba1393ff7a90aef951fc19632cf4d3ce4f78e679ba",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "argocd-repo-server-58c976b9df-sgg7x",
+      "namespace": "argocd",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "quay.io/argoproj/argocd:v3.5.6",
+          "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+          "restarts": 5
+        }
+      ]
+    },
+    {
+      "name": "argocd-server-947dccccf-rdq66",
+      "namespace": "argocd",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "quay.io/argoproj/argocd:v3.5.6",
+          "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "capstone-smoke-6dcfd95769-7wwnk",
+      "namespace": "capstone-smoke",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "registry:5000/capstone/smoke:v1",
+          "imageID": "registry:5000/capstone/smoke@sha256:efdc8215d87a41b0badab43b6d2bff124284042bf827d67ef885c2d5d5a650bc",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "journalfit-backend-b84c65dd-9nvmp",
+      "namespace": "default",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+          "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "journalfit-backend-b84c65dd-9vd69",
+      "namespace": "default",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+          "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "coredns-8db54c48d-bp6fr",
+      "namespace": "kube-system",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "docker.io/rancher/mirrored-coredns-coredns:1.14.3",
+          "imageID": "docker.io/rancher/mirrored-coredns-coredns@sha256:b21d26b915e10acb5bc78715c1e8b6047ab2675389b2bcc18b3a6499d90e74c0",
+          "restarts": 7
+        }
+      ]
+    },
+    {
+      "name": "local-path-provisioner-5d9d9885bc-6gwnf",
+      "namespace": "kube-system",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "docker.io/rancher/local-path-provisioner:v0.0.36",
+          "imageID": "docker.io/rancher/local-path-provisioner@sha256:1eba82e9c386038b4af6d69cca7519fac738c28c42735ed48ce70c882ad0d80f",
+          "restarts": 0
+        }
+      ]
+    },
+    {
+      "name": "metrics-server-786d997795-7nb7v",
+      "namespace": "kube-system",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "docker.io/rancher/mirrored-metrics-server:v0.8.1",
+          "imageID": "docker.io/rancher/mirrored-metrics-server@sha256:b2d2efaf5ac3b366ed0f839d2412a2c4279d4fc2a2a733f12c52133faed36c41",
+          "restarts": 7
+        }
+      ]
+    },
+    {
+      "name": "svclb-traefik-c9622c4f-5hdwl",
+      "namespace": "kube-system",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "docker.io/rancher/klipper-lb:v0.4.17",
+          "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+          "restarts": 7
+        },
+        {
+          "image": "docker.io/rancher/klipper-lb:v0.4.17",
+          "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+          "restarts": 8
+        }
+      ]
+    },
+    {
+      "name": "svclb-traefik-c9622c4f-xzfg8",
+      "namespace": "kube-system",
+      "phase": "Running",
+      "node": "k3d-capstone-server-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "docker.io/rancher/klipper-lb:v0.4.17",
+          "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+          "restarts": 6
+        },
+        {
+          "image": "docker.io/rancher/klipper-lb:v0.4.17",
+          "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+          "restarts": 6
+        }
+      ]
+    },
+    {
+      "name": "traefik-9bcdbbd9-qkg5g",
+      "namespace": "kube-system",
+      "phase": "Running",
+      "node": "k3d-capstone-agent-0",
+      "deleting": false,
+      "ready": true,
+      "containers": [
+        {
+          "image": "docker.io/rancher/mirrored-library-traefik:3.6.13",
+          "imageID": "docker.io/rancher/mirrored-library-traefik@sha256:34d5089d0b414945342848518b383f11f5b3a645504ed87b77ffeb9d683d0e48",
+          "restarts": 7
+        }
+      ]
+    }
+  ],
+  "deployment": {
+    "apiVersion": "apps/v1",
+    "kind": "Deployment",
+    "metadata": {
+      "annotations": {
+        "deployment.kubernetes.io/revision": "5",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"apps/v1\",\"kind\":\"Deployment\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"minReadySeconds\":5,\"progressDeadlineSeconds\":180,\"revisionHistoryLimit\":3,\"selector\":{\"matchLabels\":{\"app\":\"journalfit\"}},\"strategy\":{\"rollingUpdate\":{\"maxSurge\":1,\"maxUnavailable\":0},\"type\":\"RollingUpdate\"},\"template\":{\"metadata\":{\"labels\":{\"app\":\"journalfit\"}},\"spec\":{\"automountServiceAccountToken\":false,\"containers\":[{\"env\":[{\"name\":\"DB_PASSWORD\",\"valueFrom\":{\"secretKeyRef\":{\"key\":\"DB_PASSWORD\",\"name\":\"journalfit-backend-secret\"}}}],\"envFrom\":[{\"configMapRef\":{\"name\":\"journalfit-backend-config\"}}],\"image\":\"registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a\",\"imagePullPolicy\":\"Always\",\"livenessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/health/live\",\"port\":\"http\"},\"periodSeconds\":10,\"timeoutSeconds\":2},\"name\":\"backend\",\"ports\":[{\"containerPort\":8000,\"name\":\"http\"}],\"readinessProbe\":{\"failureThreshold\":3,\"httpGet\":{\"path\":\"/health/ready\",\"port\":\"http\"},\"periodSeconds\":5,\"timeoutSeconds\":2},\"resources\":{\"limits\":{\"cpu\":\"250m\",\"memory\":\"256Mi\"},\"requests\":{\"cpu\":\"100m\",\"memory\":\"128Mi\"}},\"securityContext\":{\"allowPrivilegeEscalation\":false,\"capabilities\":{\"drop\":[\"ALL\"]}},\"startupProbe\":{\"failureThreshold\":12,\"httpGet\":{\"path\":\"/health/live\",\"port\":\"http\"},\"periodSeconds\":5,\"timeoutSeconds\":2},\"volumeMounts\":[{\"mountPath\":\"/app/uploads\",\"name\":\"uploads\"}]}],\"nodeSelector\":{\"journalfit-storage\":\"uploads\"},\"securityContext\":{\"fsGroup\":10001,\"fsGroupChangePolicy\":\"OnRootMismatch\",\"runAsGroup\":10001,\"runAsNonRoot\":true,\"runAsUser\":10001},\"volumes\":[{\"name\":\"uploads\",\"persistentVolumeClaim\":{\"claimName\":\"journalfit-uploads\"}}]}}}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:27:44Z",
+      "generation": 11,
+      "name": "journalfit-backend",
+      "namespace": "default",
+      "resourceVersion": "14521",
+      "uid": "05acb35d-8a99-4b23-8e6f-1946791a8709"
+    },
+    "spec": {
+      "minReadySeconds": 5,
+      "progressDeadlineSeconds": 180,
+      "replicas": 2,
+      "revisionHistoryLimit": 3,
+      "selector": {
+        "matchLabels": {
+          "app": "journalfit"
+        }
+      },
+      "strategy": {
+        "rollingUpdate": {
+          "maxSurge": 1,
+          "maxUnavailable": 0
+        },
+        "type": "RollingUpdate"
+      },
+      "template": {
+        "metadata": {
+          "annotations": {
+            "kubectl.kubernetes.io/restartedAt": "2026-11-10T13:43:08+07:00"
+          },
+          "labels": {
+            "app": "journalfit"
+          }
+        },
+        "spec": {
+          "automountServiceAccountToken": false,
+          "containers": [
+            {
+              "env": [
+                {
+                  "name": "DB_PASSWORD",
+                  "valueFrom": {
+                    "secretKeyRef": {
+                      "key": "DB_PASSWORD",
+                      "name": "journalfit-backend-secret"
+                    }
+                  }
+                }
+              ],
+              "envFrom": [
+                {
+                  "configMapRef": {
+                    "name": "journalfit-backend-config"
+                  }
+                }
+              ],
+              "image": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+              "imagePullPolicy": "Always",
+              "livenessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health/live",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 10,
+                "successThreshold": 1,
+                "timeoutSeconds": 2
+              },
+              "name": "backend",
+              "ports": [
+                {
+                  "containerPort": 8000,
+                  "name": "http",
+                  "protocol": "TCP"
+                }
+              ],
+              "readinessProbe": {
+                "failureThreshold": 3,
+                "httpGet": {
+                  "path": "/health/ready",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 5,
+                "successThreshold": 1,
+                "timeoutSeconds": 2
+              },
+              "resources": {
+                "limits": {
+                  "cpu": "250m",
+                  "memory": "256Mi"
+                },
+                "requests": {
+                  "cpu": "100m",
+                  "memory": "128Mi"
+                }
+              },
+              "securityContext": {
+                "allowPrivilegeEscalation": false,
+                "capabilities": {
+                  "drop": [
+                    "ALL"
+                  ]
+                }
+              },
+              "startupProbe": {
+                "failureThreshold": 12,
+                "httpGet": {
+                  "path": "/health/live",
+                  "port": "http",
+                  "scheme": "HTTP"
+                },
+                "periodSeconds": 5,
+                "successThreshold": 1,
+                "timeoutSeconds": 2
+              },
+              "terminationMessagePath": "/dev/termination-log",
+              "terminationMessagePolicy": "File",
+              "volumeMounts": [
+                {
+                  "mountPath": "/app/uploads",
+                  "name": "uploads"
+                }
+              ]
+            }
+          ],
+          "dnsPolicy": "ClusterFirst",
+          "nodeSelector": {
+            "journalfit-storage": "uploads"
+          },
+          "restartPolicy": "Always",
+          "schedulerName": "default-scheduler",
+          "securityContext": {
+            "fsGroup": 10001,
+            "fsGroupChangePolicy": "OnRootMismatch",
+            "runAsGroup": 10001,
+            "runAsNonRoot": true,
+            "runAsUser": 10001
+          },
+          "terminationGracePeriodSeconds": 30,
+          "volumes": [
+            {
+              "name": "uploads",
+              "persistentVolumeClaim": {
+                "claimName": "journalfit-uploads"
+              }
+            }
+          ]
+        }
+      }
+    },
+    "status": {
+      "availableReplicas": 2,
+      "conditions": [
+        {
+          "lastTransitionTime": "2026-11-09T17:27:44Z",
+          "lastUpdateTime": "2026-11-17T06:31:08Z",
+          "message": "ReplicaSet \"journalfit-backend-b84c65dd\" has successfully progressed.",
+          "reason": "NewReplicaSetAvailable",
+          "status": "True",
+          "type": "Progressing"
+        },
+        {
+          "lastTransitionTime": "2026-11-17T06:38:36Z",
+          "lastUpdateTime": "2026-11-17T06:38:36Z",
+          "message": "Deployment has minimum availability.",
+          "reason": "MinimumReplicasAvailable",
+          "status": "True",
+          "type": "Available"
+        }
+      ],
+      "observedGeneration": 11,
+      "readyReplicas": 2,
+      "replicas": 2,
+      "terminatingReplicas": 0,
+      "updatedReplicas": 2
+    }
+  },
+  "configMap": {
+    "PORT": "8000",
+    "NODE_ENV": "production",
+    "DB_HOST": "host.docker.internal",
+    "DB_PORT": "5432",
+    "DB_NAME": "journalfit",
+    "DB_USER": "capstone"
+  },
+  "secretReference": {
+    "name": "journalfit-backend-secret",
+    "type": "Opaque",
+    "keys": [
+      "DB_PASSWORD"
+    ]
+  },
+  "service": {
+    "apiVersion": "v1",
+    "kind": "Service",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"Service\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"ports\":[{\"name\":\"http\",\"port\":80,\"targetPort\":\"http\"}],\"selector\":{\"app\":\"journalfit\"},\"type\":\"ClusterIP\"}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:27:44Z",
+      "name": "journalfit-backend",
+      "namespace": "default",
+      "resourceVersion": "1668",
+      "uid": "87fc23be-78d5-41ef-8aed-9d7e47fb3f7b"
+    },
+    "spec": {
+      "clusterIP": "10.43.41.15",
+      "clusterIPs": [
+        "10.43.41.15"
+      ],
+      "internalTrafficPolicy": "Cluster",
+      "ipFamilies": [
+        "IPv4"
+      ],
+      "ipFamilyPolicy": "SingleStack",
+      "ports": [
+        {
+          "name": "http",
+          "port": 80,
+          "protocol": "TCP",
+          "targetPort": "http"
+        }
+      ],
+      "selector": {
+        "app": "journalfit"
+      },
+      "sessionAffinity": "None",
+      "type": "ClusterIP"
+    },
+    "status": {
+      "loadBalancer": {}
+    }
+  },
+  "ingress": {
+    "apiVersion": "networking.k8s.io/v1",
+    "kind": "Ingress",
+    "metadata": {
+      "annotations": {
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"networking.k8s.io/v1\",\"kind\":\"Ingress\",\"metadata\":{\"annotations\":{},\"name\":\"journalfit-backend\",\"namespace\":\"default\"},\"spec\":{\"ingressClassName\":\"traefik\",\"rules\":[{\"host\":\"journalfit.localhost\",\"http\":{\"paths\":[{\"backend\":{\"service\":{\"name\":\"journalfit-backend\",\"port\":{\"number\":80}}},\"path\":\"/\",\"pathType\":\"Prefix\"}]}}]}}\n"
+      },
+      "creationTimestamp": "2026-11-09T17:27:55Z",
+      "generation": 1,
+      "name": "journalfit-backend",
+      "namespace": "default",
+      "resourceVersion": "13803",
+      "uid": "e8cbf00d-20df-4a8c-a082-9e892ea1c9c0"
+    },
+    "spec": {
+      "ingressClassName": "traefik",
+      "rules": [
+        {
+          "host": "journalfit.localhost",
+          "http": {
+            "paths": [
+              {
+                "backend": {
+                  "service": {
+                    "name": "journalfit-backend",
+                    "port": {
+                      "number": 80
+                    }
+                  }
+                },
+                "path": "/",
+                "pathType": "Prefix"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    "status": {
+      "loadBalancer": {
+        "ingress": [
+          {
+            "ip": "172.28.0.7"
+          },
+          {
+            "ip": "172.28.0.8"
+          }
+        ]
+      }
+    }
+  },
+  "pvc": {
+    "apiVersion": "v1",
+    "kind": "PersistentVolumeClaim",
+    "metadata": {
+      "annotations": {
+        "argocd.argoproj.io/sync-options": "Prune=false,Delete=false",
+        "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"v1\",\"kind\":\"PersistentVolumeClaim\",\"metadata\":{\"annotations\":{\"argocd.argoproj.io/sync-options\":\"Prune=false,Delete=false\"},\"name\":\"journalfit-uploads\",\"namespace\":\"default\"},\"spec\":{\"accessModes\":[\"ReadWriteOnce\"],\"resources\":{\"requests\":{\"storage\":\"1Gi\"}},\"storageClassName\":\"local-path\"}}\n",
+        "pv.kubernetes.io/bind-completed": "yes",
+        "pv.kubernetes.io/bound-by-controller": "yes",
+        "volume.beta.kubernetes.io/storage-provisioner": "rancher.io/local-path",
+        "volume.kubernetes.io/selected-node": "k3d-capstone-agent-0",
+        "volume.kubernetes.io/storage-provisioner": "rancher.io/local-path"
+      },
+      "creationTimestamp": "2026-11-09T17:25:37Z",
+      "finalizers": [
+        "kubernetes.io/pvc-protection"
+      ],
+      "name": "journalfit-uploads",
+      "namespace": "default",
+      "resourceVersion": "3286",
+      "uid": "462818b8-6b0b-475e-9511-34f656284417"
+    },
+    "spec": {
+      "accessModes": [
+        "ReadWriteOnce"
+      ],
+      "resources": {
+        "requests": {
+          "storage": "1Gi"
+        }
+      },
+      "storageClassName": "local-path",
+      "volumeMode": "Filesystem",
+      "volumeName": "pvc-462818b8-6b0b-475e-9511-34f656284417"
+    },
+    "status": {
+      "accessModes": [
+        "ReadWriteOnce"
+      ],
+      "capacity": {
+        "storage": "1Gi"
+      },
+      "phase": "Bound"
+    }
+  },
+  "pv": {
+    "name": "pvc-462818b8-6b0b-475e-9511-34f656284417",
+    "capacity": {
+      "storage": "1Gi"
+    },
+    "reclaimPolicy": "Delete",
+    "nodeAffinity": {
+      "required": {
+        "nodeSelectorTerms": [
+          {
+            "matchExpressions": [
+              {
+                "key": "kubernetes.io/hostname",
+                "operator": "In",
+                "values": [
+                  "k3d-capstone-agent-0"
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    },
+    "hostPath": null
+  },
+  "storageClasses": [
+    {
+      "name": "local-path",
+      "provisioner": "rancher.io/local-path"
+    }
+  ],
+  "ingressClasses": [
+    "traefik"
+  ],
+  "argocd": [
+    {
+      "name": "argocd-applicationset-controller",
+      "ready": 1,
+      "images": [
+        "quay.io/argoproj/argocd:v3.5.6"
+      ]
+    },
+    {
+      "name": "argocd-dex-server",
+      "ready": 1,
+      "images": [
+        "ghcr.io/dexidp/dex:v2.45.1"
+      ]
+    },
+    {
+      "name": "argocd-notifications-controller",
+      "ready": 1,
+      "images": [
+        "quay.io/argoproj/argocd:v3.5.6"
+      ]
+    },
+    {
+      "name": "argocd-redis",
+      "ready": 1,
+      "images": [
+        "public.ecr.aws/docker/library/redis:8.2.3-alpine"
+      ]
+    },
+    {
+      "name": "argocd-repo-server",
+      "ready": 1,
+      "images": [
+        "quay.io/argoproj/argocd:v3.5.6"
+      ]
+    },
+    {
+      "name": "argocd-server",
+      "ready": 1,
+      "images": [
+        "quay.io/argoproj/argocd:v3.5.6"
+      ]
+    }
+  ],
+  "argocdStatefulsets": [
+    {
+      "name": "argocd-application-controller",
+      "ready": 1,
+      "images": [
+        "quay.io/argoproj/argocd:v3.5.6"
+      ]
+    }
+  ],
+  "argoApplications": [],
+  "metrics": {
+    "nodes": {
+      "exitCode": 0,
+      "stdout": "NAME                    CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   \nk3d-capstone-agent-0    179m         1%       1009Mi          13%         \nk3d-capstone-server-0   195m         1%       840Mi           11%",
+      "stderr": ""
+    },
+    "applicationPods": {
+      "exitCode": 0,
+      "stdout": "NAME                                CPU(cores)   MEMORY(bytes)   \njournalfit-backend-b84c65dd-9nvmp   1m           26Mi            \njournalfit-backend-b84c65dd-9vd69   25m          27Mi",
+      "stderr": ""
+    }
+  },
+  "database": {
+    "pod": "journalfit-backend-b84c65dd-9nvmp",
+    "nodeVersion": "v22.23.5",
+    "dbHost": "host.docker.internal",
+    "dbPort": "5432",
+    "dns": [
+      {
+        "address": "192.168.65.254",
+        "family": 4
+      }
+    ],
+    "identity": {
+      "database": "journalfit",
+      "role": "capstone",
+      "schema": "public",
+      "version": "17.11",
+      "search_path": "\"$user\", public"
+    },
+    "role": {
+      "rolsuper": true,
+      "rolcreatedb": true,
+      "rolcreaterole": true
+    },
+    "columns": [
+      {
+        "table_name": "check_results",
+        "column_name": "id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "check_results",
+        "column_name": "manuscript_id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "check_results",
+        "column_name": "status",
+        "data_type": "character varying",
+        "character_maximum_length": 30,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "check_results",
+        "column_name": "format_score",
+        "data_type": "integer",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "0"
+      },
+      {
+        "table_name": "check_results",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+      },
+      {
+        "table_name": "findings",
+        "column_name": "id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "findings",
+        "column_name": "check_result_id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "findings",
+        "column_name": "rule_type",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "findings",
+        "column_name": "severity",
+        "data_type": "character varying",
+        "character_maximum_length": 20,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "findings",
+        "column_name": "message",
+        "data_type": "text",
+        "character_maximum_length": null,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "findings",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "tenant_id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "template_name",
+        "data_type": "character varying",
+        "character_maximum_length": 100,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "min_words",
+        "data_type": "integer",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "3000"
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "max_words",
+        "data_type": "integer",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "8000"
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "require_abstract",
+        "data_type": "boolean",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "true"
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "require_keywords",
+        "data_type": "boolean",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "true"
+      },
+      {
+        "table_name": "format_rule_templates",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+      },
+      {
+        "table_name": "manuscripts",
+        "column_name": "id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "manuscripts",
+        "column_name": "tenant_id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "manuscripts",
+        "column_name": "author_id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "manuscripts",
+        "column_name": "title",
+        "data_type": "character varying",
+        "character_maximum_length": 255,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "manuscripts",
+        "column_name": "file_path",
+        "data_type": "character varying",
+        "character_maximum_length": 255,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "manuscripts",
+        "column_name": "upload_time",
+        "data_type": "timestamp without time zone",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+      },
+      {
+        "table_name": "tenants",
+        "column_name": "id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "tenants",
+        "column_name": "name",
+        "data_type": "character varying",
+        "character_maximum_length": 100,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "tenants",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+      },
+      {
+        "table_name": "users",
+        "column_name": "id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "users",
+        "column_name": "tenant_id",
+        "data_type": "character varying",
+        "character_maximum_length": 50,
+        "is_nullable": "YES",
+        "column_default": null
+      },
+      {
+        "table_name": "users",
+        "column_name": "name",
+        "data_type": "character varying",
+        "character_maximum_length": 100,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "users",
+        "column_name": "email",
+        "data_type": "character varying",
+        "character_maximum_length": 100,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "users",
+        "column_name": "role",
+        "data_type": "character varying",
+        "character_maximum_length": 30,
+        "is_nullable": "NO",
+        "column_default": null
+      },
+      {
+        "table_name": "users",
+        "column_name": "created_at",
+        "data_type": "timestamp without time zone",
+        "character_maximum_length": null,
+        "is_nullable": "YES",
+        "column_default": "CURRENT_TIMESTAMP"
+      }
+    ],
+    "constraints": [
+      {
+        "table_name": "check_results",
+        "conname": "check_results_manuscript_id_fkey",
+        "contype": "f",
+        "definition": "FOREIGN KEY (manuscript_id) REFERENCES manuscripts(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "check_results",
+        "conname": "check_results_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "findings",
+        "conname": "findings_check_result_id_fkey",
+        "contype": "f",
+        "definition": "FOREIGN KEY (check_result_id) REFERENCES check_results(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "findings",
+        "conname": "findings_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "format_rule_templates",
+        "conname": "format_rule_templates_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "format_rule_templates",
+        "conname": "format_rule_templates_tenant_id_fkey",
+        "contype": "f",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "manuscripts",
+        "conname": "manuscripts_author_id_fkey",
+        "contype": "f",
+        "definition": "FOREIGN KEY (author_id) REFERENCES users(id) ON DELETE SET NULL"
+      },
+      {
+        "table_name": "manuscripts",
+        "conname": "manuscripts_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "manuscripts",
+        "conname": "manuscripts_tenant_id_fkey",
+        "contype": "f",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+      },
+      {
+        "table_name": "tenants",
+        "conname": "tenants_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "users",
+        "conname": "users_pkey",
+        "contype": "p",
+        "definition": "PRIMARY KEY (id)"
+      },
+      {
+        "table_name": "users",
+        "conname": "users_tenant_id_fkey",
+        "contype": "f",
+        "definition": "FOREIGN KEY (tenant_id) REFERENCES tenants(id) ON DELETE CASCADE"
+      }
+    ],
+    "rowCounts": {
+      "tenants": 3,
+      "users": 2,
+      "format_rule_templates": 3,
+      "manuscripts": 3,
+      "check_results": 3,
+      "findings": 8
+    }
+  },
+  "schemaCompatibility": {
+    "expectedColumns": {
+      "tenants": [
+        "id",
+        "name",
+        "created_at"
+      ],
+      "users": [
+        "id",
+        "tenant_id",
+        "name",
+        "email",
+        "role",
+        "created_at"
+      ],
+      "format_rule_templates": [
+        "id",
+        "tenant_id",
+        "template_name",
+        "min_words",
+        "max_words",
+        "require_abstract",
+        "require_keywords",
+        "created_at"
+      ],
+      "manuscripts": [
+        "id",
+        "tenant_id",
+        "author_id",
+        "title",
+        "file_path",
+        "upload_time"
+      ],
+      "check_results": [
+        "id",
+        "manuscript_id",
+        "status",
+        "format_score",
+        "created_at"
+      ],
+      "findings": [
+        "id",
+        "check_result_id",
+        "rule_type",
+        "severity",
+        "message",
+        "created_at"
+      ]
+    },
+    "missingTables": [],
+    "missingColumns": {}
+  },
+  "registryArtifact": {
+    "pushReference": "localhost:5001/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+    "pullReference": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+    "manifest": {
+      "httpStatus": 200,
+      "body": {
+        "schemaVersion": 2,
+        "mediaType": "application/vnd.oci.image.index.v1+json",
+        "manifests": [
+          {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:cee8a25934bcd8a18b55ebf040e3d241397810349fc3e6df28f13fce05cbba70",
+            "size": 2190,
+            "platform": {
+              "architecture": "amd64",
+              "os": "linux"
+            }
+          },
+          {
+            "mediaType": "application/vnd.oci.image.manifest.v1+json",
+            "digest": "sha256:707ac6cb0d74c5a915f34ea661a2193de59bcc4ff5922f74e0525a6c10cb0bfb",
+            "size": 837,
+            "annotations": {
+              "vnd.docker.reference.digest": "sha256:cee8a25934bcd8a18b55ebf040e3d241397810349fc3e6df28f13fce05cbba70",
+              "vnd.docker.reference.type": "attestation-manifest"
+            },
+            "platform": {
+              "architecture": "unknown",
+              "os": "unknown"
+            }
+          }
+        ]
+      },
+      "digestHeader": "sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+      "bodySha256": "9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557"
+    },
+    "buildDigest": "sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+    "podImageIds": [
+      "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+      "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557"
+    ]
+  },
+  "nodeRegistryConfiguration": {
+    "registryMirrorPresent": true,
+    "httpEndpointPresent": true
+  },
+  "nodeToRegistry": {
+    "method": "wget inside existing agent node",
+    "exitCode": 0,
+    "body": {}
+  },
+  "checks": {
+    "m3ContainersRunning": true,
+    "coreContainersRunning": true,
+    "postgresHealthy": true,
+    "coreHttpEndpoints": false,
+    "applicationHttp": true,
+    "registryHttp": true,
+    "schemaTablesAndColumns": true,
+    "registryContentDigest": true,
+    "registryMatchesBuild": true,
+    "podsMatchRegistry": true,
+    "nodeRegistryRoute": true,
+    "twoNodesReady": true,
+    "applicationReady": true,
+    "pvcBound": true,
+    "storageAndIngressClasses": true,
+    "runtimeSecretKeyPresent": true,
+    "kubectlVersionSkew": true
+  },
+  "readyForManifestReview": true,
+  "findings": [
+    {
+      "id": "gitea-api-not-ready",
+      "milestone": "M4 delivery",
+      "observation": {
+        "httpStatus": 200,
+        "url": "http://127.0.0.1:3001/",
+        "title": "Installation - Gitea: Git with a cup of tea",
+        "installationFormPresent": true
+      },
+      "action": "Complete/review Gitea installation before bootstrapping users and runner."
+    },
+    {
+      "id": "lab-db-role-privileged",
+      "milestone": "M6 security",
+      "action": "Review a least-privilege application role; current lab role is superuser."
+    },
+    {
+      "id": "application-metrics-not-instrumented",
+      "milestone": "M5 operations",
+      "action": "Instrument the Express application and adapt the reference scrape path/routing."
+    }
+  ],
+  "finishedAt": "2026-11-17T17:02:16.675987+07:00"
+}

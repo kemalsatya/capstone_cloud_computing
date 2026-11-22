@@ -1,0 +1,12 @@
+[
+  {
+    "name": "k3d-capstone-agent-0",
+    "ready": true,
+    "version": "v1.35.5+k3s1"
+  },
+  {
+    "name": "k3d-capstone-server-0",
+    "ready": true,
+    "version": "v1.35.5+k3s1"
+  }
+]

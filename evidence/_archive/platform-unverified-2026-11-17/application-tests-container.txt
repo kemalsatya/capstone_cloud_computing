@@ -1,0 +1,33 @@
+﻿Timestamp: 2026-11-09T22:58:38.0276135+07:00
+Command: docker run --rm --network none --mount type=bind,source=<repo>/source/tests,target=/app/tests,readonly journalfit-backend:platform-dev npm test
+
+> source@1.0.0 test
+> node --test tests/**/*.test.js
+
+▶ JournalFit Modular Monolith Tests
+  ▶ Rule Evaluator Service
+    ✔ should flag manuscript if word count is below minimum (1.227983ms)
+    ✔ should evaluate compliant manuscript with abstract and keywords (0.820626ms)
+    ✔ should penalize missing abstract and keywords (0.577807ms)
+  ✔ Rule Evaluator Service (3.845781ms)
+  ▶ Multi-Tenant Isolation Security Logic
+    ✔ should return report when requesting tenant matches manuscript owner (0.468465ms)
+    ✔ should throw 403 Forbidden when requesting tenant is different (Negative Test) (0.779917ms)
+    ✔ should throw 404 when manuscript does not exist (0.328294ms)
+  ✔ Multi-Tenant Isolation Security Logic (1.921753ms)
+  ▶ Endpoints HTTP Integration (Mock)
+    ✔ GET /health/live returns 200 alive (83.21034ms)
+    ✔ POST /api/auth/token generates mock token (15.75253ms)
+    ✔ GET /api/manuscripts/ms-001/report without X-Tenant-ID header returns 400 (5.211285ms)
+    ✔ teardown server (1.029529ms)
+  ✔ Endpoints HTTP Integration (Mock) (105.829994ms)
+✔ JournalFit Modular Monolith Tests (112.517898ms)
+ℹ tests 10
+ℹ suites 4
+ℹ pass 10
+ℹ fail 0
+ℹ cancelled 0
+ℹ skipped 0
+ℹ todo 0
+ℹ duration_ms 559.903949
+Test exit code: 0

@@ -1,0 +1,106 @@
+{
+    "scope":  "Stage 2: production image and isolated Docker runtime checks",
+    "startedAt":  "2026-11-17T12:52:17.1078986+07:00",
+    "image":  "journalfit-backend:stage2-20261117t055120z-d9ab35a",
+    "status":  "passed",
+    "checks":  {
+                   "identity":  "uid=10001(journalfit) gid=10001(journalfit) groups=10001(journalfit)",
+                   "nodeVersion":  "v22.23.5",
+                   "productionFilesystem":  "PASS: uploads writable; package manifest read-only; local config, schema, tests and nodemon absent",
+                   "applicationTests":  {
+                                            "exitCode":  0,
+                                            "log":  "application-tests.tap"
+                                        },
+                   "live":  {
+                                "statusCode":  200,
+                                "body":  {
+                                             "status":  "alive",
+                                             "timestamp":  "2026-11-17T05:52:39.111Z"
+                                         }
+                            },
+                   "ready":  {
+                                 "statusCode":  200,
+                                 "body":  {
+                                              "status":  "ready",
+                                              "database":  "connected",
+                                              "timestamp":  "2026-11-17T05:52:39.238Z"
+                                          }
+                             },
+                   "root":  {
+                                "statusCode":  200,
+                                "body":  {
+                                             "name":  "JournalFit Backend API",
+                                             "version":  "1.0.0",
+                                             "description":  "Multi-Tenant Journal Manuscript Pre-Submission Checker (Modular Monolith)",
+                                             "endpoints":  {
+                                                               "healthLive":  "GET /health/live",
+                                                               "healthReady":  "GET /health/ready",
+                                                               "uploadManuscript":  "POST /api/manuscripts/upload",
+                                                               "getReport":  "GET /api/manuscripts/:id/report",
+                                                               "issueToken":  "POST /api/auth/token"
+                                                           }
+                                         }
+                            },
+                   "pid1":  "dumb-init",
+                   "liveWithoutDatabase":  {
+                                               "statusCode":  200,
+                                               "body":  {
+                                                            "status":  "alive",
+                                                            "timestamp":  "2026-11-17T05:52:42.588Z"
+                                                        }
+                                           },
+                   "unready":  {
+                                   "statusCode":  503,
+                                   "body":  {
+                                                "status":  "unready",
+                                                "database":  "disconnected",
+                                                "error":  "database \"stage2_missing_159a4d9700e34788a78057023d4c7c8a\" does not exist",
+                                                "timestamp":  "2026-11-17T05:52:42.639Z"
+                                            }
+                               },
+                   "dockerVolume":  "PASS: marker written as UID 10001 and read from a new container"
+               },
+    "imageId":  "sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+    "imageConfiguration":  {
+                               "user":  "10001:10001",
+                               "workingDirectory":  "/app",
+                               "entrypoint":  [
+                                                  "/usr/bin/dumb-init",
+                                                  "--"
+                                              ],
+                               "command":  [
+                                               "node",
+                                               "src/index.js"
+                                           ],
+                               "labels":  {
+                                              "io.journalfit.dockerfile.sha256":  "8b864229d838a099feee1c6df3635e46687498b86c88ac34e6f17b9207756b99",
+                                              "io.journalfit.dockerignore.sha256":  "2311981b0aba63d4cbd569367dcab056cbdcc331d1fc54f842dd02d198e9c498",
+                                              "io.journalfit.source.revision-state":  "working-tree",
+                                              "org.opencontainers.image.created":  "2026-11-17T12:51:20.8057250+07:00",
+                                              "org.opencontainers.image.revision":  "d9ab35a10eab8e9c67e45bc53f8a22522846b038"
+                                          }
+                           },
+    "database":  {
+                     "container":  "capstone-postgres",
+                     "database":  "journalfit",
+                     "network":  "capstone-net",
+                     "operations":  "SELECT 1 only"
+                 },
+    "cleanup":  {
+                    "containers":  [
+                                       {
+                                           "name":  "journalfit-stage2-run-20261117T055216Z-33df42db-positive",
+                                           "alreadyRemoved":  true
+                                       },
+                                       {
+                                           "name":  "journalfit-stage2-run-20261117T055216Z-33df42db-negative",
+                                           "removed":  true
+                                       }
+                                   ],
+                    "volume":  {
+                                   "name":  "journalfit-stage2-run-20261117T055216Z-33df42db-uploads",
+                                   "removed":  true
+                               }
+                },
+    "finishedAt":  "2026-11-17T12:52:47.6604909+07:00"
+}

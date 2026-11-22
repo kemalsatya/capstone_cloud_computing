@@ -1,0 +1,32 @@
+{
+  "journalfit-backend-b84c65dd-9vd69": {
+    "uid": 10001,
+    "path": "/app/uploads/ms-6c850b2c-stage6-20261121t122916z-cde83c-persistence.docx",
+    "bytes": 1127,
+    "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+    "mode": 33188,
+    "fileUid": 10001,
+    "fileGid": 10001,
+    "matching": [
+      "ms-6c850b2c-stage6-20261121t122916z-cde83c-persistence.docx"
+    ],
+    "modeOctal": "0o644",
+    "matchesExpected": true,
+    "noOrphans": true
+  },
+  "journalfit-backend-b84c65dd-q9bdq": {
+    "uid": 10001,
+    "path": "/app/uploads/ms-6c850b2c-stage6-20261121t122916z-cde83c-persistence.docx",
+    "bytes": 1127,
+    "sha256": "5407d163f6ce28641df03097fd575ac162a7580e416014b711dec284c166dc72",
+    "mode": 33188,
+    "fileUid": 10001,
+    "fileGid": 10001,
+    "matching": [
+      "ms-6c850b2c-stage6-20261121t122916z-cde83c-persistence.docx"
+    ],
+    "modeOctal": "0o644",
+    "matchesExpected": true,
+    "noOrphans": true
+  }
+}

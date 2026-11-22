@@ -1,0 +1,12 @@
+{
+  "identity": {
+    "database": "journalfit",
+    "role": "capstone",
+    "read_only": "on"
+  },
+  "tenants": [],
+  "templates": [],
+  "manuscripts": [],
+  "results": [],
+  "findings": []
+}

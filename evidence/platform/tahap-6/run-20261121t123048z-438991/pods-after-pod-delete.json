@@ -1,0 +1,32 @@
+[
+  {
+    "name": "journalfit-backend-7496d44d87-45bmt",
+    "uid": "a549a994-926a-4b1a-8543-f9cce652c36a",
+    "node": "k3d-capstone-agent-0",
+    "createdAt": "2026-11-21T12:31:15Z",
+    "ready": true,
+    "containers": [
+      {
+        "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+        "restarts": 0,
+        "startedAt": "2026-11-21T12:31:16Z",
+        "lastState": {}
+      }
+    ]
+  },
+  {
+    "name": "journalfit-backend-7496d44d87-stdss",
+    "uid": "4953f4dc-b7fa-4784-b66a-308d6f583980",
+    "node": "k3d-capstone-agent-0",
+    "createdAt": "2026-11-21T12:29:55Z",
+    "ready": true,
+    "containers": [
+      {
+        "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+        "restarts": 0,
+        "startedAt": "2026-11-21T12:29:56Z",
+        "lastState": {}
+      }
+    ]
+  }
+]

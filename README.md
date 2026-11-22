@@ -1,83 +1,82 @@
 # JournalFit - Capstone Cloud Computing
 
-JournalFit membantu memeriksa format naskah DOCX sebelum submission jurnal.
-Backend modular monolith menggunakan Express/Node.js dan PostgreSQL. Repository
-ini memuat pekerjaan kelompok; branch feat/k8s-manifests berfokus pada platform M3.
+JournalFit membantu memeriksa naskah DOCX sebelum submission jurnal. Source backend
+menggunakan Express/Node.js dan PostgreSQL. Pekerjaan platform M3 ditinjau ulang
+dengan target utama Windows dan Docker Desktop Linux containers.
+
+## Status M3 per 2026-11-22
+
+**Baseline M3 telah diverifikasi pada lingkungan lokal:** image baru berjalan pada
+dua pod, transaksi DOCX berhasil, dan data/file tetap tersedia setelah penggantian
+pod serta rolling update. [Bukti pengujian langsung](evidence/platform/m3-live-20261117/README.md)
+dan [pengukuran Tahap 6](evidence/platform/tahap-6/README.md).
+Endpoint demo: **http://journalfit.localhost:8088/**. Evidence lama dipisahkan ke
+[arsip belum terverifikasi](evidence/_archive/platform-unverified-2026-11-17/ARCHIVE_STATUS.md).
+Isi rekaman lama tidak menjadi dasar untuk menyatakan aplikasi, cluster, rollout,
+scaling, atau persistensi saat ini sudah benar.
+
+Tahap 0 menata arsip, Tahap 1 menelusuri source M2, Tahap 2 menguji container, dan
+Tahap 3-6 memeriksa lingkungan, manifest, transaksi, serta persistensi/rollout.
+Cakupan dan langkah selanjutnya tersedia pada
+[roadmap dan panduan M3](deployment/PANDUAN_M3.md).
+
+**Urutan formal saat ini:** [Tahap 7](evidence/platform/tahap-7/README.md) menyiapkan
+panduan operator, demo, dan [handoff M4](automation/handoff/M3_TO_M4.md). Rehearsal
+lokal lulus: upload DOCX 201, report 200 dengan skor 100, checksum cocok di kedua
+pod. Setup di laptop kedua dan penerimaan M4 masih terbuka. [Tahap 6](evidence/platform/tahap-6/README.md)
+lulus 13/13 check, dengan rollout 22,44 detik dan 117/117 probe berhasil.
+[Temuan input Tahap 5](automation/handoff/STAGE5_APPLICATION_FINDINGS.md) tetap
+menjadi tindak lanjut M2.
+
+## Mulai presentasi dengan Compose
+
+Jalankan dari root repository dengan PowerShell:
+
+```powershell
+.\start-presentasi.ps1 -UploadFixture -BukaBrowser
+```
+
+Script [start-presentasi.ps1](start-presentasi.ps1) menjalankan Compose, menunggu
+pesan `[M3 SIAP]`, menampilkan node/workload/PVC dan readiness, mengunggah satu
+DOCX QA dari repo, lalu menampilkan laporannya. `-BukaBrowser` membuka
+**http://journalfit.localhost:8088/**. Tanpa `-UploadFixture`, starter membaca
+laporan demo lama jika tersedia di lab.
+[compose.yaml](compose.yaml) menyalakan lima container lab yang sudah ada dan
+menunggu registry serta readiness API. Backend tetap dikelola Kubernetes.
+Untuk lab kosong, ikuti [panduan setup Windows](deployment/SETUP_LAPTOP_M3.md)
+sebelum menjalankan starter.
 
 ## Mulai membaca
 
-- [Ringkasan capaian dan batas M3](evidence/platform/RINGKASAN_M3_ANGGOTA_2.md)
-- [Panduan manifest dan prasyarat deployment](deployment/README.md)
-- [Kontrak integrasi dan riwayat penyesuaian](deployment/INTEGRATION_CONTRACT.md)
-- [Indeks evidence aktual](evidence/platform/README.md)
-- [Demo read-only dan rencana screenshot 04](demo/panduan-demo-m3.md)
-- [Transkrip presentasi](demo/transkrip-presentasi-m3.md)
-- [Roadmap dan status yang belum selesai](roadmap.md)
+1. [Roadmap dan panduan command M3](deployment/PANDUAN_M3.md).
+2. [Indeks pemeriksaan dan evidence platform aktif](evidence/platform/README.md).
+3. [Peta manifest yang akan ditinjau](deployment/README.md).
+4. [Kontrak integrasi M2 ke M3](deployment/INTEGRATION_CONTRACT.md).
+5. [Asal, status, dan integritas arsip](evidence/_archive/platform-unverified-2026-11-17/ARCHIVE_STATUS.md).
 
-## Versi source dan artifact pengujian
+## Source, konfigurasi, dan runtime
 
-| Bagian | Versi/status |
-| --- | --- |
-| Dockerfile source terbaru | Node 22 Alpine, USER node, dumb-init; berasal dari pembaruan kelompok 3ffb92f yang masuk feature branch melalui 2bd8428. |
-| Validasi source terbaru | Build, non-root, uploads writable dan 10 tes lulus pada Node 22; UID 10001 dengan mount sementara dan health database juga diuji. |
-| Artifact yang sudah diuji di Kubernetes | registry:5000/journalfit-backend:3bdf305, Node 24, runtime UID 10001. |
-| Konfigurasi saat ini | Context k3d-capstone, namespace default, DB_HOST host.docker.internal pada Docker Desktop Windows. |
-| Delivery M4 | Controller Argo terpasang; Application sync/Healthy/revision belum dibuktikan. Patch CI masih bahan handoff. |
+| Bagian | Yang tersedia di repository | Status |
+| --- | --- | --- |
+| Aplikasi M2 | Backend, schema SQL, dan source test di `source/` | Core E2E Tahap 5 lulus; validasi non-DOCX dan status ukuran masih perlu perbaikan |
+| Container | Base Node 22 dipin, UID/GID 10001 | Build ulang dan skenario Docker lulus; [evidence Tahap 2](evidence/platform/tahap-2/README.md) |
+| Kubernetes | Manifest memakai image stage2-20261117t055120z-d9ab35a | Dua pod Ready, Service/Ingress, PVC, probes/resource, persistensi, dan rollout telah diukur |
+| Infrastruktur lokal | Paket dosen dan environment yang ada | Lima area telah diaudit pada Tahap 3; detail versi dan temuan tercatat |
+| Delivery M4 | Gitea/Argo dan bahan handoff | Gitea masih Installation, runner belum tersedia, Argo belum mempunyai Application |
 
-Fetch terakhir menemukan main 280a866 dengan perbaikan YAML Argo dan perintah tes.
-Perubahan itu direview read-only; feature branch belum menggabungkan main tersebut.
+Nilai yang tertulis di file tidak membuktikan nilai yang sedang digunakan oleh
+container atau cluster. Versi source, image hasil build, dan image runtime akan
+dicatat terpisah saat pengujian baru.
 
-Validasi image kandidat Node 22 tidak sama dengan mengganti image cluster.
-Evidence lama tetap berisi versi yang benar pada saat pengujian dilakukan.
+## Target akhir M3
 
-## Menjalankan platform lokal
+- Image dapat dibangun ulang dari source yang dapat ditelusuri.
+- Konfigurasi Kubernetes sesuai kebutuhan aplikasi, database, dan file DOCX.
+- Akses layanan, probes, resource, storage, dan persistensi memiliki bukti baru.
+- Satu panduan command menjelaskan tujuan, hasil yang diharapkan, dan diagnosis.
+- Pemilik M3 dapat menjalankan serta menjelaskan prosedurnya.
+- Penggunaan di laptop lain dinyatakan teruji setelah benar-benar dicoba di sana.
 
-Gunakan Windows/PowerShell dengan Docker Desktop Linux Engine, Git, kubectl dan
-k3d. Infrastruktur lab diekstrak di luar repository, misalnya C:\cloud-capstone.
-Paket menyediakan PostgreSQL, registry, Gitea dan Keycloak; jangan menjalankan
-bootstrap-project terhadap repository yang sudah ada karena memuat force push.
-
-Prasyarat sebelum menerapkan manifest:
-
-1. Cluster capstone tersedia, context k3d-capstone dapat diakses, node Ready,
-   Metrics API, Traefik dan storage class local-path tersedia.
-2. Node k3d-capstone-agent-0 dipilih sebagai storage node dan memiliki label
-   journalfit-storage=uploads. Replica berbagi PVC pada node itu.
-3. Database journalfit tersedia dengan enam tabel dari source/schema.sql.
-   Jangan menghapus atau menginisialisasi ulang database yang sudah berisi data.
-4. Secret journalfit-backend-secret dengan key DB_PASSWORD disediakan lokal pada
-   namespace default. Nilai sebenarnya tidak disimpan di Git, log atau image.
-5. Artifact image telah dipublikasikan ke registry. Push host memakai localhost:5001;
-   cluster menarik image dari registry:5000. Tag Kustomize harus menunjuk artifact yang ada.
-
-Contoh build artifact baru dari root repository:
-
-```powershell
-$tag = (git rev-parse --short=7 HEAD).Trim()
-docker build -t "localhost:5001/journalfit-backend:$tag" ./source
-docker push "localhost:5001/journalfit-backend:$tag"
-```
-
-Sesuaikan images[].newTag pada deployment/kustomization.yaml melalui perubahan
-yang direview. Build/push tidak otomatis mengganti tag manifest atau workload.
-Perintah berikut untuk deployment manual awal; setelah Argo mengelola aplikasi,
-perubahan mengikuti satu sumber Git yang disepakati bersama Anggota 3.
-
-```powershell
-kubectl --context k3d-capstone apply --dry-run=server -k ./deployment
-kubectl --context k3d-capstone apply -k ./deployment
-kubectl --context k3d-capstone -n default get deployment,pods,service,ingress,pvc,hpa
-curl.exe -sS -H "Host: journalfit.localhost" http://127.0.0.1:8088/health/ready
-```
-
-Ini prosedur yang dirangkai dari langkah yang sudah diuji, bukan klaim bahwa seluruh
-setup telah diulang dari nol pada laptop lain. Resource adalah baseline awal;
-storage lokal satu node bukan high availability lintas node. PDF latihan presentasi,
-reference-docs, .env dan file QA sementara bukan bagian source runtime.
-
-## Kolaborasi
-
-Tidak ada direct commit ke main atau force push. Gunakan feature branch, review,
-dan izin pengguna sebelum publikasi. Saat ini pengguna mengizinkan commit/push
-feature branch, tetapi belum mengizinkan pembuatan PR. Dokumentasi draft PR tidak
-berarti PR sudah dibuat atau perubahan sudah diterima anggota lain.
+Command dikumpulkan di panduan utama, termasuk bagian **Demo langsung M3** untuk
+menunjukkan workload, endpoint, laporan, dan upload. CI/CD penuh, security,
+observability, backup/restore, dan portabilitas tetap memiliki bukti tersendiri.

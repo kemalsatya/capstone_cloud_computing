@@ -31,7 +31,7 @@ spec:
         fsGroupChangePolicy: OnRootMismatch
       containers:
         - name: backend
-          image: registry:5000/journalfit-backend:3bdf305
+          image: registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a
           imagePullPolicy: Always
           ports:
             - name: http

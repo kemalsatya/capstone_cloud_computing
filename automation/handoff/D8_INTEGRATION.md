@@ -1,5 +1,11 @@
 # Integrasi delivery JournalFit
 
+> **Status per 2026-11-17:** catatan dan usulan D.8 di bawah belum diverifikasi
+> ulang. Pernyataan pengujian, versi, dan status branch merupakan catatan lama.
+> Evidence platform terkait sudah masuk [arsip](../../evidence/_archive/platform-unverified-2026-11-17/ARCHIVE_STATUS.md).
+> Untuk kontrak artifact dan kriteria penerimaan terbaru, gunakan
+> [handoff aktif M3 → M4](M3_TO_M4.md). Isi di bawah adalah riwayat usulan D.8.
+
 Status: persiapan D.8 untuk review. Bukti sinkronisasi dari GitHub belum direkam;
 publikasi branch platform adalah prasyarat sebelum sync diuji. Tidak ada push/PR/merge otomatis oleh dokumen ini.
 

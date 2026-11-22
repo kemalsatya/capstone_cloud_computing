@@ -1,0 +1,7 @@
+Timestamp: 2026-11-10T01:03:34.560940+07:00
+Scope: static CI patch and local Argo config validation; not a CI run or Argo sync.
+git apply --check against cf78b0d exported files: exit 0
+.github/workflows/ci.yaml: patched YAML parses; run step shell syntax passes; no active workflow changed.
+.gitea/workflows/ci.yml: patched YAML parses; run step shell syntax passes; no active workflow changed.
+Application branch/default namespace/HPA ownership/PVC protection: static checks pass.
+Source branch not published: live Git comparison, sync, drift reconciliation and CI artifact promotion remain unverified.

@@ -1,0 +1,2 @@
+# Preserve archived evidence bytes across Git add/checkout on different platforms.
+evidence/_archive/** -text

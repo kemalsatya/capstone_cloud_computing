@@ -1,0 +1,2 @@
+[JournalFit Server] Running on http://localhost:8000
+[JournalFit Server] Environment: PORT=8000, DB_HOST=capstone-postgres:5432, DB_NAME=stage2_missing_159a4d9700e34788a78057023d4c7c8a

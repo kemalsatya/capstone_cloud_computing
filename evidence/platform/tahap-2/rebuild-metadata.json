@@ -1,0 +1,70 @@
+{
+  "buildx.build.provenance": {
+    "builder": {
+      "id": ""
+    },
+    "buildType": "https://mobyproject.org/buildkit@v1",
+    "materials": [
+      {
+        "uri": "pkg:docker/node@22-alpine?digest=sha256:1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a\u0026platform=linux%2Famd64",
+        "digest": {
+          "sha256": "1314fb30ec37592d5845e5a160d522c0e680972aa534549940b8d73bde88481a"
+        }
+      }
+    ],
+    "invocation": {
+      "configSource": {
+        "entryPoint": "Dockerfile"
+      },
+      "parameters": {
+        "frontend": "dockerfile.v0",
+        "args": {
+          "label:io.journalfit.dockerfile.sha256": "8b864229d838a099feee1c6df3635e46687498b86c88ac34e6f17b9207756b99",
+          "label:io.journalfit.dockerignore.sha256": "2311981b0aba63d4cbd569367dcab056cbdcc331d1fc54f842dd02d198e9c498",
+          "label:io.journalfit.source.revision-state": "working-tree",
+          "label:org.opencontainers.image.created": "2026-11-17T12:51:20.8057250+07:00",
+          "label:org.opencontainers.image.revision": "d9ab35a10eab8e9c67e45bc53f8a22522846b038"
+        },
+        "locals": [
+          {
+            "name": "context"
+          },
+          {
+            "name": "dockerfile"
+          }
+        ],
+        "root": {
+          "configSource": {
+            "path": "Dockerfile"
+          },
+          "request": {
+            "args": {
+              "label:io.journalfit.dockerfile.sha256": "8b864229d838a099feee1c6df3635e46687498b86c88ac34e6f17b9207756b99",
+              "label:io.journalfit.dockerignore.sha256": "2311981b0aba63d4cbd569367dcab056cbdcc331d1fc54f842dd02d198e9c498",
+              "label:io.journalfit.source.revision-state": "working-tree",
+              "label:org.opencontainers.image.created": "2026-11-17T12:51:20.8057250+07:00",
+              "label:org.opencontainers.image.revision": "d9ab35a10eab8e9c67e45bc53f8a22522846b038",
+              "vcs:localdir:context": "source",
+              "vcs:localdir:dockerfile": "source",
+              "vcs:revision": "d9ab35a10eab8e9c67e45bc53f8a22522846b038",
+              "vcs:source": "https://github.com/kemalsatya/capstone_cloud_computing"
+            }
+          }
+        },
+        "compatibilityVersion": 30
+      },
+      "environment": {
+        "dockerfileVersion": "1.26.0",
+        "platform": "linux/amd64"
+      }
+    }
+  },
+  "buildx.build.ref": "desktop-linux/desktop-linux/9ifbp4cmlx06fz57kr0pur7o0",
+  "containerimage.descriptor": {
+    "mediaType": "application/vnd.oci.image.index.v1+json",
+    "digest": "sha256:1586556413f1f9f1b05a482bbfe2c09937e9a63f0ed0fa61285f3e13aa767f0b",
+    "size": 856
+  },
+  "containerimage.digest": "sha256:1586556413f1f9f1b05a482bbfe2c09937e9a63f0ed0fa61285f3e13aa767f0b",
+  "image.name": "docker.io/library/journalfit-backend:stage2-20261117t055120z-d9ab35a-rebuild"
+}

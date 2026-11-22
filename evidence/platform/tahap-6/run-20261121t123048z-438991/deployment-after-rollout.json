@@ -1,0 +1,37 @@
+{
+  "generation": 21,
+  "observedGeneration": 21,
+  "replicas": 2,
+  "updatedReplicas": 2,
+  "readyReplicas": 2,
+  "availableReplicas": 2,
+  "unavailableReplicas": 0,
+  "strategy": {
+    "rollingUpdate": {
+      "maxSurge": 1,
+      "maxUnavailable": 0
+    },
+    "type": "RollingUpdate"
+  },
+  "minReadySeconds": 5,
+  "image": "registry:5000/journalfit-backend:stage2-20261117t055120z-d9ab35a",
+  "restartedAt": "2026-11-21T19:31:30+07:00",
+  "conditions": [
+    {
+      "lastTransitionTime": "2026-11-21T12:31:26Z",
+      "lastUpdateTime": "2026-11-21T12:31:26Z",
+      "message": "Deployment has minimum availability.",
+      "reason": "MinimumReplicasAvailable",
+      "status": "True",
+      "type": "Available"
+    },
+    {
+      "lastTransitionTime": "2026-11-09T17:27:44Z",
+      "lastUpdateTime": "2026-11-21T12:31:53Z",
+      "message": "ReplicaSet \"journalfit-backend-6df66fd858\" has successfully progressed.",
+      "reason": "NewReplicaSetAvailable",
+      "status": "True",
+      "type": "Progressing"
+    }
+  ]
+}

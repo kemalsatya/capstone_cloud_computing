@@ -1,0 +1,51 @@
+﻿Timestamp: 2026-11-10T00:16:50.3348157+07:00
+Scope: apply existing Anggota 1 SQL to local JournalFit database; backend/SQL files unchanged.
+Schema SHA256: 73A75F57E37FA7E0ED4E45A9775DAA86976367D40A13D05B4FC7499E6097D499
+Command: docker exec capstone-postgres sh -c <createdb using configured lab user> journalfit
+Create database exit code: 0
+Command: Get-Content source/schema.sql -Raw | docker exec -i capstone-postgres sh -c <psql -X --single-transaction -v ON_ERROR_STOP=1 -d journalfit -f ->
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+INSERT 0 2
+INSERT 0 2
+INSERT 0 2
+INSERT 0 1
+INSERT 0 1
+INSERT 0 2
+Schema application exit code: 0
+Command: read-only table and seed verification in database journalfit
+ current_database | current_user 
+------------------+--------------
+ journalfit       | capstone
+(1 row)
+
+      table_name       
+-----------------------
+ check_results
+ findings
+ format_rule_templates
+ manuscripts
+ tenants
+ users
+(6 rows)
+
+      table_name       | row_count 
+-----------------------+-----------
+ check_results         |         1
+ findings              |         2
+ format_rule_templates |         2
+ manuscripts           |         1
+ tenants               |         2
+ users                 |         2
+(6 rows)
+
+   id   | tenant_id |  status   
+--------+-----------+-----------
+ ms-001 | tenant-a  | COMPLETED
+(1 row)
+
+Schema source hash unchanged. Seed manuscript metadata does not prove an actual DOCX file exists. Runtime application checks remain separate.

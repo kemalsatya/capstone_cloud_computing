@@ -1,0 +1,48 @@
+[
+  {
+    "name": "journalfit-backend-b84c65dd-9nvmp",
+    "uid": "1a156b6c-0d97-4e23-8816-8c7bcc17c1db",
+    "node": "k3d-capstone-agent-0",
+    "createdAt": "2026-11-17T06:38:20Z",
+    "ready": true,
+    "containers": [
+      {
+        "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+        "restarts": 5,
+        "startedAt": "2026-11-21T12:20:41Z",
+        "lastState": {
+          "terminated": {
+            "containerID": "containerd://a05df6fcd278d6b08631e70a4112fc022bfd76de4214b3852e6c5eefd98006e8",
+            "exitCode": 1,
+            "finishedAt": "2026-11-18T13:22:35Z",
+            "reason": "Error",
+            "startedAt": "2026-11-18T12:38:43Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "journalfit-backend-b84c65dd-9vd69",
+    "uid": "438a966e-2a19-41c3-a272-34be91a78cb8",
+    "node": "k3d-capstone-agent-0",
+    "createdAt": "2026-11-17T06:30:31Z",
+    "ready": true,
+    "containers": [
+      {
+        "imageID": "registry:5000/journalfit-backend@sha256:9aa3893aa1a763fb818af769e98db305c4afcbd34e5685231e571783e4d91557",
+        "restarts": 5,
+        "startedAt": "2026-11-21T12:20:41Z",
+        "lastState": {
+          "terminated": {
+            "containerID": "containerd://e9a8d8a67bc4b7c84073bb26b7ea0f0ae7fe8d5280b6bf39862843e00203f3a7",
+            "exitCode": 1,
+            "finishedAt": "2026-11-18T13:22:35Z",
+            "reason": "Error",
+            "startedAt": "2026-11-18T12:38:43Z"
+          }
+        }
+      }
+    ]
+  }
+]

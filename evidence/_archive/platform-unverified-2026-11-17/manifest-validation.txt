@@ -1,0 +1,22 @@
+Timestamp: 2026-11-09T23:52:09.252304+07:00
+Source: e30a3d6e00a1 plus uncommitted stage C manifests
+Command: kubectl kustomize ./deployment
+Render exit code: 0
+Rendered resource count: 6
+PASS: Explicit Kustomize resource set, no Secret or HPA included
+PASS: All namespaced resources use capstone
+PASS: Deployment selector, pod labels and Service selector agree
+PASS: Service target resolves to configured application port 8000
+PASS: ConfigMap and Secret reference cover environment keys consumed by backend
+PASS: Password comes only from runtime Secret reference
+PASS: ConfigMap reference resolves
+PASS: Volume claim and mount resolve to application uploads directory
+PASS: Local RWO storage explicitly constrains replica placement
+PASS: Pod identity matches non-root image and volume group
+PASS: CPU and memory match JournalFit baseline
+PASS: livenessProbe matches backend route and named port
+PASS: readinessProbe matches backend route and named port
+PASS: Rolling update retains baseline availability configuration
+PASS: Ingress references existing Service and port
+Limitations: local render and static consistency only; no Kubernetes API/schema validation, apply, image pull, database connectivity, PVC write, rollout or autoscaling performed.
+HPA deferred until Metrics API verification. platform-dev is local test tag, not published release artifact.
