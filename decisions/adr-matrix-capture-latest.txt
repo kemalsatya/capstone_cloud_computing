@@ -1,0 +1,29 @@
+================================================================================================================
+  [10-DECISIONS-ADR] ARCHITECTURE DECISION RECORDS MATRIX - JOURNALFIT (TEAM 7)
+  Owners: All Team Members (Anggota 1, Anggota 2, Anggota 3, Anggota 4) | Baseline: Keycloak OIDC (Commit 2dc3593)
+================================================================================================================
+
+ID      | Keputusan Arsitektur       | Status     | Alternatif Ditolak   | Trade-Off Utama                       
+--------+----------------------------+------------+----------------------+---------------------------------------
+ADR-001 | Modular Monolith Express 5 | Accepted   | Microservices penuh  | Hemat RAM (128Mi); scaling per pod.   
+ADR-002 | Postgres + tenant_id Isol  | Accepted   | DB terpisah / NoSQL  | ACID & hemat; butuh disiplin filter.  
+ADR-003 | k3d + Non-Root UID 10001   | Accepted   | Compose / Root image | Image 276MB; butuh host.docker.int.   
+ADR-004 | Argo CD GitOps + SHA-7 Tag | Accepted   | Manual kubectl apply | Anti-drift; wajib sync manifest git.  
+ADR-005 | PVC RWO + Node Pinning     | Accepted   | S3 / MinIO di v1     | Tanpa komponen extra; 1-node SPOF.    
+ADR-006 | K8s Secret + Trivy Gate    | Accepted   | Hardcoded YAML env   | 0 secret di Git; Trivy gate di CI.    
+ADR-007 | Prometheus /metrics + Graf | Accepted   | Paid SaaS APM agent  | Vendor-neutral; belum ada tracing.    
+ADR-008 | pg_dump DB Test + RuleEng  | Accepted   | LLM tiap cek dasar   | RTO 1.41s & $0 AI; cek masih statis.  
+ADR-009 | Keycloak OIDC + JWT Claim  | Accepted   | Mock token / Header auth | Standard OIDC; RAM 596MiB & boot 72s. 
+
+File Detail ADR Lengkap:
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-001-modular-monolith.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-002-postgresql-multitenancy.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-003-k3d-nonroot-container.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-004-gitops-argocd-sha7.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-005-pvc-rwo-storage-pinning.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-006-secrets-trivy-security.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-007-prometheus-grafana-slo.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-008-backup-restore-rule-engine.md
+  - /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing/decisions/ADR-009-keycloak-oidc-tenant-claim.md
+
+[TIP SCREENSHOT 10_evidence.jpg] Screenshot matriks ADR di atas atau tabel Markdown di 10-decisions-adr/README.md.
