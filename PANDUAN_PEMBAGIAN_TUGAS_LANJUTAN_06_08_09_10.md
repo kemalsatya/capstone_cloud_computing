@@ -14,21 +14,21 @@ Masing-masing anggota tim bebas **memilih sendiri 1 Paket** (1 orang = 1 paket),
 
 | Paket | Modul & File Bukti Target | Bobot Rubrik | Pekerjaan Utama yang Harus Dibuat & Dibuktikan | Status / Dipilih Oleh |
 | :--- | :--- | :---: | :--- | :--- |
-| **Paket A** | `06-security/06_evidence.jpg` | **10%** | Buat `deployment/secret.example.yaml`, uji ulang auth & isolasi tenant pakai **JWT Keycloak** (`401`/`403`/`404`/`200`, `X-Tenant-ID` diabaikan), audit secret & non-root, merge/update **Trivy scan** image terbaru + tabel prioritas remediasi CVE nyata. *(Progress di GitHub: Keycloak PR #11/#12 sudah di `main`; `trivy-scan.txt` awal sudah ada di branch `feat/evidence-jpg-trivy-observability`)* | **✅ Sudah Selesai** |
-| **Paket B** | `08-reliability-recovery/08_evidence.jpg` | **7.5%** | Verifikasi deploy K8s + Keycloak (`setup-keycloak.sh`), uji **Controlled Pod Deletion** (`kubectl delete pod`) & self-healing + ringkasan rolling update (`0 failed`), uji **Backup & Actual Restore** DB (`journalfit` + catatan/backup `keycloak`) + ukur **RTO aktual**. | `[ Terbuka — bebas pilih ]` |
-| **Paket C** | `09-capacity-finops/09_evidence.jpg` | **5%** | Ambil metrik live (`kubectl top`, `describe hpa`, `docker stats`), perbarui **Capacity & Headroom Worksheet** dengan memasukkan **pod Keycloak** (`~596 MiB`), lengkapi **Cloud IaaS Mapping + Unit-Cost FinOps**, dan revisi **Residual Risks & Roadmap** pasca-Keycloak. | `[ Terbuka — bebas pilih ]` |
-| **Paket D** | `10-decisions-adr/10_evidence.jpg` *(+ `01`, `02`, `11`)* | **15%*** *(+10% +2.5%)* | Audit `ADR-001`..`ADR-008`, revisi `ADR-006` + tambah **`ADR-009` (Keycloak OIDC)** → `10_evidence.jpg`; buat diagram visual arsitektur (+ Keycloak) → `02_evidence.jpg`; ringkasan bisnis → `01_evidence.jpg`; gladi bersih E2E → `11_evidence.jpg` *(bagian `01`/`02`/`10` bisa dikerjakan langsung; hanya `11` menunggu integrasi akhir)*. | `[ Terbuka — bebas pilih ]` |
+| **Paket A** | `06-security/06_evidence.jpg` | **10%** | Uji auth & isolasi tenant pakai **JWT Keycloak** (`401`/`403`/`404`/`200`, `X-Tenant-ID` diabaikan), audit secret & non-root, **Trivy scan** image terbaru + tabel prioritas remediasi CVE nyata. | **✅ Sudah Selesai** |
+| **Paket B** | `08-reliability-recovery/08_evidence.jpg` | **7.5%** | Verifikasi deploy K8s + Keycloak (`setup-keycloak.sh`), jalankan `capture-evidence-06-08-09-10.sh 08` untuk uji **Controlled Pod Deletion** (`kubectl delete pod` & self-healing) + ringkasan rolling update (`0 failed`), uji **Backup & Actual Restore** DB (`journalfit` → `journalfit_restore_test` + backup `keycloak`) + ukur **RTO aktual**. | `[ Terbuka — bebas pilih ]` |
+| **Paket C** | `09-capacity-finops/09_evidence.jpg` | **5%** | Jalankan `capture-evidence-06-08-09-10.sh 09`, ambil metrik live (`kubectl top`, `describe hpa`, `docker stats`) ke `live-metrics.txt`, perbarui **Capacity & Headroom Worksheet** dengan **pod Keycloak** (`~596 MiB`), lengkapi **Cloud IaaS Mapping + Unit-Cost FinOps**, dan revisi **Residual Risks & Roadmap** pasca-Keycloak. | `[ Terbuka — bebas pilih ]` |
+| **Paket D** | `10-decisions-adr/10_evidence.jpg` *(+ `01`, `02`, `11`)* | **15%*** *(+10% +2.5%)* | Verifikasi & screenshot matriks `ADR-001`..`ADR-009` (`capture-evidence-06-08-09-10.sh 10`) → `10_evidence.jpg`; buat/ekspor diagram visual arsitektur (+ Keycloak) → `02_evidence.jpg`; ringkasan bisnis → `01_evidence.jpg`; gladi bersih E2E → `11_evidence.jpg` *(bagian `01`/`02`/`10` bisa dikerjakan langsung; hanya `11` menunggu integrasi akhir)*. | `[ Terbuka — bebas pilih ]` |
 
-*\*Catatan: Bobot 15% adalah nilai terpadu Architecture & ADRs (`02-architecture` + `10-decisions-adr`). Bukti `03`, `04`, `05`, `07` sudah tersedia, namun pastikan catatan versinya selaras dengan `main` terbaru.*
+*\*Catatan: Bobot 15% adalah nilai terpadu Architecture & ADRs (`02-architecture` + `10-decisions-adr`). Bukti `03`, `04`, `05`, `06`, `07` sudah tersedia, namun pastikan catatan versinya selaras dengan `main` terbaru.*
 
 ---
 
 ## 1. Prasyarat Sinkronisasi Bersama (Sebelum Ambil Bukti Final)
 
-Sebelum mengambil screenshot final untuk kluster `k3d`, pastikan **3 penyelarasan teknis** di `main` ini sudah beres (dikerjakan bersama / oleh pengelola CI/CD & kluster):
-1. **Bump tag image backend di `deployment/kustomization.yaml`:** tag lama `3bdf305` belum memuat library `jose` / middleware Keycloak, sedangkan `deployment/configmap.yaml` sudah mengeset `AUTH_MODE: jwt`. Build ulang image dari `main` terbaru dan perbarui `images[].newTag` ke SHA-7 baru.
-2. **Arahkan Argo CD ke `main`:** perbarui `automation/argocd/application.yaml` dari `targetRevision: milestone-per-week` ke `main` agar Argo CD menyinkronkan manifest Keycloak + backend terbaru.
-3. **Siapkan DB & Secret Keycloak di `k3d`:** jalankan `bash automation/scripts/setup-keycloak.sh` sebelum `kubectl apply -k deployment/`.
+Sebelum mengambil screenshot final untuk kluster `k3d`, pastikan **3 penyelarasan teknis** ini sudah aktif:
+1. **Bump tag image backend di `deployment/kustomization.yaml` & `deployment/deployment.yaml` (✅ Sudah diselaraskan ke `2dc3593`):** image tag sudah diselaraskan ke baseline Keycloak `main` (`2dc3593`). Jika membangun image baru di lokal, jalankan `bash automation/scripts/build-and-tag.sh`.
+2. **Arahkan Argo CD ke `main` & CI ke Node 22 (✅ Sudah diselaraskan):** `automation/argocd/application.yaml` sudah mengarah ke `targetRevision: main` dan workflow CI sudah menggunakan Node 22.
+3. **Siapkan DB & Secret Keycloak di `k3d` lokal:** jalankan `bash automation/scripts/setup-keycloak.sh` sebelum `kubectl apply -k deployment/`.
 
 ---
 
@@ -42,8 +42,8 @@ git fetch origin
 git checkout main
 git pull --ff-only origin main
 
-# 2. Buat feature branch kerja pribadi (DILARANG direct commit ke main)
-git checkout -b feat/m2-paket-<a|b|c|d>-<nama-anda>
+# 2. Buat feature branch kerja pribadi sesuai paket yang dipilih (b/c/d)
+git checkout -b feat/m2-paket-<b|c|d>-<nama-anda>
 
 # 3. Cek kesiapan tool lokal (git, docker, node, kubectl, k3d)
 bash automation/scripts/doctor.sh
@@ -51,7 +51,7 @@ bash automation/scripts/doctor.sh
 
 **Aturan Wajib (Critical Quality Gates — Guideline 2 §14.2):**
 - **Jangan pernah** commit file `.env`, password DB/Keycloak, token, atau kredensial nyata ke Git.
-- **Jangan menyalin output lama pre-Keycloak** (`400/403` `X-Tenant-ID`) sebagai hasil uji keamanan terbaru — modul `06` wajib menggunakan token JWT Keycloak aktual (`source/AUTH.md`).
+- **Jangan menyalin output lama pre-Keycloak** (`400/403` `X-Tenant-ID`) sebagai hasil uji keamanan terbaru — wajib menggunakan token JWT Keycloak aktual (`source/AUTH.md`).
 - Setiap `README.md` modul wajib memuat 9 field **Evidence Standard (§9)**: *Scope, Owner, Source/Version, Timestamp, Method, Observation, Interpretation, Limitation, Decision Supported*.
 
 ---
@@ -60,7 +60,7 @@ bash automation/scripts/doctor.sh
 
 ---
 
-### PAKET A — Modul `06-security/` (`06_evidence.jpg` — Bobot 10%)
+### PAKET A — Modul `06-security/` (`06_evidence.jpg` — Bobot 10%) [✅ SUDAH SELESAI]
 
 #### Apa yang Harus Dibuat & Dibuktikan?
 1. **Membuat template Secret aman (`deployment/secret.example.yaml`):**
@@ -157,17 +157,11 @@ bash automation/scripts/setup-keycloak.sh
 kubectl --context k3d-capstone apply -k deployment/
 kubectl --context k3d-capstone -n default rollout status deployment/journalfit-backend --timeout=90s
 
-# 2. Panel 1 — Controlled Pod Deletion & Self-Healing
-kubectl --context k3d-capstone -n default get pods -l app=journalfit
-POD=$(kubectl --context k3d-capstone -n default get pods -l app=journalfit -o jsonpath='{.items[0].metadata.name}')
-kubectl --context k3d-capstone -n default delete pod "$POD"
-kubectl --context k3d-capstone -n default rollout status deployment/journalfit-backend --timeout=90s
-kubectl --context k3d-capstone -n default get pods -l app=journalfit
+# 2. Jalankan skrip otomasi Panel 1 (Pod Self-Healing) & Panel 2 (Backup + Isolated Restore journalfit_restore_test + RTO)
+bash automation/scripts/capture-evidence-06-08-09-10.sh 08
 
-# 3. Panel 2 — Backup & Actual Isolated Restore + Ukur RTO
-bash automation/scripts/db-backup-restore.sh backup
-# Ganti <file.sql> dengan file backup yang baru terbuat di evidence/reliability-recovery/:
-time bash automation/scripts/db-backup-restore.sh restore evidence/reliability-recovery/<file.sql>
+# 3. (Opsional) Backup tambahan untuk database Keycloak
+DB_NAME=keycloak bash automation/scripts/db-backup-restore.sh backup
 ```
 
 #### Prompt AI Siap Copy-Paste (Paket B — Reliability & Recovery)
@@ -176,15 +170,14 @@ Saya memilih Paket B (Modul 08 - Reliability & Recovery) untuk Progress Mileston
 
 Konteks repo saat ini:
 - Manifest K8s: `deployment/deployment.yaml` (2 replika, maxUnavailable: 0, maxSurge: 1, readiness `/health/ready`), `deployment/pvc.yaml` (1Gi local-path RWO, `Prune=false,Delete=false`), dan `deployment/keycloak/deployment.yaml` (1 replika `Recreate`).
-- Skrip: `automation/scripts/setup-keycloak.sh`, `automation/scripts/db-backup-restore.sh`.
+- Skrip: `automation/scripts/setup-keycloak.sh`, `automation/scripts/db-backup-restore.sh`, dan `automation/scripts/capture-evidence-06-08-09-10.sh 08`.
 - Bukti referensi sebelumnya: `evidence/platform/pod-replacement-persistence.txt`, `evidence/platform/rolling-update-result.json`, `evidence/reliability-recovery/restore-proof.txt`, `evidence/reliability-recovery/README.md`.
 
 Tolong bantu saya mengerjakan dan membuktikan modul 08 secara nyata di mesin saya (jangan membuat angka fiktif):
 1. Bantu memverifikasi prasyarat: `journalfit-postgres` berjalan, `setup-keycloak.sh` selesai, kluster `k3d-capstone` aktif dengan 2 pod `journalfit-backend` Ready dan PVC `Bound`.
-2. Pandu saya menjalankan **Controlled Pod Failure Test** (`kubectl delete pod`), mengukur waktu self-healing sampai pod baru `Ready`, serta membuktikan `GET /health/ready` tetap 200 dan file PVC tidak hilang.
-3. Pandu saya menjalankan **Actual Backup & Restore** lewat `automation/scripts/db-backup-restore.sh` (tambahkan uji insert/cek data sebelum backup → restore ke DB validasi → cocokkan 6 tabel & jumlah baris + ukur waktu RTO dalam detik), serta bantu tambahkan verifikasi backup DB `keycloak` (atau catat batasannya).
-4. Perbarui `evidence/reliability-recovery/README.md` dengan hasil observasi & RTO aktual saya sesuai Guideline 2 Section 9 (9 field Evidence Standard, termasuk keterbatasan RWO single-node).
-5. Pandu penataan screenshot 2 panel untuk `08_evidence.jpg`, draft Bab 9 Laporan Akhir, dan jawaban singkat sidang: "What happens if one application pod is deleted?", "What does your readiness probe protect against?", dan "What is your recovery target (RTO/RPO) and was it actually tested?".
+2. Pandu saya menjalankan `bash automation/scripts/capture-evidence-06-08-09-10.sh 08` untuk menguji **Controlled Pod Failure Test** (`kubectl delete pod` & waktu self-healing) serta **Actual Backup & Isolated Restore** ke `journalfit_restore_test` (cocokkan 6 tabel & jumlah baris + ukur waktu RTO), ditambah verifikasi backup DB `keycloak` (`DB_NAME=keycloak bash automation/scripts/db-backup-restore.sh backup`).
+3. Perbarui `evidence/reliability-recovery/README.md` dengan hasil observasi & RTO aktual saya sesuai Guideline 2 Section 9 (9 field Evidence Standard, termasuk keterbatasan RWO single-node).
+4. Pandu penataan screenshot 2 panel untuk `08_evidence.jpg`, draft Bab 9 Laporan Akhir, dan jawaban singkat sidang: "What happens if one application pod is deleted?", "What does your readiness probe protect against?", dan "What is your recovery target (RTO/RPO) and was it actually tested?".
 ```
 
 ---
@@ -196,7 +189,7 @@ Tolong bantu saya mengerjakan dan membuktikan modul 08 secara nyata di mesin say
    - Ambil pengukuran aktual dari kluster & Docker: `kubectl top nodes`, `kubectl top pods -n default`, `kubectl describe hpa journalfit-backend`, dan `docker stats --no-stream`.
    - Simpan output mentah ke `evidence/capacity-finops/live-metrics.txt`.
 2. **Memperbarui Capacity & Headroom Worksheet (Pasca-Keycloak):**
-   - Dokumen `evidence/capacity-finops/README.md` lama belum memasukkan **pod Keycloak** (`requests: 250m CPU / 512Mi RAM`, `limits: 1000m CPU / 1Gi RAM`, cold start terukur 72s / `~596 MiB` RAM di `deployment/README.md`).
+   - Jalankan `bash automation/scripts/capture-evidence-06-08-09-10.sh 09` dan perbarui `evidence/capacity-finops/README.md` dengan memasukkan **pod Keycloak** (`requests: 250m CPU / 512Mi RAM`, `limits: 1000m CPU / 1Gi RAM`, cold start terukur 72s / `~596 MiB` RAM di `deployment/README.md`).
    - Hitung ulang total reservasi & puncak host (Backend 2–3 pod HPA + Keycloak 1 pod + PostgreSQL + Prometheus/Grafana + k3s control plane), bedakan jelas mana angka **terukur (*measured*)** dan mana **asumsi (*assumed*)**, serta identifikasi mana yang *over-provisioned* dan mana yang berisiko *under-provisioned*.
 3. **Memperbarui Cloud IaaS Mapping & FinOps Unit-Cost:**
    - Sesuaikan pemetaan ke Cloud IaaS / CloudStack (pastikan sizing RAM worker node memadai untuk Backend + Keycloak + DB).
@@ -212,11 +205,16 @@ Tolong bantu saya mengerjakan dan membuktikan modul 08 secara nyata di mesin say
 
 #### Perintah yang Dijalankan di Git Bash
 ```bash
-# 1. Ambil metrik live dari Kubernetes (termasuk pod Keycloak) & Docker
-kubectl --context k3d-capstone top nodes
-kubectl --context k3d-capstone top pods -n default
-kubectl --context k3d-capstone describe hpa journalfit-backend -n default
-docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+# 1. Cetak 3 panel Capacity, FinOps & Residual Risks terbaru (+ kubectl top pods otomatis bila kluster aktif)
+bash automation/scripts/capture-evidence-06-08-09-10.sh 09
+
+# 2. Ambil metrik live dari Kubernetes (termasuk pod Keycloak) & Docker ke live-metrics.txt
+{
+  kubectl --context k3d-capstone top nodes
+  kubectl --context k3d-capstone top pods -n default
+  kubectl --context k3d-capstone describe hpa journalfit-backend -n default
+  docker stats --no-stream --format "table {{.Name}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.MemPerc}}"
+} | tee evidence/capacity-finops/live-metrics.txt
 ```
 
 #### Prompt AI Siap Copy-Paste (Paket C — Capacity & FinOps)
@@ -228,10 +226,10 @@ Konteks repo saat ini:
   - `deployment/deployment.yaml`: backend 2–3 pod (HPA min 2, max 3, CPU 70%), requests `100m/128Mi`, limits `250m/256Mi`.
   - `deployment/keycloak/deployment.yaml`: Keycloak 1 pod (`Recreate`), requests `250m/512Mi`, limits `1000m/1Gi` (cold start terukur 72s / `596MiB` di `deployment/README.md`).
   - `deployment/pvc.yaml`: 1Gi local-path RWO; `docker-compose.yml`: Postgres 17, Prometheus (retensi 3d), Grafana.
-- Dokumen lama yang perlu diperbarui: `evidence/capacity-finops/README.md` (masih belum menghitung Keycloak dan Residual Risk R2 masih menyebut mock JWT).
+- Skrip & dokumen target: `automation/scripts/capture-evidence-06-08-09-10.sh 09` dan `evidence/capacity-finops/README.md`.
 
 Tolong bantu saya melengkapi dan memvalidasi modul 09 secara nyata & terukur:
-1. Pandu saya merekam angka utilisasi nyata (`kubectl top nodes`, `kubectl top pods -n default`, `kubectl describe hpa`, `docker stats --no-stream`) ke `evidence/capacity-finops/live-metrics.txt`.
+1. Pandu saya menjalankan `bash automation/scripts/capture-evidence-06-08-09-10.sh 09` dan merekam angka utilisasi nyata (`kubectl top nodes`, `kubectl top pods -n default`, `kubectl describe hpa`, `docker stats --no-stream`) ke `evidence/capacity-finops/live-metrics.txt`.
 2. Perbarui tabel **Capacity & Headroom Worksheet** di `evidence/capacity-finops/README.md` dengan memasukkan **pod Keycloak** dan hasil pengukuran saya (tandai tegas mana angka *measured* dan mana *assumed*), lalu analisis komponen mana yang *over-provisioned* vs *under-provisioned*.
 3. Sesuaikan tabel **Cloud IaaS / CloudStack Mapping** & **Unit-Cost FinOps** (termasuk perbandingan v1 deterministic rule-engine `$0` AI vs proyeksi v2 abstract-only LLM + prinsip *Optimization Without Harming Controls*).
 4. Revisi bagian **Residual Risks & Roadmap**: hapus klaim lama "belum pakai Keycloak" dan ganti dengan risiko sisa aktual (PVC RWO single-node, direct access grant & dev passwords Keycloak, DB host.docker.internal & backup manual, local registry tanpa TLS, serta fitur PRD v2 Garage/pg-boss/Groq). Lengkapi 9 field Evidence Standard Guideline 2 §9.
@@ -244,11 +242,10 @@ Tolong bantu saya melengkapi dan memvalidasi modul 09 secara nyata & terukur:
 
 #### Apa yang Harus Dibuat & Dibuktikan?
 1. **Audit & Sinkronisasi ADR (`10-decisions-adr/10_evidence.jpg`):**
-   - Audit silang `decisions/ADR-001` s.d. `ADR-008` terhadap kondisi `main` terbaru.
-   - **Revisi `ADR-006`** (hapus klaim *"Keycloak ditolak di v1 / masih mock token"*) dan **buat `decisions/ADR-009-keycloak-oidc-tenant-claim.md`** (keputusan integrasi Keycloak RS256/JWKS, pemisahan external issuer vs internal JWKS URI, claim `tenant_id`, dan penolakan `404` cross-tenant + `403` RBAC).
-   - Perbarui matriks di `decisions/README.md` (9 field Evidence Standard) dan ambil screenshot rapi matriks ADR-001..009 sebagai **`10_evidence.jpg`**.
+   - Verifikasi `decisions/ADR-001` s.d. `ADR-009` (`ADR-006` sudah direvisi dan **`decisions/ADR-009-keycloak-oidc-tenant-claim.md`** sudah ditambahkan untuk keputusan integrasi Keycloak RS256/JWKS, pemisahan external issuer vs internal JWKS URI, claim `tenant_id`, dan penolakan `404` cross-tenant + `403` RBAC).
+   - Jalankan `bash automation/scripts/capture-evidence-06-08-09-10.sh 10`, pastikan matriks di `decisions/README.md` memuat 9 field Evidence Standard, dan ambil screenshot rapi matriks `ADR-001`..`ADR-009` sebagai **`10_evidence.jpg`**.
 2. **Diagram Visual Arsitektur (`02-architecture/02_evidence.jpg`):**
-   - Buat diagram arsitektur visual yang bersih (Mermaid / Draw.io / Excalidraw) yang **sudah memuat Keycloak**, PostgreSQL (`journalfit` + `keycloak`), Traefik Ingress (`journalfit.localhost` & `keycloak.localhost`), Backend 2–3 pod HPA, PVC RWO 1Gi, Argo CD, Prometheus/Grafana, dengan label tegas:
+   - Buat diagram arsitektur visual yang bersih (ArchiMate / Mermaid / Draw.io / Excalidraw) yang **sudah memuat Keycloak**, PostgreSQL (`journalfit` + `keycloak`), Traefik Ingress (`journalfit.localhost` & `keycloak.localhost`), Backend 2–3 pod HPA, PVC RWO 1Gi, Argo CD, Prometheus/Grafana, dengan label tegas:
      - **Control Plane vs Data Plane**
      - **Trust Boundaries** (External, JWT/JWKS, Tenant, Secret)
      - **Failure Boundaries**
@@ -265,8 +262,8 @@ Tolong bantu saya melengkapi dan memvalidasi modul 09 secara nyata & terukur:
 # 1. Jalankan seluruh unit & auth tests terbaru di source/
 cd source && npm test && cd ..
 
-# 2. Cek daftar file ADR & render matriks ADR
-ls -la decisions/
+# 2. Cetak matriks ADR-001 s.d. ADR-009 untuk 10_evidence.jpg
+bash automation/scripts/capture-evidence-06-08-09-10.sh 10
 
 # 3. Gladi bersih End-to-End (setelah stack & kluster sinkron) untuk 11_evidence.jpg
 bash automation/scripts/e2e-milestone-test.sh --with-trivy
@@ -277,14 +274,14 @@ bash automation/scripts/e2e-milestone-test.sh --with-trivy
 Saya memilih Paket D (Modul 10 - Decisions ADR, serta penyelarasan 01-Business, 02-Architecture, dan 11-Demo-Defense) untuk Progress Milestone 2 proyek Capstone Cloud Computing "JournalFit" di branch `main` terbaru (`capstone_cloud_computing`, sudah termasuk Keycloak PR #11 & #12).
 
 Konteks repo saat ini:
-- File ADR: `decisions/README.md` dan `decisions/ADR-001`..`ADR-008`.
+- File ADR: `decisions/README.md`, `decisions/ADR-001`..`ADR-009` (termasuk `ADR-009-keycloak-oidc-tenant-claim.md`), dan `decisions/adr-matrix-capture-latest.txt`.
 - Arsitektur & Bisnis: `architecture/index.md`, `evidence/architecture/README.md`, `evidence/business/README.md`.
 - Implementasi terbaru: `source/AUTH.md`, `source/src/app.js`, `deployment/*.yaml`, `deployment/keycloak/*.yaml`, `.github/workflows/ci.yaml`, `docker-compose.yml`.
 - Demo: `automation/scripts/e2e-milestone-test.sh`, `cloud-capstone-team-7/11-demo-defense/README.md`.
 
 Tolong bantu saya mengerjakan paket ini secara lengkap & faktual (jangan mengklaim fitur PRD yang belum dibangun seperti Garage/pg-boss/Groq; catat di Roadmap saja):
-1. Audit silang `decisions/ADR-001`..`ADR-008` terhadap kode `main` terbaru. Revisi `ADR-006` (hapus klaim Keycloak ditolak/mock token) dan buat `decisions/ADR-009-keycloak-oidc-tenant-claim.md` (RS256/JWKS, pemisahan external issuer vs internal JWKS URI, claim `tenant_id`, 404 cross-tenant, 403 RBAC), lalu perbarui matriks di `decisions/README.md` lengkap 9 field Guideline 2 §9 untuk `10_evidence.jpg`.
-2. Buatkan diagram visual arsitektur (Mermaid/HTML siap ekspor gambar) untuk `02_evidence.jpg` yang menampilkan **Keycloak**, Backend HPA (UID 10001), PostgreSQL (`journalfit` + `keycloak`), PVC RWO 1Gi, Traefik Ingress, Argo CD, Prometheus/Grafana, dengan batas **Control Plane vs Data Plane**, **Trust Boundaries**, dan **Failure Boundaries**.
+1. Verifikasi silang `decisions/ADR-001`..`ADR-009` terhadap kode `main` terbaru dan pandu pengambilan `10_evidence.jpg` dari matriks `decisions/README.md` / `bash automation/scripts/capture-evidence-06-08-09-10.sh 10` lengkap 9 field Guideline 2 §9.
+2. Buatkan diagram visual arsitektur (ArchiMate/Mermaid/HTML siap ekspor gambar) untuk `02_evidence.jpg` yang menampilkan **Keycloak**, Backend HPA (UID 10001), PostgreSQL (`journalfit` + `keycloak`), PVC RWO 1Gi, Traefik Ingress, Argo CD, Prometheus/Grafana, dengan batas **Control Plane vs Data Plane**, **Trust Boundaries**, dan **Failure Boundaries**.
 3. Buatkan ringkasan visual rapi untuk `01_evidence.jpg` dari `evidence/business/README.md` (Problem, Stakeholders, Workflow, Cloud Rationale, Success Metrics).
 4. Pandu saya menjalankan `cd source && npm test` dan `bash automation/scripts/e2e-milestone-test.sh` untuk `11_evidence.jpg`, serta siapkan draft Bab 1–3 Laporan Akhir dan ringkasan jawaban 12 Bank Pertanyaan Sidang (Guideline 2 §13.1).
 ```
