@@ -74,37 +74,68 @@ run_06() {
     echo "================================================================================"
     echo ""
 
-    echo ">>> PANEL 1: POSITIVE & NEGATIVE AUTHORIZATION / TENANT ISOLATION TESTS"
+    echo ">>> PANEL 1: POSITIVE & NEGATIVE AUTHORIZATION / TENANT ISOLATION TESTS (KEYCLOAK JWT)"
     detect_app_endpoint
-    if [[ -n "$APP_BASE_URL" ]]; then
-      echo "[Target Aktif] $APP_BASE_URL (Host header: ${APP_HOST_HEADER:-none})"
-      echo ""
-      echo "1) Negative Test - Tanpa Header X-Tenant-ID (Expected: 400 Bad Request):"
-      local code_400 body_400
-      body_400=$(curl_api GET "/api/manuscripts/ms-001/report")
-      code_400=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} "${APP_BASE_URL}/api/manuscripts/ms-001/report")
-      echo "   HTTP Status : $code_400"
-      echo "   Response    : $body_400"
+    local kc_url="" kc_host=""
+    if curl -sf "http://127.0.0.1:8081/realms/journalfit" >/dev/null 2>&1; then
+      kc_url="http://127.0.0.1:8081/realms/journalfit/protocol/openid-connect/token"
+    elif curl -sf -H "Host: keycloak.localhost" "http://127.0.0.1:8088/realms/journalfit" >/dev/null 2>&1; then
+      kc_url="http://127.0.0.1:8088/realms/journalfit/protocol/openid-connect/token"
+      kc_host="keycloak.localhost"
+    fi
+
+    if [[ -n "$APP_BASE_URL" && -n "$kc_url" ]]; then
+      echo "[Target API]      $APP_BASE_URL (Host header: ${APP_HOST_HEADER:-none})"
+      echo "[Target Keycloak] $kc_url (Host header: ${kc_host:-none})"
       echo ""
 
-      echo "2) Negative Test - Lintas Tenant: tenant-b membaca ms-001 milik tenant-a (Expected: 403 Forbidden):"
+      local tok_auth_a tok_edit_a tok_auth_b
+      tok_auth_a=$(curl -sS -X POST ${kc_host:+-H "Host: $kc_host"} "$kc_url" -d "grant_type=password&client_id=journalfit-app&username=author.a&password=author.a&scope=openid" | node -e 'const fs=require("fs"); try{console.log(JSON.parse(fs.readFileSync(0,"utf8")).access_token||"")}catch{console.log("")}')
+      tok_edit_a=$(curl -sS -X POST ${kc_host:+-H "Host: $kc_host"} "$kc_url" -d "grant_type=password&client_id=journalfit-app&username=editor.a&password=editor.a&scope=openid" | node -e 'const fs=require("fs"); try{console.log(JSON.parse(fs.readFileSync(0,"utf8")).access_token||"")}catch{console.log("")}')
+      tok_auth_b=$(curl -sS -X POST ${kc_host:+-H "Host: $kc_host"} "$kc_url" -d "grant_type=password&client_id=journalfit-app&username=author.b&password=author.b&scope=openid" | node -e 'const fs=require("fs"); try{console.log(JSON.parse(fs.readFileSync(0,"utf8")).access_token||"")}catch{console.log("")}')
+
+      echo "1) Negative Test - Tanpa Bearer Token (Expected: 401 UNAUTHENTICATED):"
+      local code_401 body_401
+      body_401=$(curl_api GET "/api/auth/me")
+      code_401=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} "${APP_BASE_URL}/api/auth/me")
+      echo "   HTTP Status : $code_401"
+      echo "   Response    : $body_401"
+      echo ""
+
+      echo "2) Negative Test - Lintas Tenant: author.b membaca ms-001 milik tenant-a (Expected: 404 NOT_FOUND):"
+      local code_404 body_404
+      body_404=$(curl_api GET "/api/manuscripts/ms-001/report" -H "Authorization: Bearer $tok_auth_b")
+      code_404=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "Authorization: Bearer $tok_auth_b" "${APP_BASE_URL}/api/manuscripts/ms-001/report")
+      echo "   HTTP Status : $code_404"
+      echo "   Response    : $body_404"
+      echo ""
+
+      echo "3) Negative Test - RBAC: editor.a memanggil POST /api/manuscripts/upload (Expected: 403 FORBIDDEN):"
       local code_403 body_403
-      body_403=$(curl_api GET "/api/manuscripts/ms-001/report" -H "X-Tenant-ID: tenant-b")
-      code_403=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "X-Tenant-ID: tenant-b" "${APP_BASE_URL}/api/manuscripts/ms-001/report")
+      body_403=$(curl_api POST "/api/manuscripts/upload" -H "Authorization: Bearer $tok_edit_a")
+      code_403=$(curl -s -o /dev/null -w "%{http_code}" -X POST ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "Authorization: Bearer $tok_edit_a" "${APP_BASE_URL}/api/manuscripts/upload")
       echo "   HTTP Status : $code_403"
       echo "   Response    : $body_403"
       echo ""
 
-      echo "3) Positive Test - Pemilik Sah: tenant-a membaca ms-001 (Expected: 200 OK):"
+      echo "4) Negative Test - Spoof Header X-Tenant-ID: tenant-b dengan JWT author.a (Expected: 200 tetap tenant-a):"
+      local code_spoof body_spoof
+      body_spoof=$(curl_api GET "/api/auth/me" -H "Authorization: Bearer $tok_auth_a" -H "X-Tenant-ID: tenant-b")
+      code_spoof=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "Authorization: Bearer $tok_auth_a" -H "X-Tenant-ID: tenant-b" "${APP_BASE_URL}/api/auth/me")
+      echo "   HTTP Status : $code_spoof"
+      echo "   Response    : $body_spoof"
+      echo ""
+
+      echo "5) Positive Test - Akses Sah editor.a (tenant-a) membaca ms-001 (Expected: 200 OK):"
       local code_200 body_200
-      body_200=$(curl_api GET "/api/manuscripts/ms-001/report" -H "X-Tenant-ID: tenant-a")
-      code_200=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "X-Tenant-ID: tenant-a" "${APP_BASE_URL}/api/manuscripts/ms-001/report")
+      body_200=$(curl_api GET "/api/manuscripts/ms-001/report" -H "Authorization: Bearer $tok_edit_a")
+      code_200=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "Authorization: Bearer $tok_edit_a" "${APP_BASE_URL}/api/manuscripts/ms-001/report")
       echo "   HTTP Status : $code_200"
       echo "   Response    : ${body_200:0:180}..."
     else
-      echo "[INFO] Aplikasi live (:8000 / :8088) belum menyala. Menampilkan referensi uji tersimpan:"
-      [[ -f "$DIR_06/no-header-400.txt" ]] && { echo "--- no-header-400.txt ---"; head -n 10 "$DIR_06/no-header-400.txt"; echo ""; }
-      [[ -f "$DIR_06/negative-test-403.txt" ]] && { echo "--- negative-test-403.txt ---"; head -n 10 "$DIR_06/negative-test-403.txt"; echo ""; }
+      echo "[INFO] Aplikasi (:8000/:8088) atau Keycloak (:8081/:8088) belum menyala."
+      echo "       Jalankan: docker compose up -d postgres keycloak app"
+      echo "       Referensi perintah uji JWT Keycloak ada di: source/AUTH.md"
     fi
 
     echo ""
@@ -245,10 +276,11 @@ run_09() {
     printf "%-30s-+-%-7s-+-%-11s-+-%-11s-+-%-12s-+-%-12s\n" "------------------------------" "-------" "-----------" "-----------" "------------" "---------------"
     printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "JournalFit Backend (Baseline)" "2" "100m / 250m" "128Mi/256Mi" "500m / 512Mi" "1Gi PVC (RWO)"
     printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "JournalFit Backend (HPA Max)" "3" "100m / 250m" "128Mi/256Mi" "750m / 768Mi" "1Gi PVC (RWO)"
+    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "Keycloak OIDC (start-dev/prod)" "1" "250m / 1000m" "512Mi/1024Mi" "~596Mi aktual" "Recreate stateful"
     printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "PostgreSQL 17 Alpine" "1" "- / ~500m" "- / ~64Mi" "~64Mi / host" "Docker Volume"
     printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "Prometheus + Grafana + Reg" "3" "- / ~500m" "- / ~350Mi" "~350Mi total" "3d Retention"
     printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "k3s Control Plane + Traefik" "1" "- / ~1000m" "- / ~650Mi" "~650Mi total" "local-path"
-    echo "  -> Headroom tersisa pada host pada HPA Peak (3 pod + full stack): ~75% RAM, >85% CPU"
+    echo "  -> Headroom tersisa pada host pada HPA Peak (3 pod + Keycloak + full stack): ~68% RAM, >80% CPU"
     echo ""
 
     if command -v kubectl >/dev/null 2>&1 && kubectl top pods >/dev/null 2>&1; then
@@ -271,7 +303,7 @@ run_09() {
 
     echo ">>> PANEL 3: RESIDUAL RISKS & PRIORITIZED IMPROVEMENT ROADMAP"
     echo "  [R1 - High] PVC ReadWriteOnce terikat 1 node -> Roadmap: Migrasi upload .docx ke S3/MinIO."
-    echo "  [R2 - High] Mock JWT belum terverifikasi OIDC -> Roadmap: Integrasi Keycloak JWKS + Postgres RLS."
+    echo "  [R2 - Med ] Direct Access Grant dev client (password) -> Roadmap: Authorization Code Flow + PKCE & DB RLS."
     echo "  [R3 - Med ] DB lokal via host.docker.internal -> Roadmap: Managed RDS + K8s CronJob auto-backup."
     echo "  [R4 - Low ] Local OCI Registry tanpa auth/TLS  -> Roadmap: Pindah ke GHCR / Harbor privat."
     echo ""
@@ -287,7 +319,7 @@ run_10() {
   {
     echo "================================================================================================================"
     echo "  [10-DECISIONS-ADR] ARCHITECTURE DECISION RECORDS MATRIX - JOURNALFIT (TEAM 7)"
-    echo "  Owners: All Team Members (Anggota 1, Anggota 2, Anggota 3, Anggota 4) | Baseline: Commit d9e9bab"
+    echo "  Owners: All Team Members (Anggota 1, Anggota 2, Anggota 3, Anggota 4) | Baseline: Keycloak OIDC (Commit 2dc3593)"
     echo "================================================================================================================"
     echo ""
     printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ID" "Keputusan Arsitektur" "Status" "Alternatif Ditolak" "Trade-Off Utama"
@@ -297,9 +329,10 @@ run_10() {
     printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-003" "k3d + Non-Root UID 10001" "Accepted" "Compose / Root image" "Image 276MB; butuh host.docker.int."
     printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-004" "Argo CD GitOps + SHA-7 Tag" "Accepted" "Manual kubectl apply" "Anti-drift; wajib sync manifest git."
     printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-005" "PVC RWO + Node Pinning" "Accepted" "S3 / MinIO di v1" "Tanpa komponen extra; 1-node SPOF."
-    printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-006" "K8s Secret + Trivy Gate" "Accepted" "Hardcoded YAML env" "0 secret di Git; JWT masih mock."
+    printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-006" "K8s Secret + Trivy Gate" "Accepted" "Hardcoded YAML env" "0 secret di Git; Trivy gate di CI."
     printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-007" "Prometheus /metrics + Graf" "Accepted" "Paid SaaS APM agent" "Vendor-neutral; belum ada tracing."
     printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-008" "pg_dump DB Test + RuleEng" "Accepted" "LLM tiap cek dasar" "RTO 1.41s & \$0 AI; cek masih statis."
+    printf "%-7s | %-26s | %-10s | %-20s | %-38s\n" "ADR-009" "Keycloak OIDC + JWT Claim" "Accepted" "Mock token / Header auth" "Standard OIDC; RAM 596MiB & boot 72s."
     echo ""
     echo "File Detail ADR Lengkap:"
     ls -1 "$DIR_10"/ADR-*.md 2>/dev/null | sed 's/^/  - /' || echo "  (Lihat folder 10-decisions-adr/ADR-*.md)"

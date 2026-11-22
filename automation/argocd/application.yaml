@@ -9,7 +9,7 @@ spec:
   project: default
   source:
     repoURL: 'https://github.com/kemalsatya/capstone_cloud_computing.git'
-    targetRevision: milestone-per-week
+    targetRevision: main
     path: deployment
   destination:
     server: 'https://kubernetes.default.svc'

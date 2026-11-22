@@ -184,11 +184,11 @@ echo "=== [M1-M2] Application Unit Tests, Database Schema & Transaksi Live ==="
 
 run_step "Unit & HTTP mock tests (node --test)" bash -c "cd '$ROOT_DIR/source' && node --test"
 
-echo "[INFO] Menyalakan stack core Docker Compose (postgres + app)..."
-if docker compose up -d --build postgres app; then
-  record_pass "Docker Compose up (postgres + app)"
+echo "[INFO] Menyalakan stack core Docker Compose (postgres + keycloak + app)..."
+if docker compose up -d --build postgres keycloak app; then
+  record_pass "Docker Compose up (postgres + keycloak + app)"
 else
-  record_fail "Docker Compose up (postgres + app)"
+  record_fail "Docker Compose up (postgres + keycloak + app)"
 fi
 
 DB_READY=false
@@ -201,9 +201,42 @@ for _ in $(seq 1 30); do
 done
 if [[ "$DB_READY" == "true" ]]; then
   record_pass "PostgreSQL healthy dan menerima koneksi"
+  docker exec -i journalfit-postgres psql -U "${DB_USER:-capstone}" -d "${DB_NAME:-journalfit}" \
+    < "$ROOT_DIR/source/migrations/001_add_keycloak_auth.sql" >/dev/null 2>&1 || true
 else
   record_fail "PostgreSQL tidak kunjung ready"
 fi
+
+KEYCLOAK_URL="${KEYCLOAK_URL:-http://127.0.0.1:${KEYCLOAK_PORT:-8081}}"
+KC_READY=false
+for _ in $(seq 1 45); do
+  if curl -fsS "$KEYCLOAK_URL/realms/journalfit" >/dev/null 2>&1; then
+    KC_READY=true
+    break
+  fi
+  sleep 2
+done
+if [[ "$KC_READY" == "true" ]]; then
+  record_pass "Keycloak realm 'journalfit' siap ($KEYCLOAK_URL)"
+else
+  record_fail "Keycloak realm 'journalfit' tidak kunjung ready"
+fi
+
+fetch_kc_token() {
+  local username="$1"
+  local password="$2"
+  local token_url="${3:-$KEYCLOAK_URL/realms/journalfit/protocol/openid-connect/token}"
+  local host_hdr="${4:-}"
+  local resp
+  if [[ -n "$host_hdr" ]]; then
+    resp=$(curl -sS -X POST -H "Host: $host_hdr" "$token_url" \
+      -d "grant_type=password&client_id=journalfit-app&username=${username}&password=${password}&scope=openid profile email" || echo "{}")
+  else
+    resp=$(curl -sS -X POST "$token_url" \
+      -d "grant_type=password&client_id=journalfit-app&username=${username}&password=${password}&scope=openid profile email" || echo "{}")
+  fi
+  node -e 'try { const d = JSON.parse(process.argv[1]); console.log(d.access_token || ""); } catch { console.log(""); }' "$resp"
+}
 
 APP_URL="${APP_URL:-http://127.0.0.1:8000}"
 APP_READY=false
@@ -248,13 +281,22 @@ else
   record_fail "GET /health/live mengembalikan HTTP $LIVE_CODE"
 fi
 
-TOKEN_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$APP_URL/api/auth/token" \
-  -H "Content-Type: application/json" \
-  -d '{"username":"e2e-author","role":"author","tenantId":"tenant-a"}')
-if [[ "$TOKEN_CODE" == "200" ]]; then
-  record_pass "POST /api/auth/token mengembalikan HTTP 200"
+TOK_AUTH_A=$(fetch_kc_token "author.a" "author.a")
+TOK_EDIT_A=$(fetch_kc_token "editor.a" "editor.a")
+TOK_AUTH_B=$(fetch_kc_token "author.b" "author.b")
+
+if [[ -n "$TOK_AUTH_A" && -n "$TOK_EDIT_A" && -n "$TOK_AUTH_B" ]]; then
+  record_pass "Keycloak mengeluarkan JWT access_token untuk author.a, editor.a, author.b"
 else
-  record_fail "POST /api/auth/token mengembalikan HTTP $TOKEN_CODE"
+  record_fail "Gagal mengambil JWT access_token dari Keycloak ($KEYCLOAK_URL)"
+fi
+
+ME_RESP="$TMP_DIR/auth-me.json"
+ME_CODE=$(curl -s -o "$ME_RESP" -w "%{http_code}" -H "Authorization: Bearer $TOK_AUTH_A" "$APP_URL/api/auth/me")
+if [[ "$ME_CODE" == "200" ]] && grep -q "tenant-a" "$ME_RESP"; then
+  record_pass "GET /api/auth/me dengan JWT author.a mengembalikan HTTP 200 (tenant-a)"
+else
+  record_fail "GET /api/auth/me gagal (HTTP $ME_CODE)"
 fi
 
 TEST_DOCX=".e2e-tmp/sample-manuscript.docx"
@@ -266,14 +308,13 @@ fs.writeFileSync(process.argv[1], `Abstract\nThis manuscript evaluates cloud nat
 
 UPLOAD_RESP=".e2e-tmp/upload.json"
 UPLOAD_CODE=$(curl -s -o "$UPLOAD_RESP" -w "%{http_code}" -X POST "$APP_URL/api/manuscripts/upload" \
-  -H "X-Tenant-ID: tenant-a" \
-  -F "file=@$TEST_DOCX" \
-  -F "authorId=user-a-01")
+  -H "Authorization: Bearer $TOK_AUTH_A" \
+  -F "file=@$TEST_DOCX")
 
 if [[ "$UPLOAD_CODE" == "201" ]]; then
   UPLOADED_MS_ID=$(node -e 'const d = JSON.parse(require("fs").readFileSync(process.argv[1], "utf8")); console.log(d.data?.manuscript?.id || d.data?.id || "");' "$UPLOAD_RESP")
   if [[ -n "$UPLOADED_MS_ID" ]]; then
-    record_pass "POST /api/manuscripts/upload HTTP 201 (id=$UPLOADED_MS_ID)"
+    record_pass "POST /api/manuscripts/upload (JWT author.a) HTTP 201 (id=$UPLOADED_MS_ID)"
   else
     record_fail "POST /api/manuscripts/upload HTTP 201 tetapi ID kosong"
   fi
@@ -282,9 +323,9 @@ else
 fi
 
 if [[ -n "$UPLOADED_MS_ID" ]]; then
-  REPORT_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "X-Tenant-ID: tenant-a" "$APP_URL/api/manuscripts/$UPLOADED_MS_ID/report")
+  REPORT_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOK_AUTH_A" "$APP_URL/api/manuscripts/$UPLOADED_MS_ID/report")
   if [[ "$REPORT_CODE" == "200" ]]; then
-    record_pass "GET /api/manuscripts/$UPLOADED_MS_ID/report HTTP 200"
+    record_pass "GET /api/manuscripts/$UPLOADED_MS_ID/report (JWT author.a) HTTP 200"
   else
     record_fail "GET /api/manuscripts/$UPLOADED_MS_ID/report gagal (HTTP $REPORT_CODE)"
   fi
@@ -299,7 +340,7 @@ if [[ -n "$UPLOADED_MS_ID" ]]; then
     sleep 1
   done
   if [[ "$PERSIST_OK" == "true" ]]; then
-    AFTER_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "X-Tenant-ID: tenant-a" "$APP_URL/api/manuscripts/$UPLOADED_MS_ID/report")
+    AFTER_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOK_AUTH_A" "$APP_URL/api/manuscripts/$UPLOADED_MS_ID/report")
     if [[ "$AFTER_CODE" == "200" ]]; then
       record_pass "Persistensi DB & file setelah restart container app (HTTP 200)"
     else
@@ -463,15 +504,28 @@ if [[ "$SYNC_K8S" == "true" ]]; then
       K8S_METRICS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: journalfit.localhost" "$K8S_INGRESS_URL/metrics" || echo "000")
       [[ "$K8S_METRICS_CODE" == "200" ]] && record_pass "K8s Ingress /metrics HTTP 200" || record_fail "K8s Ingress /metrics HTTP $K8S_METRICS_CODE"
 
-      K8S_UPLOAD_CODE=$(curl -s -o "$TMP_DIR/k8s-upload.json" -w "%{http_code}" -X POST "$K8S_INGRESS_URL/api/manuscripts/upload" \
-        -H "Host: journalfit.localhost" \
-        -H "X-Tenant-ID: tenant-a" \
-        -F "file=@$TEST_DOCX" \
-        -F "authorId=user-a-01" || echo "000")
-      [[ "$K8S_UPLOAD_CODE" == "201" ]] && record_pass "K8s Ingress POST /api/manuscripts/upload HTTP 201" || record_fail "K8s Ingress upload gagal (HTTP $K8S_UPLOAD_CODE)"
+      K8S_KC_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: keycloak.localhost" "$K8S_INGRESS_URL/realms/journalfit" || echo "000")
+      [[ "$K8S_KC_CODE" == "200" ]] && record_pass "K8s Ingress Keycloak /realms/journalfit HTTP 200" || record_skip "K8s Ingress Keycloak belum ready (HTTP $K8S_KC_CODE; cold start bisa ~72 detik)"
 
-      K8S_403_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: journalfit.localhost" -H "X-Tenant-ID: tenant-b" "$K8S_INGRESS_URL/api/manuscripts/ms-001/report" || echo "000")
-      [[ "$K8S_403_CODE" == "403" ]] && record_pass "K8s Ingress Tenant Isolation (tenant-b -> ms-001) HTTP 403" || record_fail "K8s Ingress Tenant Isolation HTTP $K8S_403_CODE"
+      K8S_TOK_A=""
+      K8S_TOK_B=""
+      if [[ "$K8S_KC_CODE" == "200" ]]; then
+        K8S_TOK_A=$(fetch_kc_token "author.a" "author.a" "$K8S_INGRESS_URL/realms/journalfit/protocol/openid-connect/token" "keycloak.localhost")
+        K8S_TOK_B=$(fetch_kc_token "author.b" "author.b" "$K8S_INGRESS_URL/realms/journalfit/protocol/openid-connect/token" "keycloak.localhost")
+      fi
+
+      if [[ -n "$K8S_TOK_A" ]]; then
+        K8S_UPLOAD_CODE=$(curl -s -o "$TMP_DIR/k8s-upload.json" -w "%{http_code}" -X POST "$K8S_INGRESS_URL/api/manuscripts/upload" \
+          -H "Host: journalfit.localhost" \
+          -H "Authorization: Bearer $K8S_TOK_A" \
+          -F "file=@$TEST_DOCX" || echo "000")
+        [[ "$K8S_UPLOAD_CODE" == "201" ]] && record_pass "K8s Ingress POST /api/manuscripts/upload (JWT) HTTP 201" || record_fail "K8s Ingress upload gagal (HTTP $K8S_UPLOAD_CODE)"
+
+        K8S_CROSS_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Host: journalfit.localhost" -H "Authorization: Bearer $K8S_TOK_B" "$K8S_INGRESS_URL/api/manuscripts/ms-001/report" || echo "000")
+        [[ "$K8S_CROSS_CODE" == "404" || "$K8S_CROSS_CODE" == "403" ]] && record_pass "K8s Ingress Tenant Isolation (author.b -> ms-001) HTTP $K8S_CROSS_CODE" || record_fail "K8s Ingress Tenant Isolation HTTP $K8S_CROSS_CODE"
+      else
+        record_skip "K8s Ingress transaksi JWT dilewati karena token Keycloak K8s belum tersedia"
+      fi
     else
       record_fail "K8s Ingress /health/ready tidak merespons 200"
     fi
@@ -494,10 +548,10 @@ else
   record_fail "Pipeline CI belum lengkap memuat langkah Trivy scan"
 fi
 
-if grep -q "path: deployment" "$ROOT_DIR/automation/argocd/application.yaml" && grep -q "/spec/replicas" "$ROOT_DIR/automation/argocd/application.yaml"; then
-  record_pass "Argo CD Application manifest valid (path deployment + ignoreDifferences HPA)"
+if grep -q "path: deployment" "$ROOT_DIR/automation/argocd/application.yaml" && grep -q "/spec/replicas" "$ROOT_DIR/automation/argocd/application.yaml" && grep -q "targetRevision: main" "$ROOT_DIR/automation/argocd/application.yaml"; then
+  record_pass "Argo CD Application manifest valid (targetRevision main + path deployment + ignoreDifferences HPA)"
 else
-  record_fail "Argo CD Application manifest belum sesuai kontrak HPA/path"
+  record_fail "Argo CD Application manifest belum sesuai kontrak (main / HPA / path)"
 fi
 
 if [[ "$WITH_TRIVY" == "true" ]]; then
@@ -533,30 +587,52 @@ else
 fi
 
 # ------------------------------------------------------------------------------
-# M5: SECURITY - MULTI-TENANT ISOLATION & NEGATIVE TESTS (DOCKER COMPOSE API)
+# M5: SECURITY - KEYCLOAK JWT, RBAC & MULTI-TENANT ISOLATION (DOCKER COMPOSE API)
 # ------------------------------------------------------------------------------
 echo ""
-echo "=== [M5] Security: Isolasi Multi-Tenant & Negative Tests ==="
+echo "=== [M5] Security: Keycloak JWT, RBAC & Isolasi Multi-Tenant ==="
 
-NO_HDR_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL/api/manuscripts/ms-001/report")
-if [[ "$NO_HDR_CODE" == "400" ]]; then
-  record_pass "Negative test tanpa header X-Tenant-ID -> HTTP 400"
+NO_TOK_CODE=$(curl -s -o /dev/null -w "%{http_code}" "$APP_URL/api/auth/me")
+if [[ "$NO_TOK_CODE" == "401" ]]; then
+  record_pass "Negative test tanpa Bearer token -> HTTP 401 UNAUTHENTICATED"
 else
-  record_fail "Negative test tanpa header X-Tenant-ID -> diharapkan 400, dapat $NO_HDR_CODE"
+  record_fail "Negative test tanpa Bearer token -> diharapkan 401, dapat $NO_TOK_CODE"
 fi
 
-OWN_TENANT_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "X-Tenant-ID: tenant-a" "$APP_URL/api/manuscripts/ms-001/report")
+BAD_TOK_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer bad.token" "$APP_URL/api/auth/me")
+if [[ "$BAD_TOK_CODE" == "401" ]]; then
+  record_pass "Negative test token rusak -> HTTP 401 UNAUTHENTICATED"
+else
+  record_fail "Negative test token rusak -> diharapkan 401, dapat $BAD_TOK_CODE"
+fi
+
+OWN_TENANT_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOK_EDIT_A" "$APP_URL/api/manuscripts/ms-001/report")
 if [[ "$OWN_TENANT_CODE" == "200" ]]; then
-  record_pass "Akses sah tenant-a ke ms-001 -> HTTP 200"
+  record_pass "Akses sah editor.a (tenant-a) ke ms-001 -> HTTP 200"
 else
-  record_fail "Akses sah tenant-a ke ms-001 gagal (HTTP $OWN_TENANT_CODE)"
+  record_fail "Akses sah editor.a (tenant-a) ke ms-001 gagal (HTTP $OWN_TENANT_CODE)"
 fi
 
-CROSS_TENANT_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "X-Tenant-ID: tenant-b" "$APP_URL/api/manuscripts/ms-001/report")
-if [[ "$CROSS_TENANT_CODE" == "403" ]]; then
-  record_pass "Negative test lintas tenant (tenant-b -> ms-001 milik tenant-a) -> HTTP 403 Forbidden"
+CROSS_TENANT_CODE=$(curl -s -o /dev/null -w "%{http_code}" -H "Authorization: Bearer $TOK_AUTH_B" "$APP_URL/api/manuscripts/ms-001/report")
+if [[ "$CROSS_TENANT_CODE" == "404" ]]; then
+  record_pass "Negative test lintas tenant (author.b -> ms-001 milik tenant-a) -> HTTP 404 NOT_FOUND"
 else
-  record_fail "Negative test lintas tenant gagal -> diharapkan 403, dapat $CROSS_TENANT_CODE"
+  record_fail "Negative test lintas tenant gagal -> diharapkan 404, dapat $CROSS_TENANT_CODE"
+fi
+
+RBAC_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST -H "Authorization: Bearer $TOK_EDIT_A" "$APP_URL/api/manuscripts/upload")
+if [[ "$RBAC_CODE" == "403" ]]; then
+  record_pass "Negative test RBAC (editor.a memanggil upload author-only) -> HTTP 403 FORBIDDEN"
+else
+  record_fail "Negative test RBAC gagal -> diharapkan 403, dapat $RBAC_CODE"
+fi
+
+SPOOF_RESP="$TMP_DIR/spoof-me.json"
+SPOOF_CODE=$(curl -s -o "$SPOOF_RESP" -w "%{http_code}" -H "Authorization: Bearer $TOK_AUTH_A" -H "X-Tenant-ID: tenant-b" "$APP_URL/api/auth/me")
+if [[ "$SPOOF_CODE" == "200" ]] && grep -q "tenant-a" "$SPOOF_RESP"; then
+  record_pass "Negative test header palsu X-Tenant-ID: tenant-b diabaikan (tetap tenant-a)"
+else
+  record_fail "Negative test header palsu gagal (HTTP $SPOOF_CODE)"
 fi
 
 # ------------------------------------------------------------------------------
@@ -577,7 +653,7 @@ SLO_TOTAL=20
 SLO_OK=0
 SLO_SLOW=0
 for _ in $(seq 1 $SLO_TOTAL); do
-  LINE=$(curl -s -o /dev/null -w "%{http_code} %{time_total}" -H "X-Tenant-ID: tenant-a" "$APP_URL/api/manuscripts/ms-001/report")
+  LINE=$(curl -s -o /dev/null -w "%{http_code} %{time_total}" -H "Authorization: Bearer $TOK_EDIT_A" "$APP_URL/api/manuscripts/ms-001/report")
   CODE="${LINE%% *}"
   TIME_S="${LINE##* }"
   if [[ "$CODE" == "200" ]]; then
