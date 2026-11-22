@@ -19,5 +19,5 @@ Kredensial database (`DB_PASSWORD`), token akses, dan artefak build berisiko boc
 - **Positif:**
   - Nol kredensial produksi di repositori Git; audit repo dengan `git grep` bersih dari kebocoran password nyata.
 - **Negatif / Batasan:**
-  - Secret di kluster `k3d` saat ini masih dibuat secara imperatif pada tahap inisialisasi (`create-cluster.sh` / preflight).
-  - Endpoint `/api/auth/token` saat ini menghasilkan mock JWT ringan untuk keperluan demo alur role (`author`/`editor`/`admin`) dan isolasi `X-Tenant-ID`, belum terintegrasi dengan Keycloak/OIDC penuh.
+  - Secret di kluster `k3d` dibuat pada tahap inisialisasi (`setup-keycloak.sh` / preflight), belum memakai External Secrets Operator.
+  - Mekanisme autentikasi & otorisasi tingkat lanjut (verifikasi signature RS256, claim `tenant_id`, role enforcement) dipisahkan ke **ADR-009** menggunakan Keycloak OIDC/JWKS.
