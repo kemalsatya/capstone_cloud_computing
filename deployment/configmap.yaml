@@ -10,3 +10,9 @@ data:
   DB_PORT: "5432"
   DB_USER: capstone
   DB_NAME: journalfit
+  AUTH_MODE: jwt
+  # Must equal the Keycloak service KC_HOSTNAME (external issuer URL).
+  KEYCLOAK_ISSUER: http://keycloak.localhost:8088/realms/journalfit
+  # In-cluster JWKS fetch: the issuer above is not resolvable from pods.
+  KEYCLOAK_JWKS_URI: http://keycloak.default.svc.cluster.local/realms/journalfit/protocol/openid-connect/certs
+  KEYCLOAK_AUDIENCE: journalfit-api

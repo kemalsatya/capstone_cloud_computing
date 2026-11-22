@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-config
+  namespace: default
+  labels:
+    app: keycloak
+data:
+  KC_DB: postgres
+  # Shared lab PostgreSQL, separate database "keycloak" (PRD A-08).
+  # host.docker.internal is the route validated from k3d pods (see deployment/INTEGRATION_CONTRACT.md A.2).
+  KC_DB_URL: jdbc:postgresql://host.docker.internal:5432/keycloak
+  KC_DB_USERNAME: capstone
+  # External issuer URL. Must match KEYCLOAK_ISSUER used by the backend.
+  KC_HOSTNAME: http://keycloak.localhost:8088
+  KC_HTTP_ENABLED: "true"
+  KC_PROXY_HEADERS: xforwarded
+  # Single replica: no Infinispan cluster discovery. Switch to ispn + a
+  # headless service before scaling beyond one pod.
+  KC_CACHE: local
+  # Exposes /health/{live,ready,started} on port 9000 for the probes.
+  KC_HEALTH_ENABLED: "true"
+  KC_BOOTSTRAP_ADMIN_USERNAME: admin

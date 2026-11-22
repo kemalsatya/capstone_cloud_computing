@@ -1,0 +1,170 @@
+name: journalfit-platform
+
+services:
+  # ===============================================================
+  # 1. CORE APPLICATION & DATABASE (Default Profile: Local Dev)
+  # ===============================================================
+  postgres:
+    image: postgres:17-alpine
+    container_name: journalfit-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_NAME:-journalfit}
+      POSTGRES_USER: ${DB_USER:-capstone}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-capstone}
+    ports:
+      - "127.0.0.1:${DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./source/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+      - ./source/migrations/001_add_keycloak_auth.sql:/docker-entrypoint-initdb.d/02-auth.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-capstone} -d ${DB_NAME:-journalfit}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - capstone-net
+
+  app:
+    build:
+      context: ./source
+      dockerfile: Dockerfile
+    container_name: journalfit-app
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+    environment:
+      PORT: ${PORT:-8000}
+      NODE_ENV: ${NODE_ENV:-development}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-capstone}
+      DB_PASSWORD: ${DB_PASSWORD:-capstone}
+      DB_NAME: ${DB_NAME:-journalfit}
+      AUTH_MODE: ${AUTH_MODE:-jwt}
+      KEYCLOAK_ISSUER: ${KEYCLOAK_ISSUER:-http://localhost:${KEYCLOAK_PORT:-8081}/realms/journalfit}
+      KEYCLOAK_JWKS_URI: ${KEYCLOAK_JWKS_URI:-http://keycloak:8080/realms/journalfit/protocol/openid-connect/certs}
+      KEYCLOAK_AUDIENCE: ${KEYCLOAK_AUDIENCE:-journalfit-api}
+    ports:
+      - "127.0.0.1:${PORT:-8000}:8000"
+    volumes:
+      - app_uploads:/app/uploads
+    networks:
+      - capstone-net
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.8.2
+    container_name: capstone-keycloak
+    restart: unless-stopped
+    command: ["start-dev", "--import-realm"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-admin}
+      KC_HOSTNAME: http://localhost:${KEYCLOAK_PORT:-8081}
+      KC_HTTP_ENABLED: "true"
+    ports:
+      - "127.0.0.1:${KEYCLOAK_PORT:-8081}:8080"
+    volumes:
+      - ./deployment/keycloak/realm-journalfit.json:/opt/keycloak/data/import/realm-journalfit.json:ro
+      - keycloak_data:/opt/keycloak/data
+    networks:
+      - capstone-net
+
+  # ===============================================================
+  # 2. CI/CD & REGISTRY INFRASTRUCTURE (Profile: ci-cd)
+  # ===============================================================
+  registry:
+    image: registry:2
+    container_name: capstone-registry
+    profiles: ["ci-cd"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${REGISTRY_PORT:-5001}:5000"
+    volumes:
+      - registry_data:/var/lib/registry
+    networks:
+      capstone-net:
+        aliases:
+          - registry
+
+  gitea:
+    image: gitea/gitea:${GITEA_VERSION:-1.22}
+    container_name: capstone-gitea
+    profiles: ["ci-cd"]
+    restart: unless-stopped
+    environment:
+      USER_UID: "1000"
+      USER_GID: "1000"
+      GITEA__database__DB_TYPE: sqlite3
+      GITEA__server__DOMAIN: localhost
+      GITEA__server__ROOT_URL: http://localhost:${GITEA_PORT:-3001}/
+      GITEA__server__SSH_DOMAIN: localhost
+      GITEA__server__SSH_PORT: "${GITEA_SSH_PORT:-2222}"
+      GITEA__actions__ENABLED: "true"
+      GITEA__service__DISABLE_REGISTRATION: "true"
+      GITEA__repository__DEFAULT_PRIVATE: "false"
+    ports:
+      - "127.0.0.1:${GITEA_PORT:-3001}:3000"
+      - "127.0.0.1:${GITEA_SSH_PORT:-2222}:22"
+    volumes:
+      - gitea_data:/data
+    networks:
+      - capstone-net
+
+  # ===============================================================
+  # 3. OBSERVABILITY INFRASTRUCTURE (Profile: observability)
+  # ===============================================================
+  prometheus:
+    image: prom/prometheus:v3.1.0
+    container_name: capstone-prometheus
+    profiles: ["observability"]
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.retention.time=3d"
+    ports:
+      - "127.0.0.1:${PROMETHEUS_PORT:-9090}:9090"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+      - "journalfit.localhost:host-gateway"
+    volumes:
+      - ./evidence/observability/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    networks:
+      - capstone-net
+
+  grafana:
+    image: grafana/grafana:11.4.0
+    container_name: capstone-grafana
+    profiles: ["observability"]
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3000}:3000"
+    volumes:
+      - ./evidence/observability/provisioning:/etc/grafana/provisioning:ro
+      - grafana_data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - capstone-net
+
+networks:
+  capstone-net:
+    name: capstone-net
+
+volumes:
+  postgres_data:
+  app_uploads:
+  keycloak_data:
+  registry_data:
+  gitea_data:
+  prometheus_data:
+  grafana_data:

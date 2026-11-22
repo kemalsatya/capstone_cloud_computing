@@ -3,6 +3,9 @@ import assert from 'node:assert/strict';
 import { manuscriptService } from '../src/modules/manuscripts/services/manuscript.service.js';
 import { manuscriptRepository } from '../src/modules/manuscripts/repositories/manuscript.repository.js';
 import { createApp } from '../src/app.js';
+import { configureAuthForTests } from '../src/common/middlewares/auth.js';
+
+configureAuthForTests({ mode: 'header' });
 
 describe('JournalFit Modular Monolith Tests', () => {
     describe('Rule Evaluator Service', () => {
@@ -63,10 +66,10 @@ describe('JournalFit Modular Monolith Tests', () => {
             }
         });
 
-        test('should throw 403 Forbidden when requesting tenant is different (Negative Test)', async () => {
+        test('should throw 404 when requesting tenant is different (Negative Test)', async () => {
             const originalGet = manuscriptRepository.getFullReportByManuscriptId;
             manuscriptRepository.getFullReportByManuscriptId = async (id) => ({
-                manuscript: { id, tenant_id: 'tenant-a', title: 'Paper 1' },
+                manuscript: { id, tenant_id: 'tenant-a', author_id: 'user-a-01', title: 'Paper 1' },
                 checkResult: { id: 'cr-1', format_score: 90 },
                 findings: [],
             });
@@ -74,11 +77,43 @@ describe('JournalFit Modular Monolith Tests', () => {
             try {
                 await assert.rejects(
                     async () => {
-                        await manuscriptService.getReport('ms-001', 'tenant-b');
+                        await manuscriptService.getReport('ms-001', {
+                            tenantId: 'tenant-b',
+                            roles: ['author'],
+                            user: { id: 'user-b-01' },
+                        });
                     },
                     (err) => {
-                        assert.strictEqual(err.statusCode, 403);
-                        assert.match(err.message, /Access forbidden: Tenant 'tenant-b'/);
+                        assert.strictEqual(err.statusCode, 404);
+                        assert.strictEqual(err.code, 'NOT_FOUND');
+                        return true;
+                    }
+                );
+            } finally {
+                manuscriptRepository.getFullReportByManuscriptId = originalGet;
+            }
+        });
+
+        test('should throw 404 when an author reads another author manuscript in the same tenant', async () => {
+            const originalGet = manuscriptRepository.getFullReportByManuscriptId;
+            manuscriptRepository.getFullReportByManuscriptId = async (id) => ({
+                manuscript: { id, tenant_id: 'tenant-a', author_id: 'user-a-01', title: 'Paper 1' },
+                checkResult: { id: 'cr-1', format_score: 90 },
+                findings: [],
+            });
+
+            try {
+                await assert.rejects(
+                    async () => {
+                        await manuscriptService.getReport('ms-001', {
+                            tenantId: 'tenant-a',
+                            roles: ['author'],
+                            user: { id: 'user-a-99' },
+                        });
+                    },
+                    (err) => {
+                        assert.strictEqual(err.statusCode, 404);
+                        assert.strictEqual(err.code, 'NOT_FOUND');
                         return true;
                     }
                 );
@@ -107,7 +142,7 @@ describe('JournalFit Modular Monolith Tests', () => {
         });
     });
 
-    describe('Endpoints HTTP Integration (Mock)', async () => {
+    describe('Endpoints HTTP Integration (Header Mode)', async () => {
         const app = createApp();
         const server = app.listen(0); // bind to random free port
         const port = server.address().port;
@@ -121,22 +156,16 @@ describe('JournalFit Modular Monolith Tests', () => {
             assert.strictEqual(data.status, 'alive');
         });
 
-        test('POST /api/auth/token generates mock token', async () => {
-            const res = await fetch(`${baseUrl}/api/auth/token`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    username: 'john-doe',
-                    role: 'author',
-                    tenantId: 'tenant-a',
-                }),
+        test('GET /api/auth/me returns the tenant from the header in header mode', async () => {
+            const res = await fetch(`${baseUrl}/api/auth/me`, {
+                headers: { 'X-Tenant-ID': 'tenant-a' },
             });
             const data = await res.json();
 
             assert.strictEqual(res.status, 200);
-            assert.strictEqual(data.token_type, 'Bearer');
-            assert.strictEqual(data.user.role, 'author');
-            assert.strictEqual(data.user.tenant_id, 'tenant-a');
+            assert.strictEqual(data.tenant_id, 'tenant-a');
+            assert.strictEqual(data.role, 'author');
+            assert.deepStrictEqual(data.roles, ['author']);
         });
 
         test('GET /api/manuscripts/ms-001/report without X-Tenant-ID header returns 400', async () => {
@@ -145,6 +174,17 @@ describe('JournalFit Modular Monolith Tests', () => {
 
             assert.strictEqual(res.status, 400);
             assert.strictEqual(data.success, false);
+        });
+
+        test('GET /metrics returns Prometheus text metrics', async () => {
+            const res = await fetch(`${baseUrl}/metrics`);
+            const body = await res.text();
+
+            assert.strictEqual(res.status, 200);
+            assert.match(res.headers.get('content-type') || '', /text\/plain/);
+            assert.match(body, /http_requests_total/);
+            assert.match(body, /http_request_duration_seconds_bucket/);
+            assert.match(body, /journalfit_process_uptime_seconds/);
         });
 
         // Close server after tests
