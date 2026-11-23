@@ -81,7 +81,7 @@
        +-----------------------------------------------------------------------------------+
        |                       PERSISTENT DATABASE LAYER (PostgreSQL 17)                   |
        +-----------------------------------------------------------------------------------+
-       |  PostgreSQL 17 Alpine Container (Docker Compose / host.docker.internal)           |
+       |  PostgreSQL 17 Alpine Container (Docker Compose / host.k3d.internal)              |
        |  ├── Database 'journalfit': 6 Tabel Relasional Terisolasi (tenants, users,        |
        |  │   format_rule_templates, manuscripts, check_results, findings)                 |
        |  └── Database 'keycloak': Konfigurasi realm journalfit, users, clients, claims    |

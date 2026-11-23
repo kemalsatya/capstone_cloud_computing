@@ -48,7 +48,7 @@ Prasyarat sebelum apply:
    Script membuat database (via Compose Postgres atau `psql` host) serta Secret
    `keycloak-db-secret` (`KC_DB_PASSWORD`) dan `keycloak-admin-secret`
    (`KC_BOOTSTRAP_ADMIN_PASSWORD`) di namespace `default`. Tidak ada nilai rahasia di Git.
-2. PostgreSQL dapat dijangkau dari pod melalui `host.docker.internal:5432` (lihat A.2).
+2. PostgreSQL dapat dijangkau dari pod melalui `host.k3d.internal:5432` (lihat A.2).
 3. Realm diimpor otomatis saat start pertama. Strategi import adalah
    `IGNORE_EXISTING`, jadi perubahan realm pada DB yang sudah ada tidak menimpa
    user/role secara otomatis.
@@ -128,13 +128,17 @@ hasil ini belum membuktikan workload aplikasi bisa berjalan.
   penyimpanan. Semua replica dijadwalkan di node tersebut untuk berbagi PVC lokal.
   Tanpa label, pod akan Pending. Izin tulis volume harus dibuktikan dengan UID 10001.
 - Buat database journalfit dan enam tabel melalui koordinasi Anggota 1. Buktikan
-  koneksi dari pod ke host.docker.internal:5432. Readiness SELECT 1 tidak memeriksa tabel.
+  koneksi dari pod ke host.k3d.internal:5432. Readiness SELECT 1 tidak memeriksa tabel.
   Langkah ini sudah dilakukan menggunakan schema.sql tanpa perubahan pada 2026-11-10;
   jangan menginisialisasi ulang atau menimpa database yang sudah berisi data uji.
 - Jika pod Running tetapi tidak Ready setelah restart lingkungan, periksa pesan
-  /health/ready dari dalam pod. Alias host.k3d.internal pernah hilang dari DNS k3d;
-  ConfigMap kini memakai host.docker.internal yang diuji pada Docker Desktop Windows.
-  Jangan membuat ulang database/PVC untuk memperbaiki kegagalan DNS.
+  /health/ready dari dalam pod. Default manifest kini memakai `host.k3d.internal`,
+  alias host bawaan k3d yang tersedia lintas platform. `host.docker.internal` hanya
+  ada di Docker Desktop; di k3d di atas Docker Linux alias itu tidak resolve dan
+  memunculkan `ENOTFOUND`, seperti yang terjadi pada worker `CrashLoopBackOff`.
+  Untuk Docker Desktop Windows yang kehilangan alias k3d setelah restart, tukar ke
+  `host.docker.internal` lalu restart pod. Jangan membuat ulang database/PVC untuk
+  memperbaiki kegagalan DNS.
 - Siapkan Secret runtime `journalfit-backend-secret`, key `DB_PASSWORD`, dalam
   namespace default. Tidak ada Secret berisi credential dalam konfigurasi ini.
 - Artifact source commit `3bdf305d106c` sudah dibangun dan dipublikasikan dengan

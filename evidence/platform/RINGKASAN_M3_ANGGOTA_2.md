@@ -27,6 +27,11 @@ dan service proof. Rubrik halaman 10 memberi bobot 15% pada deployment/Kubernete
 Angka pada log bertimestamp adalah hasil pengujian saat itu. Foto pengumpulan perlu
 menunjukkan apakah output live atau rekaman lama, bukan mengganti timestamp evidence.
 
+**Koreksi 2026-11-23:** pada k3d di atas Docker Linux, `host.docker.internal` tidak
+resolve (`ENOTFOUND`) dan worker `CrashLoopBackOff`. Verifikasi dari pod menunjukkan
+`host.k3d.internal` resolve ke gateway host dan TCP ke PostgreSQL:5433 berhasil;
+baseline ConfigMap dikembalikan ke `host.k3d.internal`.
+
 ## Source terbaru berbeda dari artifact runtime
 
 | Aspek | Source yang baru diterima | Artifact Kubernetes yang sudah diuji |

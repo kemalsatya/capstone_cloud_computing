@@ -6,7 +6,10 @@ metadata:
 data:
   NODE_ENV: production
   PORT: "8000"
-  DB_HOST: host.docker.internal
+  # host.k3d.internal is k3d's built-in alias for the host machine, available
+  # from pods on every k3d platform. host.docker.internal is Docker Desktop-only,
+  # so it fails with ENOTFOUND on k3d running on plain Linux Docker.
+  DB_HOST: host.k3d.internal
   DB_PORT: "5432"
   DB_USER: capstone
   DB_NAME: journalfit

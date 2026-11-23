@@ -137,7 +137,7 @@ Setiap anggota tim tetap bertanggung jawab memahami keseluruhan sistem saat *Tec
 1. **Kerumitan variasi berkas DOCX:** Dimitigasi dengan validasi ZIP safety (`INVALID_FILE`), pembatasan format hanya `.docx`, dan 9 aturan Tier-1 deterministik (`FMT-001..009`) yang teruji dengan 63/64 unit/integration tests.
 2. **PVC `ReadWriteOnce` (`local-path`) mengikat pod pada 1 node (`k3d-capstone-agent-0`):** Dimitigasi sementara dengan `nodeSelector: journalfit-storage: uploads` dan anotasi Argo CD `Prune=false,Delete=false`; migrasi ke Object Storage (Garage/MinIO S3) dijadwalkan pada Roadmap v2.
 3. **Footprint memori Keycloak (`~596 MiB` saat cold start ~72 detik) & *Direct Access Grants* dev flow:** Dimitigasi dengan startupProbe 180 detik, strategi `Recreate`, serta pemisahan database `keycloak` tersendiri; migrasi ke *Authorization Code + PKCE* masuk Roadmap v2.
-4. **PostgreSQL lokal via `host.docker.internal` & backup CLI manual:** Dimitigasi dengan verifikasi restore terisolasi rutin (RTO 0,78 detik untuk `journalfit` dan 101 tabel `keycloak`); otomatisasi `CronJob` + Managed DB masuk Roadmap v2.
+4. **PostgreSQL lokal via alias host k3d (`host.k3d.internal`) & backup CLI manual:** Dimitigasi dengan verifikasi restore terisolasi rutin (RTO 0,78 detik untuk `journalfit` dan 101 tabel `keycloak`); otomatisasi `CronJob` + Managed DB masuk Roadmap v2.
 5. **Fitur Roadmap v2 (Worker Scope AI Groq & S3):** Dicatat secara jujur sebagai *limitation* v1 agar tidak terjadi klaim fitur yang belum terbukti.
 
 ---
@@ -211,7 +211,7 @@ Seluruh 9 keputusan arsitektur terdokumentasi di `decisions/ADR-001` s.d. `ADR-0
 | :--- | :--- | :--- | :--- |
 | **ADR-001** | Modular Monolith (`Node.js 22 + Express 5.3`) + Async Worker (`pg-boss`) | Microservices penuh terpisah | Hemat RAM (~128 MiB/pod), pemrosesan format asinkron terpisah via `worker-format.yaml`; scaling API tetap di level pod utuh. |
 | **ADR-002** | PostgreSQL 17 + Logical Multi-Tenancy (`tenant_id`) | Dedicated DB per tenant / NoSQL | Integritas ACID & hemat resource; isolasi bergantung pada disiplin filter `tenant_id` di repository/service. |
-| **ADR-003** | Kluster `k3d` + Hardened Container Non-Root (`UID 10001`) + HPA (2–3) | Docker Compose saja / Root container | Image ringan (`node:22-alpine`), `drop ALL`, HPA teruji `2→3→2`; koneksi DB lab masih memakai `host.docker.internal`. |
+| **ADR-003** | Kluster `k3d` + Hardened Container Non-Root (`UID 10001`) + HPA (2–3) | Docker Compose saja / Root container | Image ringan (`node:22-alpine`), `drop ALL`, HPA teruji `2→3→2`; koneksi DB lab memakai alias host k3d `host.k3d.internal` (koreksi 2026-11-23: `host.docker.internal` hanya ada di Docker Desktop dan gagal `ENOTFOUND` pada k3d Linux). |
 | **ADR-004** | Declarative GitOps (Argo CD) + Immutable Tag SHA-7 (`0c2cf92`) | Manual `kubectl apply` & tag `:latest` | Audit trail Git 1:1 & anti-drift (`selfHeal: true`, `ignoreDifferences /spec/replicas`); butuh update `newTag` di `kustomization.yaml`. |
 | **ADR-005** | PVC `local-path` RWO (1Gi) + `nodeSelector` Storage Pinning | Deploy kluster S3/MinIO penuh di v1 | Berkas `.docx` tetap utuh saat pod diganti (SHA-256 cocok 100%); replika terkunci pada 1 node (migrasi S3 di v2). |
 | **ADR-006** | Runtime Secret Separation (`secretKeyRef`) + Trivy CI Scan Gate | Hardcoded password di YAML / Git | 0 kredensial di Git (`secret.example.yaml`), Trivy memblokir CVE `HIGH/CRITICAL`; secret dibuat imperatif saat setup kluster. |

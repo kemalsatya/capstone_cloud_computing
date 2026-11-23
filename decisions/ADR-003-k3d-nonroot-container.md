@@ -20,4 +20,4 @@ Aplikasi harus dideploy secara deklaratif di Kubernetes dengan kontrol keamanan 
   - Startup kluster `k3d` di bawah 30 detik dan jejak image sangat kecil (~276 MB dengan Alpine), meminimalkan CVE OS pada hasil scan Trivy.
   - Apabila terjadi celah RCE di aplikasi Node.js, penyerang tidak memiliki hak `root` maupun kapabilitas kernel Linux (`CAP_SYS_ADMIN`, dll.).
 - **Negatif / Batasan:**
-  - Dalam mode lab lokal Windows, kluster `k3d` berkomunikasi ke database host Docker Compose lewat DNS `host.docker.internal` (tercatat pada `deployment/configmap.yaml`). Saat migrasi ke IaaS nyata, `DB_HOST` diganti ke service StatefulSet/Managed RDS.
+  - Kluster `k3d` berkomunikasi ke database host lewat alias host bawaan k3d, `host.k3d.internal` (tercatat pada `deployment/configmap.yaml`). `host.docker.internal` hanya tersedia di Docker Desktop; pada k3d di atas Docker Linux alias itu gagal resolve (`ENOTFOUND`). Saat migrasi ke IaaS nyata, `DB_HOST` diganti ke service StatefulSet/Managed RDS. **Koreksi 2026-11-23:** baseline dipulihkan ke `host.k3d.internal` setelah worker `CrashLoopBackOff` di lingkungan k3d Linux.

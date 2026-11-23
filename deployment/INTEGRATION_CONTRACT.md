@@ -43,7 +43,7 @@ memeriksa keberadaan tabel; verifikasi skema dan transaksi harus dilakukan terpi
 | Key | Baseline sementara | Tempat konfigurasi Kubernetes |
 | --- | --- | --- |
 | `PORT` | `8000` | ConfigMap |
-| `DB_HOST` | `host.docker.internal`, rute Docker Desktop Windows yang diuji setelah restart | ConfigMap |
+| `DB_HOST` | `host.k3d.internal`, alias host bawaan k3d yang tersedia lintas platform | ConfigMap |
 | `DB_PORT` | `5432` | ConfigMap |
 | `DB_NAME` | `journalfit`, database aplikasi terpisah dari database lab `capstone` | ConfigMap |
 | `DB_USER` | `capstone`, user lab dari konfigurasi paket; evaluasi hak akses bersama Anggota 4 | ConfigMap |
@@ -63,6 +63,13 @@ ENOTFOUND. Rute host.docker.internal terbukti bisa TCP dan autentikasi SELECT ke
 journalfit, sehingga baseline ConfigMap diperbarui untuk lingkungan Windows ini.
 Perubahan ConfigMap envFrom memerlukan refresh pod agar environment diperbarui.
 Bukti diagnosis/perbaikan: evidence/platform/readiness-dns-recovery-20261110.txt.
+
+Pembaruan 2026-11-23: pada k3d di atas Docker Linux, `host.docker.internal` tidak
+pernah tersedia dan worker gagal dengan `getaddrinfo ENOTFOUND host.docker.internal`
+(CrashLoopBackOff). Verifikasi dari pod menunjukkan `host.k3d.internal` resolve ke
+gateway host dan TCP ke PostgreSQL:5433 berhasil. Baseline ConfigMap dikembalikan ke
+`host.k3d.internal` karena itu alias bawaan k3d yang berlaku lintas platform;
+`host.docker.internal` hanya dipakai sebagai fallback Docker Desktop Windows.
 
 **Pembagian pekerjaan:**
 

@@ -92,7 +92,7 @@ svg_adr = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1120" wid
   <text x="470" y="484" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
   <text x="530" y="486" font-size="11" fill="#922B21">Docker Compose saja / Root container</text>
   <text x="790" y="476" font-size="11" fill="#2C3E50">(+) Image ringkas (~276MB), HPA scale 2-&gt;3-&gt;2, non-root</text>
-  <text x="790" y="496" font-size="10.5" fill="#566573">(-) Koneksi DB lab via host.docker.internal</text>
+  <text x="790" y="496" font-size="10.5" fill="#566573">(-) Koneksi DB lab via host.k3d.internal</text>
   <text x="1210" y="476" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] deployment/deployment.yaml &amp; hpa.yaml</text>
   <text x="1210" y="496" font-size="10" fill="#566573">UID 10001, drop ALL, HPA 70% | 04_evidence.jpg</text>
 
