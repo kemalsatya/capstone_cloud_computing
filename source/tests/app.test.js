@@ -8,45 +8,6 @@ import { configureAuthForTests } from '../src/common/middlewares/auth.js';
 configureAuthForTests({ mode: 'header' });
 
 describe('JournalFit Modular Monolith Tests', () => {
-    describe('Rule Evaluator Service', () => {
-        const dummyTemplate = {
-            min_words: 3000,
-            max_words: 8000,
-            require_abstract: true,
-            require_keywords: true,
-        };
-
-        test('should flag manuscript if word count is below minimum', () => {
-            const shortText = 'This is a short abstract test with keywords.';
-            const result = manuscriptService.evaluateRules(shortText, dummyTemplate);
-
-            assert.strictEqual(result.wordCount, 8);
-            assert.ok(result.formatScore < 100);
-            const wordCountFinding = result.findings.find(f => f.ruleType === 'WORD_COUNT');
-            assert.strictEqual(wordCountFinding.severity, 'WARNING');
-        });
-
-        test('should evaluate compliant manuscript with abstract and keywords', () => {
-            const compliantText = 'Abstract ' + 'word '.repeat(3500) + ' Keywords: cloud computing';
-            const result = manuscriptService.evaluateRules(compliantText, dummyTemplate);
-
-            assert.strictEqual(result.formatScore, 100);
-            assert.strictEqual(result.findings.every(f => f.severity === 'INFO'), true);
-        });
-
-        test('should penalize missing abstract and keywords', () => {
-            const noSectionText = 'word '.repeat(3500);
-            const result = manuscriptService.evaluateRules(noSectionText, dummyTemplate);
-
-            const abstractFinding = result.findings.find(f => f.ruleType === 'ABSTRACT_CHECK');
-            const keywordFinding = result.findings.find(f => f.ruleType === 'KEYWORDS_CHECK');
-
-            assert.strictEqual(abstractFinding.severity, 'WARNING');
-            assert.strictEqual(keywordFinding.severity, 'WARNING');
-            assert.strictEqual(result.formatScore, 70); // 100 - 15 - 15
-        });
-    });
-
     describe('Multi-Tenant Isolation Security Logic', () => {
         test('should return report when requesting tenant matches manuscript owner', async () => {
             // Mock repository response

@@ -14,13 +14,15 @@ Lihat [ringkasan versi dan kontribusi](../evidence/platform/RINGKASAN_M3_ANGGOTA
 
 | File | Fungsi |
 | --- | --- |
-| `configmap.yaml` | Konfigurasi non-rahasia sesuai environment variable backend. |
+| `configmap.yaml` | Konfigurasi non-rahasia backend; `ENABLE_DOCS` default `false`. |
 | `pvc.yaml` | Penyimpanan DOCX local-path RWO, request 1Gi. |
 | `deployment.yaml` | Workload non-root, resource baseline, health probes dan rollout; replica dikelola HPA. |
 | `service.yaml` | ClusterIP port 80 menuju port container bernama http (8000). |
 | `ingress.yaml` | Routing Traefik untuk host journalfit.localhost. |
 | `kustomization.yaml` | Satu entry point manifest dan override tag image. |
 | `hpa.yaml` | HPA CPU 70%, minimum dua dan maksimum tiga replica. |
+| `worker-format.yaml` | Worker pg-boss untuk format check; memakai PVC dan node storage yang sama. |
+| `db-setup-job.yaml` | Job migrate 001+002 (initContainer) lalu seed default rules. |
 | `keycloak/deployment.yaml` | Keycloak production mode (`start --import-realm`), probes 9000, limit 1 CPU/1Gi. |
 | `keycloak/service.yaml` | ClusterIP `keycloak:80` menuju container 8080. |
 | `keycloak/ingress.yaml` | Traefik host `keycloak.localhost`. |
@@ -82,6 +84,24 @@ Image backend juga harus dibangun ulang dari commit yang memuat `jose` dan middl
 auth, lalu `images[].newTag` di `kustomization.yaml` diperbarui. Tag `3bdf305` yang
 tercatat sekarang belum memuat integrasi Keycloak, sehingga ConfigMap `AUTH_MODE` belum
 berpengaruh sampai image baru dipublikasikan.
+
+## OpenAPI / Swagger UI (demo)
+
+`ENABLE_DOCS` default `false`. Untuk demo, set `ENABLE_DOCS: "true"` pada
+`journalfit-backend-config` atau:
+
+```bash
+kubectl -n default set env deployment/journalfit-backend ENABLE_DOCS=true
+```
+
+Setelah rollout:
+
+- Swagger UI: `http://journalfit.localhost:8088/docs`
+- Spec: `http://journalfit.localhost:8088/openapi.yaml`
+
+Issuer tetap opsi B: `http://keycloak.localhost:8088/realms/journalfit`.
+Panduan demo lengkap, token, matriks tenant, dan worker/PVC ada di
+[`source/DEMO.md`](../source/DEMO.md).
 
 ## Validasi lokal
 

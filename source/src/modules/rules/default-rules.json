@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "rules": [
+    {
+      "id": "FMT-001",
+      "enabled": true,
+      "severity": "error",
+      "params": {
+        "width_twips": 11906,
+        "height_twips": 16838
+      }
+    },
+    {
+      "id": "FMT-002",
+      "enabled": true,
+      "severity": "error",
+      "params": {
+        "top": 1080,
+        "right": 907,
+        "bottom": 1440,
+        "left": 907,
+        "scope": "body"
+      }
+    },
+    {
+      "id": "FMT-003",
+      "enabled": true,
+      "severity": "error",
+      "params": {
+        "body_columns": 2
+      }
+    },
+    {
+      "id": "FMT-004",
+      "enabled": true,
+      "severity": "error",
+      "params": {
+        "styles": {
+          "title": {
+            "font": "Times New Roman",
+            "size_halfpt": 48
+          },
+          "author": {
+            "font": "Calibri",
+            "size_halfpt": 24
+          },
+          "abstract": {
+            "font": "Calibri",
+            "size_halfpt": 18
+          },
+          "body": {
+            "font": "Times New Roman",
+            "size_halfpt": 20
+          },
+          "heading1": {
+            "font": "Calibri"
+          },
+          "heading2": {
+            "font": "Calibri"
+          },
+          "heading3": {
+            "font": "Calibri"
+          },
+          "heading4": {
+            "font": "Calibri"
+          },
+          "heading5": {
+            "font": "Calibri"
+          },
+          "references": {
+            "font": "Times New Roman",
+            "size_halfpt": 20
+          }
+        }
+      }
+    },
+    {
+      "id": "FMT-005",
+      "enabled": true,
+      "severity": "warning",
+      "params": {
+        "paragraph": {
+          "title": {
+            "align": "center",
+            "line": 240,
+            "after": 280
+          },
+          "author": {
+            "align": "center",
+            "after": 120
+          },
+          "abstract": {
+            "align": "justify"
+          },
+          "body": {
+            "align": "justify",
+            "line": 228,
+            "after": 120
+          },
+          "heading1": {
+            "align": "center",
+            "after": 80
+          },
+          "references": {
+            "align": "justify",
+            "line": 228,
+            "after": 120
+          }
+        }
+      }
+    },
+    {
+      "id": "FMT-006",
+      "enabled": true,
+      "severity": "warning",
+      "params": {
+        "heading_style_required": true
+      }
+    },
+    {
+      "id": "FMT-007",
+      "enabled": true,
+      "severity": "error",
+      "params": {
+        "required_sections": [
+          "introduction",
+          "methodology",
+          "result and discussion",
+          "conclusion",
+          "references"
+        ]
+      }
+    },
+    {
+      "id": "FMT-008",
+      "enabled": true,
+      "severity": "error",
+      "params": {
+        "abstract": {
+          "min_words": 100,
+          "max_words": 200
+        }
+      }
+    },
+    {
+      "id": "FMT-009",
+      "enabled": true,
+      "severity": "error",
+      "params": {
+        "keywords": {
+          "min": 3,
+          "max": 5
+        }
+      }
+    }
+  ]
+}

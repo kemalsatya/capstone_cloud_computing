@@ -1,22 +1,43 @@
 import { manuscriptService } from '../services/manuscript.service.js';
 
 export const manuscriptController = {
-    async upload(req, res, next) {
+    async create(req, res, next) {
         try {
-            const tenantId = req.tenantId;
-            const file = req.file;
-            const authorId = req.auth?.user?.id || req.body?.authorId || null;
-
             const result = await manuscriptService.processUpload({
-                tenantId,
-                file,
-                authorId,
+                tenantId: req.tenantId,
+                file: req.file,
+                authorId: req.auth?.user?.id || null,
+                parentManuscriptId: req.body?.parent_manuscript_id || null,
+                legacy: false,
+            });
+
+            return res.status(202).json(result);
+        } catch (err) {
+            next(err);
+        }
+    },
+
+    async uploadLegacy(req, res, next) {
+        try {
+            const result = await manuscriptService.processUpload({
+                tenantId: req.tenantId,
+                file: req.file,
+                authorId: req.auth?.user?.id || null,
+                parentManuscriptId: req.body?.parent_manuscript_id || null,
+                legacy: true,
             });
 
             return res.status(201).json({
                 success: true,
-                message: 'Manuscript uploaded and format validation completed successfully.',
-                data: result,
+                message: 'Manuscript uploaded and queued for format checking.',
+                data: {
+                    ...result,
+                    manuscript: {
+                        id: result.manuscript_id,
+                        revision_no: result.revision_no,
+                        status: result.status,
+                    },
+                },
             });
         } catch (err) {
             next(err);
@@ -25,10 +46,11 @@ export const manuscriptController = {
 
     async getReport(req, res, next) {
         try {
-            const manuscriptId = req.params.id;
-            const auth = req.auth || { tenantId: req.tenantId, roles: ['tenant_admin'], user: null };
-
-            const report = await manuscriptService.getReport(manuscriptId, auth);
+            const report = await manuscriptService.getReport(req.params.id, req.auth || {
+                tenantId: req.tenantId,
+                roles: ['tenant_admin'],
+                user: null,
+            });
 
             return res.status(200).json({
                 success: true,

@@ -7,7 +7,9 @@ resources:
   - service.yaml
   - ingress.yaml
   - hpa.yaml
+  - worker-format.yaml
+  - db-setup-job.yaml
   - keycloak
 images:
   - name: registry:5000/journalfit-backend
-    newTag: 2dc3593
+    newTag: 0c2cf92

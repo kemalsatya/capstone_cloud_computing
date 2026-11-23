@@ -102,6 +102,14 @@ run_06() {
       echo "   Response    : $body_401"
       echo ""
 
+      echo "1b) Negative Test - Bearer token rusak (Expected: 401 UNAUTHENTICATED):"
+      local code_bad body_bad
+      body_bad=$(curl_api GET "/api/auth/me" -H "Authorization: Bearer bad.token")
+      code_bad=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "Authorization: Bearer bad.token" "${APP_BASE_URL}/api/auth/me")
+      echo "   HTTP Status : $code_bad"
+      echo "   Response    : $body_bad"
+      echo ""
+
       echo "2) Negative Test - Lintas Tenant: author.b membaca ms-001 milik tenant-a (Expected: 404 NOT_FOUND):"
       local code_404 body_404
       body_404=$(curl_api GET "/api/manuscripts/ms-001/report" -H "Authorization: Bearer $tok_auth_b")
@@ -132,6 +140,14 @@ run_06() {
       code_200=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "Authorization: Bearer $tok_edit_a" "${APP_BASE_URL}/api/manuscripts/ms-001/report")
       echo "   HTTP Status : $code_200"
       echo "   Response    : ${body_200:0:180}..."
+      echo ""
+
+      echo "6) Positive Test - author.a (tenant-a) membaca ms-001 (Expected: 200 OK):"
+      local code_author body_author
+      body_author=$(curl_api GET "/api/manuscripts/ms-001/report" -H "Authorization: Bearer $tok_auth_a")
+      code_author=$(curl -s -o /dev/null -w "%{http_code}" ${APP_HOST_HEADER:+-H "Host: $APP_HOST_HEADER"} -H "Authorization: Bearer $tok_auth_a" "${APP_BASE_URL}/api/manuscripts/ms-001/report")
+      echo "   HTTP Status : $code_author"
+      echo "   Response    : ${body_author:0:180}..."
     else
       echo "[INFO] Aplikasi (:8000/:8088) atau Keycloak (:8081/:8088) belum menyala."
       echo "       Jalankan: docker compose up -d postgres keycloak app"
@@ -174,6 +190,14 @@ run_06() {
     echo ""
     echo "[TIP SCREENSHOT 06_evidence.jpg] Gabungkan output Panel 1, Panel 2, dan hasil Trivy CI/Lokal."
   } | tee "$log_file"
+
+  mkdir -p "$ROOT_DIR/evidence/security"
+  cp "$log_file" "$ROOT_DIR/evidence/security/negative-authorization-test.txt"
+  echo "[06-SECURITY] Raw JWT log: evidence/security/negative-authorization-test.txt"
+
+  if [[ "$DIR_06" != "$ROOT_DIR/evidence/security" ]]; then
+    cp "$log_file" "$DIR_06/negative-authorization-test.txt"
+  fi
 }
 
 # ==============================================================================

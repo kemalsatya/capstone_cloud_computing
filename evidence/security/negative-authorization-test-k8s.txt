@@ -1,0 +1,65 @@
+=== JournalFit K8s JWT Authorization Evidence ===
+Timestamp: 2026-11-23T10:20:59+07:00
+API: http://journalfit.localhost:8088
+Keycloak: http://keycloak.localhost:8088/realms/journalfit/protocol/openid-connect/token
+
+1) no token
+HTTP/1.1 401 Unauthorized
+Content-Length: 140
+Content-Type: application/json; charset=utf-8
+Date: Mon, 23 Nov 2026 03:20:59 GMT
+Etag: W/"8c-GmCmGtJImrFPllC5RDbVG/4630s"
+X-Powered-By: Express
+X-Request-Id: 8e4752dd-d7b4-4e32-a986-dbfdd2a23404
+
+{"error":{"code":"UNAUTHENTICATED","message":"Authorization bearer token is required.","request_id":"8e4752dd-d7b4-4e32-a986-dbfdd2a23404"}}
+2) bad token
+HTTP/1.1 401 Unauthorized
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Date: Mon, 23 Nov 2026 03:20:59 GMT
+Etag: W/"85-A8gaxVVubdZmVlXfvxs6xq/qXjE"
+X-Powered-By: Express
+X-Request-Id: 650c549b-2303-431b-bfd5-80cca585a36f
+
+{"error":{"code":"UNAUTHENTICATED","message":"Invalid or expired access token.","request_id":"650c549b-2303-431b-bfd5-80cca585a36f"}}
+3) cross-tenant author.b -> ms-001
+HTTP/1.1 401 Unauthorized
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Date: Mon, 23 Nov 2026 03:20:59 GMT
+Etag: W/"85-NLdfiC0LSGIm6rXKuO93Ik7GOD8"
+X-Powered-By: Express
+X-Request-Id: 19404ca9-a226-4106-9219-bb1a5f206b25
+
+{"error":{"code":"UNAUTHENTICATED","message":"Invalid or expired access token.","request_id":"19404ca9-a226-4106-9219-bb1a5f206b25"}}
+4) editor.a upload (author-only)
+HTTP/1.1 401 Unauthorized
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Date: Mon, 23 Nov 2026 03:20:59 GMT
+Etag: W/"85-jjAWk1jLo/ZGvNr2NMJL/sjZagg"
+X-Powered-By: Express
+X-Request-Id: 446062c9-65a2-41b5-8a4b-3a23c03f843a
+
+{"error":{"code":"UNAUTHENTICATED","message":"Invalid or expired access token.","request_id":"446062c9-65a2-41b5-8a4b-3a23c03f843a"}}
+5) author.a forged X-Tenant-ID
+HTTP/1.1 401 Unauthorized
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Date: Mon, 23 Nov 2026 03:20:59 GMT
+Etag: W/"85-/BjuCB7oHgeLU/D07zEj65kWOe8"
+X-Powered-By: Express
+X-Request-Id: 25492cc6-fd57-4b34-99a0-850dde6d48af
+
+{"error":{"code":"UNAUTHENTICATED","message":"Invalid or expired access token.","request_id":"25492cc6-fd57-4b34-99a0-850dde6d48af"}}
+6) author.a positive report
+HTTP/1.1 401 Unauthorized
+Content-Length: 133
+Content-Type: application/json; charset=utf-8
+Date: Mon, 23 Nov 2026 03:20:59 GMT
+Etag: W/"85-RjVyy8V6pOUsOQXz4oeQ4Mp3HOM"
+X-Powered-By: Express
+X-Request-Id: 36390590-2949-451d-8501-d74afa1c2987
+
+{"error":{"code":"UNAUTHENTICATED","message":"Invalid or expired access token.","request_id":"36390590-2949-451d-8501-d74afa1c2987"}}

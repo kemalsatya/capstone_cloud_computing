@@ -14,6 +14,18 @@ Desktop.ini
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+deployment/secret.yaml
+deployment/*-secret.yaml
+deployment/keycloak/secret.yaml
+deployment/keycloak/*-secret.yaml
+!deployment/secret.example.yaml
+!deployment/keycloak/secret.example.yaml
 
 # Node
 node_modules/
+
+.commandcode

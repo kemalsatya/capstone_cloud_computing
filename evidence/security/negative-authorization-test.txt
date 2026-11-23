@@ -1,0 +1,76 @@
+================================================================================
+  [06-SECURITY] EVIDENCE CAPTURE - JOURNALFIT (TEAM 7)
+  Timestamp : 2026-11-23T08:53:14+07:00
+  Owner     : Anggota 4 (Lead) | Support: Anggota 1 (Auth) & Anggota 3 (Trivy)
+================================================================================
+
+>>> PANEL 1: POSITIVE & NEGATIVE AUTHORIZATION / TENANT ISOLATION TESTS (KEYCLOAK JWT)
+[Target API]      http://127.0.0.1:8000 (Host header: none)
+[Target Keycloak] http://127.0.0.1:8081/realms/journalfit/protocol/openid-connect/token (Host header: none)
+
+1) Negative Test - Tanpa Bearer Token (Expected: 401 UNAUTHENTICATED):
+   HTTP Status : 401
+   Response    : {"error":{"code":"UNAUTHENTICATED","message":"Authorization bearer token is required.","request_id":"497fdcd8-e041-419f-9aac-ca68ef7f5976"}}
+
+1b) Negative Test - Bearer token rusak (Expected: 401 UNAUTHENTICATED):
+   HTTP Status : 401
+   Response    : {"error":{"code":"UNAUTHENTICATED","message":"Invalid or expired access token.","request_id":"851ce5cf-718d-4d5f-b452-3cbcfecac32b"}}
+
+2) Negative Test - Lintas Tenant: author.b membaca ms-001 milik tenant-a (Expected: 404 NOT_FOUND):
+   HTTP Status : 404
+   Response    : {"error":{"code":"NOT_FOUND","message":"Manuscript with ID 'ms-001' not found","request_id":"3217cfd9-b2ca-484d-b3fe-ab9fce3db21a"}}
+
+3) Negative Test - RBAC: editor.a memanggil POST /api/manuscripts/upload (Expected: 403 FORBIDDEN):
+   HTTP Status : 403
+   Response    : {"error":{"code":"FORBIDDEN","message":"You do not have permission to perform this action.","request_id":"343c8c69-d13f-47a7-8ae3-40eb9a6c31f9"}}
+
+4) Negative Test - Spoof Header X-Tenant-ID: tenant-b dengan JWT author.a (Expected: 200 tetap tenant-a):
+   HTTP Status : 200
+   Response    : {"user_id":"user-a-01","sub":"11111111-1111-4111-8111-000000000001","tenant_id":"tenant-a","role":"author","roles":["author"],"name":"Author Tenant A","email":"author.a@tenant-a.test"}
+
+5) Positive Test - Akses Sah editor.a (tenant-a) membaca ms-001 (Expected: 200 OK):
+   HTTP Status : 200
+   Response    : {"success":true,"message":"Manuscript report retrieved successfully.","data":{"manuscript":{"id":"ms-001","tenant_id":"tenant-a","author_id":"user-a-01","revision_no":1,"title":"Cl...
+
+6) Positive Test - author.a (tenant-a) membaca ms-001 (Expected: 200 OK):
+   HTTP Status : 200
+   Response    : {"success":true,"message":"Manuscript report retrieved successfully.","data":{"manuscript":{"id":"ms-001","tenant_id":"tenant-a","author_id":"user-a-01","revision_no":1,"title":"Cl...
+
+>>> PANEL 2: SECRET SEPARATION & LEAST PRIVILEGE AUDIT
+- Memeriksa .gitignore memblokir file sensitif:
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+deployment/secret.yaml
+deployment/*-secret.yaml
+deployment/keycloak/secret.yaml
+deployment/keycloak/*-secret.yaml
+!deployment/secret.example.yaml
+!deployment/keycloak/secret.example.yaml
+- Memeriksa deployment/deployment.yaml (Non-root & SecretRef):
+23:      automountServiceAccountToken: false
+24-      nodeSelector:
+--
+27:        runAsNonRoot: true
+28:        runAsUser: 10001
+29-        runAsGroup: 10001
+--
+45:                secretKeyRef:
+46-                  name: journalfit-backend-secret
+--
+49:            allowPrivilegeEscalation: false
+50-            capabilities:
+51:              drop:
+52-                - ALL
+- Audit potensi hardcoded production password di deployment/*.yaml:
+  [PASS] Nol credential hardcoded di manifest deployment/*.yaml (DB_PASSWORD via secretKeyRef).
+
+>>> PANEL 3: TRIVY CONTAINER & DEPENDENCY VULNERABILITY SCAN
+[INFO] Image lokal 'journalfit-backend:latest' belum dibuild di laptop ini.
+       Jalankan dulu: docker build -t journalfit-backend:latest -f source/Dockerfile ./source
+       Atau scan langsung dengan:
+       docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL node:22-alpine
+
+[TIP SCREENSHOT 06_evidence.jpg] Gabungkan output Panel 1, Panel 2, dan hasil Trivy CI/Lokal.
