@@ -1,0 +1,36 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20261123055337
+Username: BAYYO\rafia
+RunAs User: BAYYO\rafia
+Configuration Name: 
+Machine: BAYYO (Microsoft Windows NT 10.0.26200.0)
+Host Application: C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -noexit -command try { . "c:\Users\rafia\AppData\Local\Programs\Antigravity IDE\resources\app\out\vs\workbench\contrib\terminal\common\scripts\shellIntegration.ps1" } catch {}
+Process ID: 17416
+PSVersion: 5.1.26100.9818
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.26100.9818
+BuildVersion: 10.0.26100.9818
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is evidence\reliability-recovery\panel1-pod-failure-log.txt
+Pod korban (dihapus): journalfit-backend-56657c6848-q4d9k | Pod pembanding: journalfit-backend-56657c6848-vnkzl
+
+SHA-256 SEBELUM: 118046d796143615d91b098e6bdc9c3cd532a57900e7e9849880b580f0bee40f  /app/uploads/evidence-08-test.txt
+
+
+t=1s  ready=1/2  health:HTTP/1.1 200 OK
+t=3.1s  ready=1/2  health:HTTP/1.1 200 OK
+t=5.1s  ready=1/2  health:HTTP/1.1 200 OK
+t=7.1s  ready=2/2  health:HTTP/1.1 200 OK
+WAKTU PEMULIHAN: 7.1 detik
+
+SHA-256 SESUDAH: 118046d796143615d91b098e6bdc9c3cd532a57900e7e9849880b580f0bee40f  /app/uploads/evidence-08-test.txt
+HASIL: CHECKSUM SAMA, data PVC persisten
+**********************
+Windows PowerShell transcript end
+End time: 20261123055347
+**********************
