@@ -15,11 +15,11 @@ FLAGS=()
 
 for arg in "$@"; do
   case "$arg" in
-    --allow-pending|--with-trivy)
+    --allow-pending|--with-trivy|--with-load-test|--with-drift-test)
       FLAGS+=("$arg")
       ;;
     -h|--help)
-      echo "Penggunaan: bash automation/scripts/tests/run-milestone-tests.sh [all | 01 02 ... 11] [--allow-pending] [--with-trivy]"
+      echo "Penggunaan: bash automation/scripts/tests/run-milestone-tests.sh [all | 01 02 ... 11] [--allow-pending] [--with-trivy] [--with-load-test] [--with-drift-test]"
       exit 0
       ;;
     all)

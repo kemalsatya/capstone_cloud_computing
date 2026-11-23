@@ -61,4 +61,19 @@ else
   echo "[NOTICE] Node $CONTROL_NODE dilabeli 'journalfit-storage=uploads'."
 fi
 
+# Pastikan host.k3d.internal tersedia di CoreDNS NodeHosts (fallback untuk k3d di Docker Desktop Windows/macOS)
+EXISTING_HOSTS=$(kubectl -n kube-system get configmap coredns -o jsonpath='{.data.NodeHosts}' 2>/dev/null || true)
+if [ -n "$EXISTING_HOSTS" ] && ! printf '%s\n' "$EXISTING_HOSTS" | grep -q 'host\.k3d\.internal'; then
+  HOST_GW_IP=$(docker exec "k3d-${CLUSTER_NAME}-server-0" sh -c "getent hosts host.docker.internal | awk '{print \$1}' | head -n 1" 2>/dev/null || true)
+  if [ -n "$HOST_GW_IP" ]; then
+    echo "[INFO] Menambahkan alias '$HOST_GW_IP host.k3d.internal' ke CoreDNS NodeHosts..."
+    NEW_HOSTS=$(printf '%s\n%s host.k3d.internal\n' "${EXISTING_HOSTS%$'\n'}" "$HOST_GW_IP")
+    kubectl -n kube-system create configmap coredns --from-literal="NodeHosts=$NEW_HOSTS" --dry-run=client -o json \
+      | kubectl -n kube-system patch configmap coredns --type merge -p "$(cat)" >/dev/null 2>&1 || true
+    kubectl -n kube-system rollout restart deployment/coredns >/dev/null 2>&1 || true
+    kubectl -n kube-system rollout status deployment/coredns --timeout=60s >/dev/null 2>&1 || true
+    echo "[SUCCESS] Alias host.k3d.internal ($HOST_GW_IP) aktif di CoreDNS."
+  fi
+fi
+
 echo "[SUCCESS] Cluster k3d siap digunakan!"

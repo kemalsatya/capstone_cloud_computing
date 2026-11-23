@@ -40,7 +40,7 @@
 
 ## 3. Kasus Pengujian (Test Case) — Automated ADR Conformance & Fitness Test
 
-Untuk membuktikan bahwa `ADR-001` s.d. `ADR-009` bukan sekadar dokumen teks melainkan benar-benar dipatuhi oleh kode sumber, manifest Kubernetes, dan pipeline CI/CD, dijalankan pengujian otomatis **Architecture Fitness Functions** melalui [`automation/scripts/tests/test_milestone_10_adr.py`](../automation/scripts/tests/test_milestone_10_adr.py) (log hasil tersimpan di [`adr-conformance-test.txt`](./adr-conformance-test.txt)):
+Untuk membuktikan bahwa `ADR-001` s.d. `ADR-009` bukan sekadar dokumen teks melainkan benar-benar dipatuhi oleh kode sumber, manifest Kubernetes, dan pipeline CI/CD, dijalankan pengujian otomatis **Architecture Fitness Functions** melalui [`automation/scripts/tests/test-milestone-10-adr.sh`](../automation/scripts/tests/test-milestone-10-adr.sh) (log hasil tersimpan di [`adr-conformance-test.txt`](./adr-conformance-test.txt)):
 
 ```bash
 python automation/scripts/tests/test_milestone_10_adr.py
