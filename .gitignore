@@ -4,6 +4,8 @@ output/
 reference-docs/
 # Local documentation
 /docs/
+# Local Superpowers evidence
+/evidence/superpowers/
 # Scratch and render intermediates
 tmp/
 
