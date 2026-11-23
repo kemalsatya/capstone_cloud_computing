@@ -67,9 +67,15 @@ RESULTS=()
 TMP_DIR="$ROOT_DIR/.e2e-tmp"
 mkdir -p "$TMP_DIR/docker-cfg"
 printf '{}\n' > "$TMP_DIR/docker-cfg/config.json"
-if [[ -d "/c/Program Files/Docker/Docker/resources/bin" ]]; then
-  export PATH="/c/Program Files/Docker/Docker/resources/bin:$PATH"
-fi
+for dbin in \
+  "/c/Program Files/Docker/Docker/resources/bin" \
+  "${USERPROFILE:+$(cygpath -u "$USERPROFILE" 2>/dev/null || true)/AppData/Local/Programs/DockerDesktop/resources/bin}" \
+  "${HOME}/AppData/Local/Programs/DockerDesktop/resources/bin"
+do
+  if [[ -n "$dbin" && -d "$dbin" ]]; then
+    export PATH="$dbin:$PATH"
+  fi
+done
 CREATED_BACKUP_FILE=""
 UPLOADED_MS_ID=""
 
@@ -555,7 +561,7 @@ else
 fi
 
 if [[ "$WITH_TRIVY" == "true" ]]; then
-  if docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --exit-code 0 "$TEST_IMAGE" > "$TMP_DIR/trivy.txt" 2>&1; then
+  if MSYS_NO_PATHCONV=1 docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest image --severity HIGH,CRITICAL --exit-code 0 "$TEST_IMAGE" > "$TMP_DIR/trivy.txt" 2>&1; then
     record_pass "Trivy container scan selesai pada $TEST_IMAGE"
   else
     record_fail "Trivy container scan gagal dijalankan"

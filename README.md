@@ -1,194 +1,148 @@
-# JournalFit - Capstone Project Cloud Computing
+# JournalFit — Capstone Project Cloud Computing
 
-Repositori proyek akhir Cloud Computing: Sistem Manajemen & Pemeriksaan Format Naskah Ilmiah Multi-Tenant (**JournalFit**).
-Backend modular monolith menggunakan Express/Node.js dan PostgreSQL.
-
----
-
-## 👥 Pembagian Peran Anggota Kelompok
-
-| Peran | Anggota | Fokus Utama & Direktori Kerja |
-| :--- | :--- | :--- |
-| **Anggota 1** | Aplikasi & Data | Backend modular monolith (`source/`), PostgreSQL DDL schema (`source/schema.sql`), unit test (`source/tests/`). |
-| **Anggota 2** | Platform & Kubernetes | Containerization (`source/Dockerfile`), K8s manifest (`deployment/`), k3d cluster setup, Ingress, HPA, PVC. |
-| **Anggota 3** | CI/CD & GitOps | Pipeline delivery & security scanning (`automation/`), Argo CD application (`automation/argocd/application.yaml`). |
-| **Anggota 4** | Security, Ops & Recovery | Trivy vulnerability scan, backup & disaster recovery DB, observability Grafana/Prometheus (`evidence/`). |
+Repositori proyek akhir Cloud Computing: **JournalFit**, sistem manajemen dan pemeriksaan format naskah ilmiah (`.docx`) berbasis **Multi-Tenant Modular Monolith** dengan pemrosesan asinkron (`pg-boss`), autentikasi OIDC/JWT (**Keycloak 26.8.2**), orkestrasi **Kubernetes (`k3d`)**, **GitOps (Argo CD)**, dan observability (**Prometheus + Grafana**).
 
 ---
 
-## 📚 Dokumen Referensi & Bukti Platform
+## Ringkasan Stack & Status Terkini
 
-- [Ringkasan capaian dan batas M3](evidence/platform/RINGKASAN_M3_ANGGOTA_2.md)
-- [Panduan manifest dan prasyarat deployment](deployment/README.md)
-- [Kontrak integrasi dan riwayat penyesuaian](deployment/INTEGRATION_CONTRACT.md)
-- [Indeks evidence platform](evidence/platform/README.md)
-- [Demo read-only dan rencana screenshot 04](demo/panduan-demo-m3.md)
-- [Transkrip presentasi](demo/transkrip-presentasi-m3.md)
-- [Roadmap dan status yang belum selesai](roadmap.md)
-
-| Bagian | Versi / Status Terkini |
+| Komponen | Spesifikasi / Status Terverifikasi |
 | :--- | :--- |
-| **Dockerfile source** | `node:22-alpine`, `USER node`, `dumb-init`, port `8000` (uji kandidat & runtime non-root). |
-| **Artifact K8s teruji** | `registry:5000/journalfit-backend:3bdf305` (runtime UID `10001`). |
-| **Konfigurasi kluster** | Context `k3d-capstone`, namespace `default`, `DB_HOST=host.docker.internal` (Docker Desktop Windows). |
-| **Observability** | Endpoint `GET /metrics` (Prometheus text format) + Prometheus (`:9090`) + Grafana (`:3000`). |
+| **Backend & Worker** | Node.js 22 (`node:22-alpine`, non-root `USER node`, `dumb-init`), Express `5.3.0`, OpenAPI/Swagger UI (`/docs`, `/openapi.yaml`) |
+| **Async Job & OOXML Engine** | `pg-boss` (`worker-format` pod + antrean `format-check` + DLQ), parser native `jszip` + `fast-xml-parser` untuk Tier-1 rules `FMT-001..009` (`$0` biaya AI) |
+| **Auth & Multi-Tenant** | Keycloak `26.8.2` (OIDC RS256 JWKS, `jose`), isolasi tenant & RBAC terverifikasi (`404` cross-tenant, `403` RBAC, `63/64` unit/integration tests PASS) |
+| **Artifact K8s Teruji** | `registry:5000/journalfit-backend:0c2cf92` (non-root runtime, Kustomize + `db-setup` Job) |
+| **Kluster & Delivery** | `k3d-capstone`, namespace `default`, Traefik Ingress (`:8088`), HPA (`2->3->2`, `19.865 req / 0 fail`), Argo CD GitOps (`automation/argocd/application.yaml`) |
+| **Observability & Recovery** | `GET /metrics` + Prometheus (`:9090`) + Grafana (`:3000`); Pod self-healing `7.1s`, DB Restore RTO `0.78s`, Rolling Update `777 req / 0 fail / p95 26.73ms` |
+| **Scope Boundary (v1 vs v2)** | Pemeriksaan format deterministik (`FMT-001..009`) aktif penuh; Groq AI scope checker & Garage S3 multi-AZ dicatat eksplisit sebagai **Roadmap v2** |
 
 ---
 
-## 🚀 Panduan Eksekusi di Laptop Anggota
+## Indeks Artefak & Evidence (`01`–`11`)
 
-Repositori ini telah dilengkapi dengan infrastruktur mandiri berbasis **Docker Compose** dan skrip otomasi yang dapat dijalankan langsung di masing-masing laptop anggota.
+| No | Domain | Lokasi Utama |
+| :--- | :--- | :--- |
+| `01` | Business & Strategy | [`evidence/business/`](evidence/business/) |
+| `02` | Architecture (ArchiMate 3.2) | [`architecture/journalfit-architecture.archimate`](architecture/journalfit-architecture.archimate) & [`evidence/architecture/`](evidence/architecture/) |
+| `03` | Application & Data | [`source/`](source/) & [`evidence/application-data/`](evidence/application-data/) |
+| `04` | Platform & Kubernetes | [`deployment/`](deployment/) & [`evidence/platform/README.md`](evidence/platform/README.md) |
+| `05` | CI/CD & GitOps Delivery | [`automation/argocd/`](automation/argocd/) & [`evidence/delivery/`](evidence/delivery/) |
+| `06` | Security & Multi-Tenant Isolation | [`source/AUTH.md`](source/AUTH.md) & [`evidence/security/`](evidence/security/) |
+| `07` | Observability & SLO | [`evidence/observability/`](evidence/observability/) |
+| `08` | Reliability & Recovery | [`evidence/reliability-recovery/README.md`](evidence/reliability-recovery/README.md) |
+| `09` | Capacity & FinOps | [`evidence/capacity-finops/`](evidence/capacity-finops/) |
+| `10` | Architecture Decisions (ADR) | [`decisions/README.md`](decisions/README.md) |
+| `11` | Demo & Defense | [`demo/README.md`](demo/README.md) |
 
-### 0. Diagnosa Kesiapan Laptop & End-to-End Milestone Test
-Periksa kesiapan dependensi (`git`, `docker`, `node`, `kubectl`, `k3d`, port) di laptop Anda:
+Dokumen pendukung:
+- [Panduan Otomasi & Verifikasi (`automation/README.md`)](automation/README.md)
+- [Panduan Manifest & Deployment (`deployment/README.md`)](deployment/README.md)
+- [Kontrak Integrasi (`deployment/INTEGRATION_CONTRACT.md`)](deployment/INTEGRATION_CONTRACT.md)
+- [Roadmap & Batasan Ruang Lingkup (`roadmap.md`)](roadmap.md)
+
+---
+
+## Panduan Cepat Menjalankan Sistem
+
+Detail lengkap seluruh skrip operasional, pengujian per milestone, dan generator tersedia di [`automation/README.md`](automation/README.md).
+
+### 0. Cek Kesiapan Environment & E2E Test
 ```bash
+# Cek prasyarat tools & port
 bash automation/scripts/doctor.sh
+
+# Jalankan full live E2E test seluruh milestone (+ Trivy scan)
+bash automation/scripts/e2e-milestone-test.sh --with-trivy
+
+# Jalankan pengujian operasional & verifikasi modular per milestone (01–11)
+bash automation/scripts/tests/run-milestone-tests.sh all --allow-pending
 ```
-Untuk menjalankan pengujian **end-to-end seluruh milestone** (aplikasi, database & schema, Docker non-root, sinkronisasi `k3d` & Argo CD, isolasi multi-tenant, observability Prometheus/Grafana & SLO, serta backup/restore):
+
+### 1. Mode Local Development (Docker Compose)
 ```bash
-bash automation/scripts/e2e-milestone-test.sh
+cp .env.example .env
+docker compose up -d postgres keycloak app
+
+# Cek health & metrics
+curl -i http://localhost:8000/health/live
+curl -i http://localhost:8000/health/ready
+curl -i http://localhost:8000/metrics
 ```
-Gunakan `--with-trivy` untuk pemindaian kerentanan image Trivy, atau `--skip-k8s` / `--skip-argocd` / `--skip-observability` bila ingin melewati sebagian komponen.
+Autentikasi Keycloak (realm `journalfit` otomatis terimpor):
+```bash
+TOKEN=$(curl -s -X POST "http://localhost:8081/realms/journalfit/protocol/openid-connect/token" \
+  -d "grant_type=password&client_id=journalfit-app&username=author.a&password=author.a&scope=openid profile email" \
+  | jq -r .access_token)
+curl -i -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/auth/me
+```
+Detail user demo, role, dan `AUTH_MODE` ada di [`source/AUTH.md`](source/AUTH.md). Hentikan stack dengan `docker compose down`.
+
+### 2. Mode Kubernetes & `k3d`
+```bash
+docker compose --profile ci-cd up -d registry
+bash automation/scripts/create-cluster.sh
+bash automation/scripts/setup-keycloak.sh
+
+kubectl apply --dry-run=server -k deployment/
+kubectl apply -k deployment/
+kubectl -n default get deployment,pods,service,ingress,pvc,hpa
+
+# Akses melalui Traefik Ingress (:8088)
+curl -i -H "Host: journalfit.localhost" http://localhost:8088/health/ready
+curl -i -H "Host: keycloak.localhost" http://localhost:8088/realms/journalfit
+```
+
+### 3. Mode CI/CD & GitOps (Argo CD)
+```bash
+docker compose --profile ci-cd up -d
+bash automation/scripts/install-argocd.sh
+
+bash automation/scripts/build-and-tag.sh
+bash automation/scripts/prepare-image-update.sh <7-char-sha>
+bash automation/scripts/simulate-rollback.sh
+```
+
+### 4. Mode Observability & Disaster Recovery
+```bash
+# Prometheus (:9090) & Grafana (:3000, default admin/admin)
+docker compose --profile observability up -d
+
+# Backup & uji restore PostgreSQL
+bash automation/scripts/db-backup-restore.sh backup
+bash automation/scripts/db-backup-restore.sh restore evidence/reliability-recovery/<nama_file_backup>.sql
+```
 
 ---
 
-### 💻 Mode 1: Pengembangan Lokal Ringan (Local Dev - Anggota 1 & All Devs)
-Jalankan backend Express dan database PostgreSQL JournalFit (tabel dan seed otomatis dibuat dari `source/schema.sql`):
+## Struktur Repositori
 
-1. **Siapkan environment:**
-   ```bash
-   cp .env.example .env
-   ```
-2. **Jalankan Aplikasi, Database, dan Keycloak:**
-   ```bash
-   docker compose up -d postgres keycloak app
-   ```
-3. **Cek kesehatan & metrik aplikasi:**
-   ```bash
-   curl -i http://localhost:8000/health/live
-   curl -i http://localhost:8000/health/ready
-   curl -i http://localhost:8000/metrics
-   ```
-4. **Autentikasi Keycloak:** realm `journalfit` diimpor otomatis. Ambil token lalu panggil API:
-   ```bash
-   TOKEN=$(curl -s -X POST "http://localhost:8081/realms/journalfit/protocol/openid-connect/token" \
-     -d "grant_type=password&client_id=journalfit-app&username=author.a&password=author.a&scope=openid profile email" \
-     | jq -r .access_token)
-   curl -i -H "Authorization: Bearer $TOKEN" http://localhost:8000/api/auth/me
-   ```
-   Detail realm, user demo, dan `AUTH_MODE` ada di [`source/AUTH.md`](./source/AUTH.md).
-5. **Hentikan service jika selesai:**
-   ```bash
-   docker compose down
-   ```
-
----
-
-### ☸️ Mode 2: Orkestrasi Kubernetes & k3d (Anggota 2 - Platform)
-Prasyarat sebelum menerapkan manifest Kustomize ke kluster lokal:
-1. Cluster `capstone` (`k3d-capstone`) Ready, node storage berlabel `journalfit-storage=uploads`, Metrics API & Traefik aktif.
-2. Database `journalfit` tersedia dengan 6 tabel dari `source/schema.sql`.
-3. Secret `journalfit-backend-secret` dengan key `DB_PASSWORD` tersedia di namespace `default` (jangan pernah menyimpan secret nyata di Git).
-4. Database `keycloak` dan Secret Keycloak dibuat lewat `automation/scripts/setup-keycloak.sh`.
-
-Langkah eksekusi:
-1. **Jalankan Registry lokal:**
-   ```bash
-   docker compose --profile ci-cd up -d registry
-   ```
-2. **Buat kluster k3d terintegrasi:**
-   ```bash
-   bash automation/scripts/create-cluster.sh
-   ```
-3. **Siapkan database & Secret Keycloak:**
-   ```bash
-   bash automation/scripts/setup-keycloak.sh
-   ```
-4. **Terapkan seluruh manifest kustomize:**
-   ```bash
-   kubectl apply --dry-run=server -k deployment/
-   kubectl apply -k deployment/
-   kubectl -n default get deployment,pods,service,ingress,pvc,hpa
-   ```
-5. **Akses aplikasi dan Keycloak via Ingress:**
-   ```bash
-   curl -i -H "Host: journalfit.localhost" http://localhost:8088/health/ready
-   curl -i -H "Host: keycloak.localhost" http://localhost:8088/realms/journalfit
-   ```
-
----
-
-### 🔄 Mode 3: CI/CD & GitOps Argo CD (Anggota 3 - Delivery)
-1. **Jalankan Gitea & Registry lokal:**
-   ```bash
-   docker compose --profile ci-cd up -d
-   ```
-2. **Pasang Operator Argo CD ke k3d:**
-   ```bash
-   bash automation/scripts/install-argocd.sh
-   ```
-3. **Build, Tag SHA7, & Update Desired State:**
-   ```bash
-   bash automation/scripts/build-and-tag.sh
-   bash automation/scripts/prepare-image-update.sh <7-char-sha>
-   ```
-4. **Simulasi Rollback:**
-   ```bash
-   bash automation/scripts/simulate-rollback.sh
-   ```
-
----
-
-### 🛡️ Mode 4: Backup, Disaster Recovery & Observability (Anggota 4 - Ops)
-1. **Jalankan Prometheus & Grafana:**
-   ```bash
-   docker compose --profile observability up -d
-   ```
-   * Prometheus: `http://localhost:9090`
-   * Grafana: `http://localhost:3000` (User: `admin`, Pass: `admin`)
-
-2. **Backup Database:**
-   ```bash
-   bash automation/scripts/db-backup-restore.sh backup
-   ```
-
-3. **Uji Disaster Recovery (Restore):**
-   ```bash
-   bash automation/scripts/db-backup-restore.sh restore evidence/reliability-recovery/<nama_file_backup>.sql
-   ```
-
----
-
-## 📁 Struktur Repositori (Mematuhi Section 15 Capstone Guideline)
 ```text
 capstone_cloud_computing/
 ├── .env.example                     # Template konfigurasi environment
 ├── .gitignore                       # Guard artifact lokal, node_modules, dan .env
 ├── docker-compose.yml               # Stack multi-profile mandiri
-├── README.md                        # Panduan terpadu proyek
-├── roadmap.md                       # Checklist status & progres platform
-├── architecture/                    # Diagram dan arsitektur sistem
-├── source/                          # Kode backend Express.js & Dockerfile
+├── README.md                        # Panduan utama proyek
+├── roadmap.md                       # Checklist status & batasan ruang lingkup
+├── architecture/                    # Model ArchiMate 3.2 (.archimate) & PNG views
+├── source/                          # Backend Express.js, pg-boss worker, OOXML engine & Dockerfile
 │   ├── src/                         # Modular monolith modules
-│   ├── schema.sql                   # DDL skema 6 tabel & seed data (v1 aktif)
-│   ├── schema-v2.sql                # Draft DDL skema v2 (persiapan PRD v0.1)
-│   ├── tests/                       # Unit & HTTP integration tests
+│   ├── schema.sql                   # DDL skema 6 tabel & seed data
+│   ├── tests/                       # Unit & HTTP integration tests (node --test)
 │   └── Dockerfile                   # Node.js 22 Alpine non-root runtime container
-├── deployment/                      # Manifest K8s (Deployment, Service, PVC, Ingress, HPA)
-│   ├── kustomization.yaml           # Kustomize manifest
-│   └── k3d-registries.yaml          # Registri mirror k3d
-├── automation/                      # CI/CD, GitOps, & skrip pembantu
+├── deployment/                      # Manifest K8s (Deployment, Worker, Job, Service, PVC, Ingress, HPA)
+├── automation/                      # CI/CD, Argo CD, skrip E2E, milestone tests & generators
+│   ├── README.md                    # Panduan lengkap eksekusi otomasi
 │   ├── argocd/                      # Argo CD Application manifest
-│   ├── handoff/                     # Dokumentasi & patch integrasi CI
-│   └── scripts/                     # doctor, create-cluster, install-argocd, db-backup-restore, e2e-milestone-test
-├── evidence/                        # Bukti pengujian platform, security, observability, recovery
-│   └── observability/               # Konfigurasi Prometheus & datasource Grafana
-├── demo/                            # Naskah & panduan demo
-├── decisions/                       # Catatan keputusan arsitektur (ADR)
-└── individual-reflections/          # Refleksi individual masing-masing anggota
+│   └── scripts/                     # Operational *.sh, tests/ (01–11), dan generators/
+├── evidence/                        # Bukti verifikasi 01–09
+├── decisions/                       # Architecture Decision Records (ADR-001..009)
+├── demo/                            # Panduan Demo 11, E2E log & 12 Q&A defense
+└── individual-reflections/          # Refleksi individual anggota
 ```
 
-## 🤝 Standar Kolaborasi
+---
+
+## Standar Kolaborasi
 - Tidak ada direct commit ke `main` atau `force push`.
-- Seluruh perubahan melalui feature branch, Pull Request, dan review anggota tim.
+- Seluruh perubahan melalui feature branch, Pull Request, dan review.
 - Jangan menyimpan kredensial nyata (`.env`, password DB, token) di repositori.

@@ -1,0 +1,473 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<archimate:model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:archimate="http://www.archimatetool.com/archimate" name="JournalFit Cloud-Native Platform (Team 7 - M2 Baseline)" id="id-model-journalfit" version="5.0.0">
+  <purpose>Model arsitektur ArchiMate 3.2 JournalFit (Milestone 2 Baseline 7e8607b / tag 0c2cf92): Keycloak OIDC 26.8.2, Express 5 Modular Monolith, pg-boss worker-format, OOXML Tier-1 FMT-001..009, PostgreSQL 17, k3d HPA, Prometheus/Grafana, dan Argo CD GitOps.</purpose>
+  <folder name="Strategy" id="id-folder-strategy" type="strategy"/>
+  <folder name="Business" id="id-folder-business" type="business">
+    <element xsi:type="archimate:BusinessActor" name="Author (Penulis)" id="id-ba-author">
+      <documentation>Submitter role (author.a, author.b)</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessActor" name="Journal Editor" id="id-ba-editor">
+      <documentation>Reviewer role (editor.a)</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="1. OIDC Tenant Login" id="id-bp-auth">
+      <documentation>Authenticate via Keycloak (realm journalfit) -&gt; RS256 Bearer JWT</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="2. Submit Naskah (.docx)" id="id-bp-submit">
+      <documentation>POST /api/manuscripts (202 Accepted) -&gt; PVC + pg-boss enqueue</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="3. Async OOXML Format Audit" id="id-bp-audit">
+      <documentation>worker-format evaluates Tier-1 FMT-001..009 ($0 AI cost)</documentation>
+    </element>
+    <element xsi:type="archimate:BusinessProcess" name="4. Tinjau Laporan &amp; Revisi" id="id-bp-review">
+      <documentation>GET /api/manuscripts/:id/report (&lt; 50 ms), cross-tenant 404</documentation>
+    </element>
+  </folder>
+  <folder name="Application" id="id-folder-application" type="application">
+    <element xsi:type="archimate:ApplicationService" name="Layanan Validasi Format Naskah" id="id-as-check">
+      <documentation>Multi-tenant asynchronous DOCX format pre-check service</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationInterface" name="Traefik Ingress Gateway (:8088)" id="id-ai-ingress">
+      <documentation>journalfit.localhost -&gt; backend:80 | keycloak.localhost -&gt; keycloak:80</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Keycloak OIDC Provider (26.8.2)" id="id-ac-keycloak">
+      <documentation>Realm journalfit | RS256 Token &amp; Internal JWKS (~596 MiB RAM)</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="JournalFit Backend API (Express 5)" id="id-ac-api">
+      <documentation>Node.js 22 + Express 5.3 + jose JWKS + OpenAPI /docs + /metrics</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Job Queue (pg-boss)" id="id-ac-queue">
+      <documentation>PostgreSQL-backed queue format-check + format-check-dlq (atomic TX)</documentation>
+    </element>
+    <element xsi:type="archimate:ApplicationComponent" name="Worker Format (OOXML Engine)" id="id-ac-worker">
+      <documentation>node src/worker.js | jszip + fast-xml-parser | FMT-001..009 | :9101</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Bearer JWT (RS256)" id="id-do-jwt">
+      <documentation>Claims: iss, sub, tenant_id, role (X-Tenant-ID ignored)</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Naskah (.docx)" id="id-do-docx">
+      <documentation>Binary stored in PVC /app/uploads (shared by API &amp; worker)</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Template Aturan (FMT-001..009)" id="id-do-rules">
+      <documentation>Tenant-scoped Tier-1 rules in format_rule_templates</documentation>
+    </element>
+    <element xsi:type="archimate:DataObject" name="Laporan &amp; Findings" id="id-do-report">
+      <documentation>format_score, check_results, findings (tenant-isolated)</documentation>
+    </element>
+  </folder>
+  <folder name="Technology &amp; Physical" id="id-folder-technology" type="technology">
+    <element xsi:type="archimate:Device" name="Client / Browser / API Caller" id="id-dv-client">
+      <documentation>Author &amp; Editor external client accessing HTTP :8088</documentation>
+    </element>
+    <element xsi:type="archimate:TechnologyService" name="Traefik Ingress (:8088)" id="id-ts-ingress">
+      <documentation>Cluster HTTP entrypoint [TB-1 Perimeter Boundary]</documentation>
+    </element>
+    <element xsi:type="archimate:Node" name="k3d-capstone (k3s v1.31 / agent-0)" id="id-nd-k3d">
+      <documentation>Containerd runtime, label journalfit-storage=uploads</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Pod: keycloak (UID 1000, 1x)" id="id-ss-kc">
+      <documentation>quay.io/keycloak/keycloak:26.8.2 | Req 250m/512Mi Lim 1000m/1Gi | Svc :80-&gt;:8080</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Pod: journalfit-backend (2-3 HPA)" id="id-ss-api">
+      <documentation>registry:5000/journalfit-backend:0c2cf92 | UID 10001 drop ALL | Self-heal 7.1s</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Pod: worker-format (UID 10001, 1x)" id="id-ss-worker">
+      <documentation>node src/worker.js | Req 100m/128Mi Lim 250m/256Mi | Metrics :9101</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Job: db-setup (migrate + seed)" id="id-ss-job">
+      <documentation>InitContainer run-migrations.js (001+002) + seed-demo-data.js | UID 10001</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" name="PVC: journalfit-uploads (1Gi RWO)" id="id-ar-pvc">
+      <documentation>local-path RWO /app/uploads [FB-2 single-node pinned, Prune=false]</documentation>
+    </element>
+    <element xsi:type="archimate:Artifact" name="K8s Secrets &amp; ConfigMaps" id="id-ar-sec">
+      <documentation>journalfit-backend-secret, keycloak-db/admin-secret, AUTH_MODE=jwt [TB-4]</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="PostgreSQL 17 Alpine (:5432)" id="id-ss-pg">
+      <documentation>DB journalfit (6 tables + pg-boss) &amp; DB keycloak (101 tables)</documentation>
+    </element>
+    <element xsi:type="archimate:TechnologyService" name="Backup &amp; Isolated Restore" id="id-ts-backup">
+      <documentation>db-backup-restore.sh | Verified RTO 0.78s (&lt; 300s SLO) [FB-3]</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Prometheus (:9090) &amp; Grafana (:3000)" id="id-ss-obs">
+      <documentation>Scrapes /metrics 15s, TSDB 3d retention, 4 Golden Signals SLO</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="GitHub Actions CI" id="id-ss-gha">
+      <documentation>node --test (63/64 PASS) + Trivy Gate (HIGH,CRITICAL) + SHA-7</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Local OCI Registry (:5001/:5000)" id="id-ss-reg">
+      <documentation>Immutable artifact registry:5000/journalfit-backend:0c2cf92</documentation>
+    </element>
+    <element xsi:type="archimate:SystemSoftware" name="Argo CD GitOps Controller" id="id-ss-argo">
+      <documentation>Auto-Sync &amp; Self-Heal (main -&gt; deployment/), rollback &lt; 15s</documentation>
+    </element>
+  </folder>
+  <folder name="Motivation" id="id-folder-motivation" type="motivation">
+    <element xsi:type="archimate:Stakeholder" name="Penulis / Mahasiswa" id="id-st-author">
+      <documentation>Ingin self-check format .docx sebelum submit resmi</documentation>
+    </element>
+    <element xsi:type="archimate:Stakeholder" name="Editor Jurnal" id="id-st-editor">
+      <documentation>Ingin naskah rapi secara format tanpa cek manual 10-40 menit</documentation>
+    </element>
+    <element xsi:type="archimate:Stakeholder" name="Admin Tenant" id="id-st-tadmin">
+      <documentation>Menjaga kerahasiaan &amp; isolasi data naskah antar jurnal</documentation>
+    </element>
+    <element xsi:type="archimate:Stakeholder" name="Admin Platform" id="id-st-padmin">
+      <documentation>Menjaga SLO, efisiensi FinOps, dan stabilitas kluster</documentation>
+    </element>
+    <element xsi:type="archimate:Driver" name="Cek Manual &amp; &gt;30% Desk Rejection" id="id-dr-manual">
+      <documentation>Siklus revisi 2-3x dan 16-25 jam/100 naskah</documentation>
+    </element>
+    <element xsi:type="archimate:Driver" name="Lonjakan Trafik 10x Jelang Deadline" id="id-dr-burst">
+      <documentation>Beban musiman ekstrem saat call-for-papers / yudisium</documentation>
+    </element>
+    <element xsi:type="archimate:Driver" name="Kerahasiaan Naskah &amp; FinOps" id="id-dr-sec">
+      <documentation>Naskah belum terbit sensitif; hindari biaya AI tinggi di v1</documentation>
+    </element>
+    <element xsi:type="archimate:Goal" name="Audit Format Otomatis &amp; Cepat" id="id-gl-audit">
+      <documentation>Tier-1 FMT-001..009 deterministik, report p95 &lt; 50 ms</documentation>
+    </element>
+    <element xsi:type="archimate:Goal" name="Isolasi Multi-Tenant &amp; Resilience" id="id-gl-iso">
+      <documentation>0 kebocoran data (401/404/403), self-heal 7.1s, RTO 0.78s</documentation>
+    </element>
+    <element xsi:type="archimate:Goal" name="Efisiensi Biaya ($0 AI Cost v1)" id="id-gl-cost">
+      <documentation>Deterministic OOXML tanpa token LLM berbayar di v1</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Pemrosesan Asinkron (pg-boss) + HPA" id="id-rq-async">
+      <documentation>Decouple upload API (202) dan worker-format + HPA 2-3 pod</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Rule Engine OOXML (FMT-001..009)" id="id-rq-ooxml">
+      <documentation>jszip + fast-xml-parser untuk A4, margin, font, abstrak, keywords</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Keycloak OIDC RS256 + Policy 404" id="id-rq-oidc">
+      <documentation>Claim tenant_id terverifikasi JWKS, abaikan X-Tenant-ID</documentation>
+    </element>
+    <element xsi:type="archimate:Requirement" name="Backup &amp; Isolated Restore Drill" id="id-rq-dr">
+      <documentation>Target SLO RTO &lt; 5 menit (teruji 0.78 detik)</documentation>
+    </element>
+    <element xsi:type="archimate:Constraint" name="v1 Hanya DOCX &amp; PVC RWO (S3/AI di v2)" id="id-ct-scope">
+      <documentation>Garage S3 &amp; Groq AI scope checker masuk Roadmap v2</documentation>
+    </element>
+  </folder>
+  <folder name="Implementation &amp; Migration" id="id-folder-implementation_migration" type="implementation_migration"/>
+  <folder name="Other" id="id-folder-other" type="other">
+    <element xsi:type="archimate:Grouping" name="Trust Boundary: Kubernetes Data Plane [TB-1..TB-4]" id="id-gp-platform">
+      <documentation>Perimeter :8088, RS256 JWKS, Multi-Tenant 404, Non-Root UID 10001</documentation>
+    </element>
+    <element xsi:type="archimate:Grouping" name="Host Node: Docker Engine (DB &amp; Observability)" id="id-gp-host">
+      <documentation>PostgreSQL 17, Backup/Restore [FB-3], Prometheus &amp; Grafana</documentation>
+    </element>
+    <element xsi:type="archimate:Grouping" name="Control Plane: CI/CD &amp; GitOps (Out-of-Band)" id="id-gp-cicd">
+      <documentation>GitHub Actions -&gt; OCI Registry -&gt; Argo CD Auto-Sync</documentation>
+    </element>
+  </folder>
+  <folder name="Relations" id="id-folder-relations" type="relations">
+    <element xsi:type="archimate:AssociationRelationship" id="id-r-m1" source="id-st-author" target="id-dr-manual"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-r-m2" source="id-st-editor" target="id-dr-manual"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-r-m3" source="id-st-editor" target="id-dr-burst"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-r-m4" source="id-st-tadmin" target="id-dr-sec"/>
+    <element xsi:type="archimate:AssociationRelationship" id="id-r-m5" source="id-st-padmin" target="id-dr-sec"/>
+    <element xsi:type="archimate:InfluenceRelationship" id="id-r-m6" source="id-dr-manual" target="id-gl-audit"/>
+    <element xsi:type="archimate:InfluenceRelationship" id="id-r-m7" source="id-dr-burst" target="id-gl-audit"/>
+    <element xsi:type="archimate:InfluenceRelationship" id="id-r-m8" source="id-dr-sec" target="id-gl-iso"/>
+    <element xsi:type="archimate:InfluenceRelationship" id="id-r-m9" source="id-dr-sec" target="id-gl-cost"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-m10" source="id-rq-async" target="id-gl-audit"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-m11" source="id-rq-ooxml" target="id-gl-audit"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-m12" source="id-rq-ooxml" target="id-gl-cost"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-m13" source="id-rq-oidc" target="id-gl-iso"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-m14" source="id-rq-dr" target="id-gl-iso"/>
+    <element xsi:type="archimate:InfluenceRelationship" id="id-r-m15" source="id-ct-scope" target="id-rq-ooxml"/>
+    <element xsi:type="archimate:InfluenceRelationship" id="id-r-m16" source="id-ct-scope" target="id-rq-async"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-r-l1" source="id-ba-author" target="id-bp-auth"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-r-l2" source="id-ba-author" target="id-bp-submit"/>
+    <element xsi:type="archimate:AssignmentRelationship" id="id-r-l3" source="id-ba-editor" target="id-bp-review"/>
+    <element xsi:type="archimate:TriggeringRelationship" id="id-r-l4" source="id-bp-auth" target="id-bp-submit"/>
+    <element xsi:type="archimate:TriggeringRelationship" id="id-r-l5" source="id-bp-submit" target="id-bp-audit"/>
+    <element xsi:type="archimate:TriggeringRelationship" id="id-r-l6" source="id-bp-audit" target="id-bp-review"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-l7" source="id-as-check" target="id-bp-submit"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-l8" source="id-as-check" target="id-bp-audit"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-l9" source="id-as-check" target="id-bp-review"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-l10" source="id-ac-keycloak" target="id-as-check"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-l11" source="id-ac-api" target="id-as-check"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-l12" source="id-ac-queue" target="id-as-check"/>
+    <element xsi:type="archimate:RealizationRelationship" id="id-r-l13" source="id-ac-worker" target="id-as-check"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-l14" source="id-ss-kc" target="id-ac-keycloak"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-l15" source="id-ss-api" target="id-ac-api"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-l16" source="id-ss-pg" target="id-ac-queue"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-l17" source="id-ss-worker" target="id-ac-worker"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-a1" name="keycloak.localhost" source="id-ai-ingress" target="id-ac-keycloak"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-a2" name="journalfit.localhost" source="id-ai-ingress" target="id-ac-api"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-a3" name="JWKS Keys (RS256)" source="id-ac-keycloak" target="id-ac-api"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-a4" name="Enqueue format-check" source="id-ac-api" target="id-ac-queue"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-a5" name="Dispatch Job" source="id-ac-queue" target="id-ac-worker"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-a6" name="Verify" source="id-ac-api" target="id-do-jwt" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-a7" name="Write" source="id-ac-api" target="id-do-docx" accessType="2"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-a8" name="Read" source="id-ac-worker" target="id-do-docx" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-a9" name="Read" source="id-ac-worker" target="id-do-rules" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-a10" name="Write" source="id-ac-worker" target="id-do-report" accessType="2"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-a11" name="Read" source="id-ac-api" target="id-do-report" accessType="1"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t1" name="HTTP :8088" source="id-dv-client" target="id-ts-ingress"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t2" name="Svc :80-&gt;:8080" source="id-ts-ingress" target="id-ss-kc"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t3" name="Svc :80-&gt;:8000" source="id-ts-ingress" target="id-ss-api"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t4" name="Internal JWKS" source="id-ss-kc" target="id-ss-api"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-t5" name="/app/uploads" source="id-ss-api" target="id-ar-pvc" accessType="3"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-t6" name="Read .docx" source="id-ss-worker" target="id-ar-pvc" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-t7" name="Env/Secret" source="id-ss-api" target="id-ar-sec" accessType="1"/>
+    <element xsi:type="archimate:AccessRelationship" id="id-r-t8" name="KC Secrets" source="id-ss-kc" target="id-ar-sec" accessType="1"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t9" name="TCP :5432" source="id-ss-api" target="id-ss-pg"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t10" source="id-ss-worker" target="id-ss-pg"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t11" source="id-ss-kc" target="id-ss-pg"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t12" name="Migrate/Seed" source="id-ss-job" target="id-ss-pg"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t13" name="pg_dump (0.78s)" source="id-ss-pg" target="id-ts-backup"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t14" name="Scrape :8000" source="id-ss-api" target="id-ss-obs"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t15" name="Scrape :9101" source="id-ss-worker" target="id-ss-obs"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t16" name="Push 0c2cf92" source="id-ss-gha" target="id-ss-reg"/>
+    <element xsi:type="archimate:FlowRelationship" id="id-r-t17" name="Pull 0c2cf92" source="id-ss-reg" target="id-nd-k3d"/>
+    <element xsi:type="archimate:ServingRelationship" id="id-r-t18" name="GitOps Sync" source="id-ss-argo" target="id-nd-k3d"/>
+  </folder>
+  <folder name="Views" id="id-folder-views" type="diagrams">
+    <element xsi:type="archimate:ArchimateDiagramModel" name="1. Motivation view (01-business)" id="id-v1" connectionRouterType="1">
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-st-author" archimateElement="id-st-author">
+        <bounds x="30" y="30" width="180" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m1" source="id-v1-d-id-st-author" target="id-v1-d-id-dr-manual" archimateRelationship="id-r-m1"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-st-editor" archimateElement="id-st-editor">
+        <bounds x="240" y="30" width="180" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m2" source="id-v1-d-id-st-editor" target="id-v1-d-id-dr-manual" archimateRelationship="id-r-m2"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m3" source="id-v1-d-id-st-editor" target="id-v1-d-id-dr-burst" archimateRelationship="id-r-m3"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-st-tadmin" archimateElement="id-st-tadmin">
+        <bounds x="450" y="30" width="180" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m4" source="id-v1-d-id-st-tadmin" target="id-v1-d-id-dr-sec" archimateRelationship="id-r-m4"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-st-padmin" archimateElement="id-st-padmin">
+        <bounds x="660" y="30" width="180" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m5" source="id-v1-d-id-st-padmin" target="id-v1-d-id-dr-sec" archimateRelationship="id-r-m5"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-dr-manual" targetConnections="id-v1-c-id-r-m1 id-v1-c-id-r-m2" archimateElement="id-dr-manual">
+        <bounds x="40" y="130" width="240" height="60"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m6" source="id-v1-d-id-dr-manual" target="id-v1-d-id-gl-audit" archimateRelationship="id-r-m6"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-dr-burst" targetConnections="id-v1-c-id-r-m3" archimateElement="id-dr-burst">
+        <bounds x="310" y="130" width="240" height="60"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m7" source="id-v1-d-id-dr-burst" target="id-v1-d-id-gl-audit" archimateRelationship="id-r-m7"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-dr-sec" targetConnections="id-v1-c-id-r-m4 id-v1-c-id-r-m5" archimateElement="id-dr-sec">
+        <bounds x="580" y="130" width="240" height="60"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m8" source="id-v1-d-id-dr-sec" target="id-v1-d-id-gl-iso" archimateRelationship="id-r-m8"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m9" source="id-v1-d-id-dr-sec" target="id-v1-d-id-gl-cost" archimateRelationship="id-r-m9"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-gl-audit" targetConnections="id-v1-c-id-r-m6 id-v1-c-id-r-m7 id-v1-c-id-r-m10 id-v1-c-id-r-m11" archimateElement="id-gl-audit">
+        <bounds x="60" y="235" width="240" height="60"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-gl-iso" targetConnections="id-v1-c-id-r-m8 id-v1-c-id-r-m13 id-v1-c-id-r-m14" archimateElement="id-gl-iso">
+        <bounds x="330" y="235" width="240" height="60"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-gl-cost" targetConnections="id-v1-c-id-r-m9 id-v1-c-id-r-m12" archimateElement="id-gl-cost">
+        <bounds x="600" y="235" width="240" height="60"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-rq-async" targetConnections="id-v1-c-id-r-m16" archimateElement="id-rq-async">
+        <bounds x="30" y="345" width="195" height="60"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m10" source="id-v1-d-id-rq-async" target="id-v1-d-id-gl-audit" archimateRelationship="id-r-m10"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-rq-ooxml" targetConnections="id-v1-c-id-r-m15" archimateElement="id-rq-ooxml">
+        <bounds x="240" y="345" width="195" height="60"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m11" source="id-v1-d-id-rq-ooxml" target="id-v1-d-id-gl-audit" archimateRelationship="id-r-m11"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m12" source="id-v1-d-id-rq-ooxml" target="id-v1-d-id-gl-cost" archimateRelationship="id-r-m12"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-rq-oidc" archimateElement="id-rq-oidc">
+        <bounds x="450" y="345" width="195" height="60"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m13" source="id-v1-d-id-rq-oidc" target="id-v1-d-id-gl-iso" archimateRelationship="id-r-m13"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-rq-dr" archimateElement="id-rq-dr">
+        <bounds x="660" y="345" width="195" height="60"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m14" source="id-v1-d-id-rq-dr" target="id-v1-d-id-gl-iso" archimateRelationship="id-r-m14"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v1-d-id-ct-scope" archimateElement="id-ct-scope">
+        <bounds x="110" y="450" width="360" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m15" source="id-v1-d-id-ct-scope" target="id-v1-d-id-rq-ooxml" archimateRelationship="id-r-m15"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v1-c-id-r-m16" source="id-v1-d-id-ct-scope" target="id-v1-d-id-rq-async" archimateRelationship="id-r-m16"/>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="2. Layered view (02-architecture)" id="id-v2" connectionRouterType="1">
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ba-author" archimateElement="id-ba-author">
+        <bounds x="30" y="30" width="160" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l1" source="id-v2-d-id-ba-author" target="id-v2-d-id-bp-auth" archimateRelationship="id-r-l1"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l2" source="id-v2-d-id-ba-author" target="id-v2-d-id-bp-submit" archimateRelationship="id-r-l2"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-bp-auth" targetConnections="id-v2-c-id-r-l1" archimateElement="id-bp-auth">
+        <bounds x="220" y="30" width="175" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l4" source="id-v2-d-id-bp-auth" target="id-v2-d-id-bp-submit" archimateRelationship="id-r-l4"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-bp-submit" targetConnections="id-v2-c-id-r-l2 id-v2-c-id-r-l4 id-v2-c-id-r-l7" archimateElement="id-bp-submit">
+        <bounds x="420" y="30" width="175" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l5" source="id-v2-d-id-bp-submit" target="id-v2-d-id-bp-audit" archimateRelationship="id-r-l5"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-bp-audit" targetConnections="id-v2-c-id-r-l5 id-v2-c-id-r-l8" archimateElement="id-bp-audit">
+        <bounds x="620" y="30" width="175" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l6" source="id-v2-d-id-bp-audit" target="id-v2-d-id-bp-review" archimateRelationship="id-r-l6"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-bp-review" targetConnections="id-v2-c-id-r-l3 id-v2-c-id-r-l6 id-v2-c-id-r-l9" archimateElement="id-bp-review">
+        <bounds x="820" y="30" width="175" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ba-editor" archimateElement="id-ba-editor">
+        <bounds x="1020" y="30" width="160" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l3" source="id-v2-d-id-ba-editor" target="id-v2-d-id-bp-review" archimateRelationship="id-r-l3"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-as-check" targetConnections="id-v2-c-id-r-l10 id-v2-c-id-r-l11 id-v2-c-id-r-l12 id-v2-c-id-r-l13" archimateElement="id-as-check">
+        <bounds x="220" y="130" width="775" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l7" source="id-v2-d-id-as-check" target="id-v2-d-id-bp-submit" archimateRelationship="id-r-l7"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l8" source="id-v2-d-id-as-check" target="id-v2-d-id-bp-audit" archimateRelationship="id-r-l8"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l9" source="id-v2-d-id-as-check" target="id-v2-d-id-bp-review" archimateRelationship="id-r-l9"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ac-keycloak" targetConnections="id-v2-c-id-r-l14" archimateElement="id-ac-keycloak">
+        <bounds x="60" y="230" width="240" height="65"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l10" source="id-v2-d-id-ac-keycloak" target="id-v2-d-id-as-check" archimateRelationship="id-r-l10"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ac-api" targetConnections="id-v2-c-id-r-l15" archimateElement="id-ac-api">
+        <bounds x="330" y="230" width="240" height="65"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l11" source="id-v2-d-id-ac-api" target="id-v2-d-id-as-check" archimateRelationship="id-r-l11"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ac-queue" targetConnections="id-v2-c-id-r-l16" archimateElement="id-ac-queue">
+        <bounds x="600" y="230" width="240" height="65"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l12" source="id-v2-d-id-ac-queue" target="id-v2-d-id-as-check" archimateRelationship="id-r-l12"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ac-worker" targetConnections="id-v2-c-id-r-l17" archimateElement="id-ac-worker">
+        <bounds x="870" y="230" width="240" height="65"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l13" source="id-v2-d-id-ac-worker" target="id-v2-d-id-as-check" archimateRelationship="id-r-l13"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-nd-k3d" archimateElement="id-nd-k3d">
+        <bounds x="40" y="340" width="1090" height="140"/>
+        <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ss-kc" archimateElement="id-ss-kc">
+          <bounds x="20" y="45" width="240" height="70"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l14" source="id-v2-d-id-ss-kc" target="id-v2-d-id-ac-keycloak" archimateRelationship="id-r-l14"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ss-api" archimateElement="id-ss-api">
+          <bounds x="290" y="45" width="240" height="70"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l15" source="id-v2-d-id-ss-api" target="id-v2-d-id-ac-api" archimateRelationship="id-r-l15"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ss-pg" archimateElement="id-ss-pg">
+          <bounds x="560" y="45" width="240" height="70"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l16" source="id-v2-d-id-ss-pg" target="id-v2-d-id-ac-queue" archimateRelationship="id-r-l16"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v2-d-id-ss-worker" archimateElement="id-ss-worker">
+          <bounds x="830" y="45" width="240" height="70"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v2-c-id-r-l17" source="id-v2-d-id-ss-worker" target="id-v2-d-id-ac-worker" archimateRelationship="id-r-l17"/>
+        </child>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="3. Application cooperation view" id="id-v3" connectionRouterType="1">
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-ai-ingress" archimateElement="id-ai-ingress">
+        <bounds x="250" y="25" width="440" height="55"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a1" source="id-v3-d-id-ai-ingress" target="id-v3-d-id-ac-keycloak" archimateRelationship="id-r-a1"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a2" source="id-v3-d-id-ai-ingress" target="id-v3-d-id-ac-api" archimateRelationship="id-r-a2"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-ac-keycloak" targetConnections="id-v3-c-id-r-a1" archimateElement="id-ac-keycloak">
+        <bounds x="40" y="130" width="240" height="70"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a3" source="id-v3-d-id-ac-keycloak" target="id-v3-d-id-ac-api" archimateRelationship="id-r-a3"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-ac-api" targetConnections="id-v3-c-id-r-a2 id-v3-c-id-r-a3" archimateElement="id-ac-api">
+        <bounds x="350" y="130" width="250" height="70"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a4" source="id-v3-d-id-ac-api" target="id-v3-d-id-ac-queue" archimateRelationship="id-r-a4"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a6" source="id-v3-d-id-ac-api" target="id-v3-d-id-do-jwt" archimateRelationship="id-r-a6"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a7" source="id-v3-d-id-ac-api" target="id-v3-d-id-do-docx" archimateRelationship="id-r-a7"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a11" source="id-v3-d-id-ac-api" target="id-v3-d-id-do-report" archimateRelationship="id-r-a11"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-do-jwt" targetConnections="id-v3-c-id-r-a6" archimateElement="id-do-jwt">
+        <bounds x="680" y="130" width="220" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-do-docx" targetConnections="id-v3-c-id-r-a7 id-v3-c-id-r-a8" archimateElement="id-do-docx">
+        <bounds x="40" y="250" width="220" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-ac-queue" targetConnections="id-v3-c-id-r-a4" archimateElement="id-ac-queue">
+        <bounds x="350" y="250" width="250" height="65"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a5" source="id-v3-d-id-ac-queue" target="id-v3-d-id-ac-worker" archimateRelationship="id-r-a5"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-do-report" targetConnections="id-v3-c-id-r-a10 id-v3-c-id-r-a11" archimateElement="id-do-report">
+        <bounds x="680" y="250" width="220" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-do-rules" targetConnections="id-v3-c-id-r-a9" archimateElement="id-do-rules">
+        <bounds x="40" y="365" width="220" height="55"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v3-d-id-ac-worker" targetConnections="id-v3-c-id-r-a5" archimateElement="id-ac-worker">
+        <bounds x="350" y="365" width="250" height="70"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a8" source="id-v3-d-id-ac-worker" target="id-v3-d-id-do-docx" archimateRelationship="id-r-a8"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a9" source="id-v3-d-id-ac-worker" target="id-v3-d-id-do-rules" archimateRelationship="id-r-a9"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v3-c-id-r-a10" source="id-v3-d-id-ac-worker" target="id-v3-d-id-do-report" archimateRelationship="id-r-a10"/>
+      </child>
+    </element>
+    <element xsi:type="archimate:ArchimateDiagramModel" name="4. Technology view &amp; Trust Boundaries" id="id-v4" connectionRouterType="1">
+      <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-gp-cicd" archimateElement="id-gp-cicd">
+        <bounds x="260" y="20" width="960" height="120"/>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-gha" archimateElement="id-ss-gha">
+          <bounds x="30" y="40" width="220" height="60"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t16" source="id-v4-d-id-ss-gha" target="id-v4-d-id-ss-reg" archimateRelationship="id-r-t16"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-reg" targetConnections="id-v4-c-id-r-t16" archimateElement="id-ss-reg">
+          <bounds x="360" y="40" width="250" height="60"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t17" source="id-v4-d-id-ss-reg" target="id-v4-d-id-nd-k3d" archimateRelationship="id-r-t17"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-argo" archimateElement="id-ss-argo">
+          <bounds x="690" y="40" width="240" height="60"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t18" source="id-v4-d-id-ss-argo" target="id-v4-d-id-nd-k3d" archimateRelationship="id-r-t18"/>
+        </child>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-dv-client" archimateElement="id-dv-client">
+        <bounds x="20" y="235" width="175" height="65"/>
+        <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t1" source="id-v4-d-id-dv-client" target="id-v4-d-id-ts-ingress" archimateRelationship="id-r-t1"/>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-gp-platform" archimateElement="id-gp-platform">
+        <bounds x="260" y="195" width="960" height="510"/>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ts-ingress" targetConnections="id-v4-c-id-r-t1" archimateElement="id-ts-ingress">
+          <bounds x="30" y="40" width="465" height="55"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t2" source="id-v4-d-id-ts-ingress" target="id-v4-d-id-ss-kc" archimateRelationship="id-r-t2"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t3" source="id-v4-d-id-ts-ingress" target="id-v4-d-id-ss-api" archimateRelationship="id-r-t3"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-nd-k3d" targetConnections="id-v4-c-id-r-t17 id-v4-c-id-r-t18" archimateElement="id-nd-k3d">
+          <bounds x="30" y="140" width="900" height="345"/>
+          <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-kc" targetConnections="id-v4-c-id-r-t2" archimateElement="id-ss-kc">
+            <bounds x="20" y="55" width="180" height="75"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t4" source="id-v4-d-id-ss-kc" target="id-v4-d-id-ss-api" archimateRelationship="id-r-t4"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t8" source="id-v4-d-id-ss-kc" target="id-v4-d-id-ar-sec" archimateRelationship="id-r-t8"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t11" source="id-v4-d-id-ss-kc" target="id-v4-d-id-ss-pg" archimateRelationship="id-r-t11"/>
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-api" targetConnections="id-v4-c-id-r-t3 id-v4-c-id-r-t4" archimateElement="id-ss-api">
+            <bounds x="275" y="55" width="195" height="75"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t5" source="id-v4-d-id-ss-api" target="id-v4-d-id-ar-pvc" archimateRelationship="id-r-t5"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t7" source="id-v4-d-id-ss-api" target="id-v4-d-id-ar-sec" archimateRelationship="id-r-t7"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t9" source="id-v4-d-id-ss-api" target="id-v4-d-id-ss-pg" archimateRelationship="id-r-t9"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t14" source="id-v4-d-id-ss-api" target="id-v4-d-id-ss-obs" archimateRelationship="id-r-t14"/>
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-worker" archimateElement="id-ss-worker">
+            <bounds x="525" y="55" width="180" height="75"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t6" source="id-v4-d-id-ss-worker" target="id-v4-d-id-ar-pvc" archimateRelationship="id-r-t6"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t10" source="id-v4-d-id-ss-worker" target="id-v4-d-id-ss-pg" archimateRelationship="id-r-t10"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t15" source="id-v4-d-id-ss-worker" target="id-v4-d-id-ss-obs" archimateRelationship="id-r-t15"/>
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-job" archimateElement="id-ss-job">
+            <bounds x="740" y="55" width="140" height="75"/>
+            <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t12" source="id-v4-d-id-ss-job" target="id-v4-d-id-ss-pg" archimateRelationship="id-r-t12"/>
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ar-sec" targetConnections="id-v4-c-id-r-t7 id-v4-c-id-r-t8" archimateElement="id-ar-sec">
+            <bounds x="65" y="225" width="280" height="75"/>
+          </child>
+          <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ar-pvc" targetConnections="id-v4-c-id-r-t5 id-v4-c-id-r-t6" archimateElement="id-ar-pvc">
+            <bounds x="430" y="225" width="280" height="75"/>
+          </child>
+        </child>
+      </child>
+      <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-gp-host" archimateElement="id-gp-host">
+        <bounds x="1285" y="195" width="310" height="510"/>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-pg" targetConnections="id-v4-c-id-r-t9 id-v4-c-id-r-t10 id-v4-c-id-r-t11 id-v4-c-id-r-t12" archimateElement="id-ss-pg">
+          <bounds x="30" y="55" width="250" height="95"/>
+          <sourceConnection xsi:type="archimate:Connection" id="id-v4-c-id-r-t13" source="id-v4-d-id-ss-pg" target="id-v4-d-id-ts-backup" archimateRelationship="id-r-t13"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ts-backup" targetConnections="id-v4-c-id-r-t13" archimateElement="id-ts-backup">
+          <bounds x="30" y="215" width="250" height="90"/>
+        </child>
+        <child xsi:type="archimate:DiagramObject" id="id-v4-d-id-ss-obs" targetConnections="id-v4-c-id-r-t14 id-v4-c-id-r-t15" archimateElement="id-ss-obs">
+          <bounds x="30" y="370" width="250" height="95"/>
+        </child>
+      </child>
+    </element>
+  </folder>
+</archimate:model>
