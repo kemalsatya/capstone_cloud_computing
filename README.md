@@ -54,8 +54,8 @@ bash automation/scripts/doctor.sh
 # Jalankan full live E2E test seluruh milestone (+ Trivy scan)
 bash automation/scripts/e2e-milestone-test.sh --with-trivy
 
-# Jalankan verifikasi post-evidence modular per milestone (01–11)
-python automation/scripts/tests/run_milestone_tests.py all --allow-pending
+# Jalankan pengujian operasional & verifikasi modular per milestone (01–11)
+bash automation/scripts/tests/run-milestone-tests.sh all --allow-pending
 ```
 
 ### 1. Mode Local Development (Docker Compose)

@@ -49,36 +49,36 @@ bash automation/scripts/e2e-milestone-test.sh --skip-observability
 
 ---
 
-## 2. Pengujian Modular Per Milestone (`automation/scripts/tests/`)
+## 2. Pengujian Operasional & Verifikasi Modular Per Milestone (`automation/scripts/tests/*.sh`)
 
-Digunakan untuk memverifikasi kelengkapan evidence, kontrak 9-field Evidence Standard, manifest K8s, ADR conformance, serta menjalankan unit/integration test aplikasi (`source/tests/` via `npm test`) secara terpisah per milestone.
+Setiap skrip di `automation/scripts/tests/` berbentuk **Bash (`.sh`)** yang langsung **menjalankan perintah operasional live di terminal** (`npm test`, `curl`, `psql`, `kubectl get/top`, `docker stats`, `db-backup-restore.sh`, Keycloak JWT/RBAC/cross-tenant, Trivy) lalu mencetak hasil verifikasi `[PASS]`/`[FAIL]`/`[SKIP]`/`[PEND]` di bagian akhir.
 
 ### Jalankan Semua Milestone Sekaligus
 ```bash
 # Mode standar (strict: seluruh 01–11 wajib PASS)
-python automation/scripts/tests/run_milestone_tests.py all
+bash automation/scripts/tests/run-milestone-tests.sh all
 
 # Izinkan milestone yang masih PENDING (mis. 09 sebelum paket Capacity/FinOps selesai)
-python automation/scripts/tests/run_milestone_tests.py all --allow-pending
+bash automation/scripts/tests/run-milestone-tests.sh all --allow-pending
 
-# Jalankan subset milestone tertentu
-python automation/scripts/tests/run_milestone_tests.py 01 02 06 10 11
+# Jalankan subset milestone tertentu (+ Trivy scan di M06)
+bash automation/scripts/tests/run-milestone-tests.sh 03 04 06 08 --with-trivy
 ```
 
 ### Jalankan Per Milestone Secara Mandiri
-| Milestone | Domain | Perintah |
+| Milestone | Domain & Proses Live yang Dijalankan | Perintah |
 | :--- | :--- | :--- |
-| `01` | Business & Strategy | `python automation/scripts/tests/test_milestone_01_business.py` |
-| `02` | Architecture (ArchiMate 3.2) | `python automation/scripts/tests/test_milestone_02_architecture.py` |
-| `03` | Application & Data (`npm test` + schema + OOXML/worker) | `python automation/scripts/tests/test_milestone_03_application_data.py` |
-| `04` | Platform & Kubernetes | `python automation/scripts/tests/test_milestone_04_platform_k8s.py` |
-| `05` | CI/CD & GitOps Delivery | `python automation/scripts/tests/test_milestone_05_cicd_gitops.py` |
-| `06` | Security, Keycloak JWT & Cross-Tenant Isolation | `python automation/scripts/tests/test_milestone_06_security.py` |
-| `07` | Observability & SLO | `python automation/scripts/tests/test_milestone_07_observability.py` |
-| `08` | Reliability & Recovery (RTO/RPO) | `python automation/scripts/tests/test_milestone_08_reliability.py` |
-| `09` | Capacity & FinOps | `python automation/scripts/tests/test_milestone_09_capacity_finops.py` |
-| `10` | Architecture Decisions (ADR Conformance) | `python automation/scripts/tests/test_milestone_10_adr.py` |
-| `11` | Demo & Defense | `python automation/scripts/tests/test_milestone_11_demo.py` |
+| `01` | Business & Strategy (inspeksi artefak + 9-field) | `bash automation/scripts/tests/test-milestone-01-business.sh` |
+| `02` | Architecture (ArchiMate 3.2 views, PNG captures, boundaries) | `bash automation/scripts/tests/test-milestone-02-architecture.sh` |
+| `03` | Application & Data (`npm test`, live `/health`, `psql \dt` 6 tabel) | `bash automation/scripts/tests/test-milestone-03-application-data.sh` |
+| `04` | Platform & Kubernetes (`kustomize`, `kubectl get all`, live Ingress `:8088`) | `bash automation/scripts/tests/test-milestone-04-platform-k8s.sh` |
+| `05` | CI/CD & GitOps (`newTag` SHA-7, live registry `:5001`, live Argo CD status) | `bash automation/scripts/tests/test-milestone-05-cicd-gitops.sh` |
+| `06` | Security (live Keycloak JWT, `401`/`404` cross-tenant/`403` RBAC, `--with-trivy`) | `bash automation/scripts/tests/test-milestone-06-security.sh` |
+| `07` | Observability (live `/metrics`, 10-req SLO probe, Prometheus `:9090` & Grafana `:3000`) | `bash automation/scripts/tests/test-milestone-07-observability.sh` |
+| `08` | Reliability & Recovery (live `pg_dump` backup + isolated DB restore drill + K8s pods) | `bash automation/scripts/tests/test-milestone-08-reliability.sh` |
+| `09` | Capacity & FinOps (live `docker stats`, `kubectl top pods`, requests/limits) | `bash automation/scripts/tests/test-milestone-09-capacity-finops.sh` |
+| `10` | Architecture Decisions (`ADR-001..009` conformance check terhadap codebase & manifest) | `bash automation/scripts/tests/test-milestone-10-adr.sh` |
+| `11` | Demo & Defense (live `doctor.sh`, ping semua endpoint demo, 12 Q&A §13.1) | `bash automation/scripts/tests/test-milestone-11-demo.sh` |
 
 ---
 

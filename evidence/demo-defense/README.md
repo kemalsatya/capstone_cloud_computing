@@ -10,11 +10,11 @@
 
 | Field | Detail |
 | :--- | :--- |
-| **Scope** | Penjelasan Demo 11 terintegrasi (M0–M7), panduan menjalankan seluruh automation end-to-end (`e2e-milestone-test.sh` & `run_milestone_tests.py`), panduan verifikasi masing-masing evidence (`01`–`11`), serta 12 Bank Pertanyaan Technical Defense (§13.1). |
+| **Scope** | Penjelasan Demo 11 terintegrasi (M0–M7), panduan menjalankan seluruh automation end-to-end (`e2e-milestone-test.sh` & `run-milestone-tests.sh`), panduan verifikasi masing-masing evidence (`01`–`11`), serta 12 Bank Pertanyaan Technical Defense (§13.1). |
 | **Owner** | Seluruh Anggota Tim 7 (Anggota 1–4). |
-| **Source / Version** | `automation/scripts/e2e-milestone-test.sh`, `automation/scripts/tests/run_milestone_tests.py`, `source/tests/*.test.js`, `deployment/kustomization.yaml` (`newTag: 0c2cf92`), commit `main` (`7e8607b`). |
+| **Source / Version** | `automation/scripts/e2e-milestone-test.sh`, `automation/scripts/tests/run-milestone-tests.sh`, `source/tests/*.test.js`, `deployment/kustomization.yaml` (`newTag: 0c2cf92`), commit `main` (`7e8607b`). |
 | **Timestamp** | Eksekusi live terbaru: 2026-11-23 18:55 WIB (`Asia/Jakarta`) |
-| **Method** | Eksekusi otomatis `e2e-milestone-test.sh --with-trivy` pada stack aktif (PostgreSQL 17, Keycloak 26.8.2, Express 5, `worker-format` `pg-boss`, `k3d-capstone`, Local OCI Registry `:5001`, Argo CD, Prometheus `:9090`, Grafana `:3000`, Trivy) dan `run_milestone_tests.py all`. |
+| **Method** | Eksekusi otomatis `e2e-milestone-test.sh --with-trivy` pada stack aktif (PostgreSQL 17, Keycloak 26.8.2, Express 5, `worker-format` `pg-boss`, `k3d-capstone`, Local OCI Registry `:5001`, Argo CD, Prometheus `:9090`, Grafana `:3000`, Trivy) dan `run-milestone-tests.sh all --allow-pending`. |
 | **Observation** | Live E2E selesai dengan **`PASS: 76 | FAIL: 0 | SKIP: 3`**: 63/64 unit/OOXML/worker/JWT tests lulus, Docker non-root & push registry (`7e8607b`/`0c2cf92`) sukses, rollout K8s & Ingress `/health/ready` + `/metrics` HTTP 200, Trivy scan selesai, uji keamanan Keycloak (`401`/`404`/`403`/`X-Tenant-ID` diabaikan) lulus, SLO 20/20 HTTP 200, Prometheus & Grafana sehat, serta backup & isolated restore DB pulih 15 baris. |
 | **Interpretation** | Seluruh modul cloud-native (aplikasi, platform K8s, GitOps, keamanan, observability, dan recovery) terbukti berjalan sinkron secara end-to-end dan reproducible dari satu skrip terpadu maupun per modul. |
 | **Limitation** | 3 item berstatus `SKIP` pada run ini karena cold start Keycloak K8s (~72s) dan transisi health Argo CD; PVC `1Gi local-path` RWO terikat 1 node (`k3d-capstone-agent-0`); fitur PRD v2 (Garage S3 & Groq AI scope checker) belum diimplementasikan di v1. |
@@ -53,9 +53,9 @@ cd /d "C:\Users\liaur\Documents\Tugas-Tugas Kuliah\Semester Ganjil\Semester 5\Cl
 - `--keep-backup` : simpan berkas `.sql` hasil uji backup.
 - `--cleanup` : matikan stack Docker Compose otomatis setelah selesai.
 
-### B. Jalankan Semua Verifikasi Post-Evidence Paket D (`01`, `02`, `10`, `11`)
+### B. Jalankan Semua Pengujian Operasional & Verifikasi Per Milestone (`01`–`11`)
 ```bat
-python automation/scripts/tests/run_milestone_tests.py all
+"C:\Program Files\Git\bin\bash.exe" automation/scripts/tests/run-milestone-tests.sh all --allow-pending
 ```
 
 ---
@@ -64,19 +64,19 @@ python automation/scripts/tests/run_milestone_tests.py all
 
 Jalankan dari root repo `capstone_cloud_computing`:
 
-| Evidence | Perintah Verifikasi / Pengujian per Modul | Hasil yang Diharapkan |
+| Evidence | Perintah Verifikasi / Pengujian Live per Modul | Hasil yang Diharapkan |
 | :--- | :--- | :--- |
-| **`01-business`** | `python automation/scripts/tests/test_milestone_01_business.py` | **6/6 PASS** (9-field README, `01_evidence.jpg`, ArchiMate Motivation/Strategy/Business, jujur Roadmap v2). |
-| **`02-architecture`** | `python automation/scripts/tests/test_milestone_02_architecture.py` | **6/6 PASS** (`journalfit-architecture.archimate` 4 views valid XML + 4 PNG capture murni Archi + `02_evidence.jpg`). |
-| **`03-application-data`** | `cd source && npm test` | **63/64 PASS** (`11 suites, 0 fail`, 1 skipped golden template lokal: Auth, OOXML Parser, Tier-1 `FMT-001..009`, Worker `pg-boss`, OpenAPI). |
-| **`04-platform-kubernetes`** | `kubectl --context k3d-capstone apply --dry-run=server -k deployment` & `kubectl --context k3d-capstone -n default get deploy,pods,pvc,hpa,ingress` | Dry-run lolos; 2 pod `journalfit-backend`, 1 `worker-format`, 1 `keycloak` berstatus `1/1 Running`; PVC `Bound`; HPA aktif. |
-| **`05-ci-cd-gitops`** | `kubectl --context k3d-capstone -n argocd get applications.argoproj.io` & `"C:\Program Files\Git\bin\bash.exe" automation/scripts/simulate-rollback.sh` | Argo CD `Synced`; manifest menunjuk `targetRevision: main` + tag immutable SHA-7 (`0c2cf92`); simulasi rollback berhasil. |
-| **`06-security`** | `"C:\Program Files\Git\bin\bash.exe" source/scripts/demo-tenant-restrictions.sh` & `"C:\Program Files\Git\bin\bash.exe" automation/scripts/capture-evidence-06-08-09-10.sh 06` | `401` tanpa/bad token, `404` lintas-tenant (`author.b -> ms-001`), `403` RBAC (`editor.a -> upload`), `X-Tenant-ID` diabaikan, Trivy scan aktif. |
-| **`07-observability-slo`** | `curl.exe -s http://127.0.0.1:8000/metrics` & buka Grafana `http://localhost:3000` / Prometheus `http://localhost:9090` | `/metrics` HTTP 200 memuat metrik HTTP & `pg-boss`; Prometheus ready; Grafana 4 Golden Signals & SLO aktif. |
-| **`08-reliability-recovery`** | `"C:\Program Files\Git\bin\bash.exe" automation/scripts/capture-evidence-06-08-09-10.sh 08` | Controlled pod deletion pulih (`7,1s`, SHA-256 PVC identik); backup & isolated restore DB (`0,78s`, 6 tabel `journalfit` + 101 tabel `keycloak`). |
-| **`09-capacity-finops`** | `"C:\Program Files\Git\bin\bash.exe" automation/scripts/capture-evidence-06-08-09-10.sh 09` & `kubectl --context k3d-capstone top pods -n default` | Metrik utilisasi live CPU/RAM (API, `worker-format`, Keycloak `~596 MiB`), headroom, Cloud IaaS mapping, dan unit-cost FinOps. |
-| **`10-decisions-adr`** | `python automation/scripts/tests/test_milestone_10_adr.py` | **11/11 PASS** (`9/9 ADR` conformance terhadap kode/manifest/CI + 9-field README + `10_evidence.jpg`). |
-| **`11-demo-defense`** | `"C:\Program Files\Git\bin\bash.exe" automation/scripts/e2e-milestone-test.sh --with-trivy` & `python automation/scripts/tests/test_milestone_11_demo.py` | E2E **`PASS: 76 | FAIL: 0`** + **4/4 PASS** verifikasi kesiapan Demo & Defense. |
+| **`01-business`** | `bash automation/scripts/tests/test-milestone-01-business.sh` | **6/6 PASS** (9-field README, `01_evidence.jpg`, ArchiMate Motivation/Strategy/Business, jujur Roadmap v2). |
+| **`02-architecture`** | `bash automation/scripts/tests/test-milestone-02-architecture.sh` | **6/6 PASS** (`journalfit-architecture.archimate` 4 views valid XML + 4 PNG capture murni Archi + `02_evidence.jpg`). |
+| **`03-application-data`** | `bash automation/scripts/tests/test-milestone-03-application-data.sh` | Live `npm test` (**63/64 PASS**), live `/health/ready`, & live `psql \dt` 6 tabel inti PostgreSQL. |
+| **`04-platform-kubernetes`** | `bash automation/scripts/tests/test-milestone-04-platform-k8s.sh` | Live `kubectl kustomize`, `kubectl get deploy,pods,svc,ingress,pvc,hpa`, & live Traefik Ingress `:8088` HTTP 200. |
+| **`05-ci-cd-gitops`** | `bash automation/scripts/tests/test-milestone-05-cicd-gitops.sh` | Cek immutable SHA-7 (`0c2cf92`), live registry `:5001`, live status Argo CD, & workflow CI Trivy. |
+| **`06-security`** | `bash automation/scripts/tests/test-milestone-06-security.sh --with-trivy` | Live Keycloak JWT, `401` tanpa/bad token, `404` lintas-tenant (`author.b -> ms-001`), `403` RBAC, `X-Tenant-ID` diabaikan, & live Trivy scan. |
+| **`07-observability-slo`** | `bash automation/scripts/tests/test-milestone-07-observability.sh` | Live scrape `/metrics`, 10-req SLO latency probe, live Prometheus `:9090` & Grafana `:3000`. |
+| **`08-reliability-recovery`** | `bash automation/scripts/tests/test-milestone-08-reliability.sh` | Live `pg_dump` backup & isolated DB restore drill + K8s pod readiness + bukti `7,1s` / `0,78s` / `0` fail. |
+| **`09-capacity-finops`** | `bash automation/scripts/tests/test-milestone-09-capacity-finops.sh` | Live `docker stats` & `kubectl top pods`, cek resource requests/limits di manifest `deployment/`. |
+| **`10-decisions-adr`** | `bash automation/scripts/tests/test-milestone-10-adr.sh` | **11/11 PASS** (`9/9 ADR` conformance terhadap kode/manifest/CI + 9-field README + `10_evidence.jpg`). |
+| **`11-demo-defense`** | `bash automation/scripts/tests/test-milestone-11-demo.sh` | Live `doctor.sh`, ping semua endpoint demo, 12 Q&A §13.1, & bukti `e2e-live-run.txt` / `11_evidence.jpg`. |
 
 ---
 
