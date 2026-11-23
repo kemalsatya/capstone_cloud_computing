@@ -1,0 +1,792 @@
+==================================================================
+  JournalFit Capstone - End-to-End Milestone Verification & Sync  
+==================================================================
+Root Dir : /c/Users/liaur/Documents/Tugas-Tugas Kuliah/Semester Ganjil/Semester 5/CloudComputing/Project CloudComputing/capstone_cloud_computing
+Options  : sync_k8s=true | argocd=true | trivy=true | obs=true | cleanup=false
+
+=== [M0-M1] Pre-flight, Struktur Repositori & Validasi Skrip ===
+  [PASS] Tool tersedia: git
+  [PASS] Tool tersedia: node
+  [PASS] Tool tersedia: docker
+  [PASS] Tool tersedia: curl
+  [PASS] Docker daemon aktif
+  [PASS] File wajib tersedia: README.md
+  [PASS] File wajib tersedia: .env.example
+  [PASS] File wajib tersedia: docker-compose.yml
+  [PASS] File wajib tersedia: source/package.json
+  [PASS] File wajib tersedia: source/Dockerfile
+  [PASS] File wajib tersedia: source/schema.sql
+  [PASS] File wajib tersedia: source/schema-v2.sql
+  [PASS] File wajib tersedia: deployment/kustomization.yaml
+  [PASS] File wajib tersedia: deployment/k3d-registries.yaml
+  [PASS] File wajib tersedia: automation/argocd/application.yaml
+  [PASS] File wajib tersedia: .github/workflows/ci.yaml
+  [PASS] File wajib tersedia: .gitea/workflows/ci.yml
+  [PASS] Security check: tidak ada file .env ter-track di Git
+  [PASS] Validasi sintaks docker compose config
+  [PASS] Sintaks bash valid: build-and-tag.sh
+  [PASS] Sintaks bash valid: capture-evidence-06-08-09-10.sh
+  [PASS] Sintaks bash valid: create-cluster.sh
+  [PASS] Sintaks bash valid: db-backup-restore.sh
+  [PASS] Sintaks bash valid: doctor.sh
+  [PASS] Sintaks bash valid: e2e-milestone-test.sh
+  [PASS] Sintaks bash valid: install-argocd.sh
+  [PASS] Sintaks bash valid: prepare-image-update.sh
+  [PASS] Sintaks bash valid: setup-keycloak.sh
+  [PASS] Sintaks bash valid: simulate-rollback.sh
+
+=== [M1-M2] Application Unit Tests, Database Schema & Transaksi Live ===
+TAP version 13
+# Subtest: JournalFit Modular Monolith Tests
+    # Subtest: Multi-Tenant Isolation Security Logic
+        # Subtest: should return report when requesting tenant matches manuscript owner
+        ok 1 - should return report when requesting tenant matches manuscript owner
+          ---
+          duration_ms: 4.3832
+          type: 'test'
+          ...
+        # Subtest: should throw 404 when requesting tenant is different (Negative Test)
+        ok 2 - should throw 404 when requesting tenant is different (Negative Test)
+          ---
+          duration_ms: 1.7937
+          type: 'test'
+          ...
+        # Subtest: should throw 404 when an author reads another author manuscript in the same tenant
+        ok 3 - should throw 404 when an author reads another author manuscript in the same tenant
+          ---
+          duration_ms: 0.6794
+          type: 'test'
+          ...
+        # Subtest: should throw 404 when manuscript does not exist
+        ok 4 - should throw 404 when manuscript does not exist
+          ---
+          duration_ms: 0.638
+          type: 'test'
+          ...
+        1..4
+    ok 1 - Multi-Tenant Isolation Security Logic
+      ---
+      duration_ms: 9.5826
+      type: 'suite'
+      ...
+    # Subtest: Endpoints HTTP Integration (Header Mode)
+        # Subtest: GET /health/live returns 200 alive
+        ok 1 - GET /health/live returns 200 alive
+          ---
+          duration_ms: 96.2056
+          type: 'test'
+          ...
+        # Subtest: GET /api/auth/me returns the tenant from the header in header mode
+        ok 2 - GET /api/auth/me returns the tenant from the header in header mode
+          ---
+          duration_ms: 12.4046
+          type: 'test'
+          ...
+        # Subtest: GET /api/manuscripts/ms-001/report without X-Tenant-ID header returns 400
+        ok 3 - GET /api/manuscripts/ms-001/report without X-Tenant-ID header returns 400
+          ---
+          duration_ms: 5.0256
+          type: 'test'
+          ...
+        # Subtest: GET /metrics returns Prometheus text metrics
+        ok 4 - GET /metrics returns Prometheus text metrics
+          ---
+          duration_ms: 5.2671
+          type: 'test'
+          ...
+        # Subtest: teardown server
+        ok 5 - teardown server
+          ---
+          duration_ms: 1.6062
+          type: 'test'
+          ...
+        1..5
+    ok 2 - Endpoints HTTP Integration (Header Mode)
+      ---
+      duration_ms: 121.5908
+      type: 'suite'
+      ...
+    1..2
+ok 1 - JournalFit Modular Monolith Tests
+  ---
+  duration_ms: 132.7257
+  type: 'suite'
+  ...
+# Subtest: Keycloak token verification
+    # Subtest: accepts a valid token and exposes the tenant claim
+    ok 1 - accepts a valid token and exposes the tenant claim
+      ---
+      duration_ms: 14.6128
+      type: 'test'
+      ...
+    # Subtest: rejects an expired token
+    ok 2 - rejects an expired token
+      ---
+      duration_ms: 3.589
+      type: 'test'
+      ...
+    # Subtest: rejects a wrong issuer
+    ok 3 - rejects a wrong issuer
+      ---
+      duration_ms: 2.9897
+      type: 'test'
+      ...
+    # Subtest: rejects a wrong audience
+    ok 4 - rejects a wrong audience
+      ---
+      duration_ms: 2.8475
+      type: 'test'
+      ...
+    # Subtest: rejects a bad signature
+    ok 5 - rejects a bad signature
+      ---
+      duration_ms: 3.3712
+      type: 'test'
+      ...
+    1..5
+ok 2 - Keycloak token verification
+  ---
+  duration_ms: 29.3607
+  type: 'suite'
+  ...
+# Subtest: Claim mapping
+    # Subtest: throws UNAUTHENTICATED when sub is absent
+    ok 1 - throws UNAUTHENTICATED when sub is absent
+      ---
+      duration_ms: 1.0344
+      type: 'test'
+      ...
+    # Subtest: throws TENANT_CLAIM_MISSING when tenant_id is absent
+    ok 2 - throws TENANT_CLAIM_MISSING when tenant_id is absent
+      ---
+      duration_ms: 0.4365
+      type: 'test'
+      ...
+    # Subtest: normalizes legacy realm role aliases
+    ok 3 - normalizes legacy realm role aliases
+      ---
+      duration_ms: 0.6115
+      type: 'test'
+      ...
+    # Subtest: prefers tenant_admin over other roles
+    ok 4 - prefers tenant_admin over other roles
+      ---
+      duration_ms: 0.4039
+      type: 'test'
+      ...
+    1..4
+ok 3 - Claim mapping
+  ---
+  duration_ms: 3.384
+  type: 'suite'
+  ...
+# Subtest: JWT HTTP integration
+    # Subtest: GET /api/auth/me returns the token tenant and role
+    ok 1 - GET /api/auth/me returns the token tenant and role
+      ---
+      duration_ms: 85.2327
+      type: 'test'
+      ...
+    # Subtest: rejects a request without a bearer token
+    ok 2 - rejects a request without a bearer token
+      ---
+      duration_ms: 11.6755
+      type: 'test'
+      ...
+    # Subtest: rejects a token without a tenant claim
+    ok 3 - rejects a token without a tenant claim
+      ---
+      duration_ms: 7.2466
+      type: 'test'
+      ...
+    # Subtest: ignores a forged X-Tenant-ID when a valid token is present
+    ok 4 - ignores a forged X-Tenant-ID when a valid token is present
+      ---
+      duration_ms: 8.1699
+      type: 'test'
+      ...
+    # Subtest: returns 404 for a cross-tenant manuscript
+    ok 5 - returns 404 for a cross-tenant manuscript
+      ---
+      duration_ms: 9.7482
+      type: 'test'
+      ...
+    # Subtest: rejects an editor on the author-only upload endpoint
+    ok 6 - rejects an editor on the author-only upload endpoint
+      ---
+      duration_ms: 9.7937
+      type: 'test'
+      ...
+    # Subtest: rejects a token whose tenant differs from the provisioned user
+    ok 7 - rejects a token whose tenant differs from the provisioned user
+      ---
+      duration_ms: 8.3372
+      type: 'test'
+      ...
+    1..7
+ok 4 - JWT HTTP integration
+  ---
+  duration_ms: 151.4522
+  type: 'suite'
+  ...
+# Subtest: Format worker
+    # Subtest: completes a valid DOCX with passing format results
+    ok 1 - completes a valid DOCX with passing format results
+      ---
+      duration_ms: 89.4995
+      type: 'test'
+      ...
+    # Subtest: marks a corrupt DOCX as failed without crashing
+    ok 2 - marks a corrupt DOCX as failed without crashing
+      ---
+      duration_ms: 1.6533
+      type: 'test'
+      ...
+    # Subtest: is idempotent when the format check is already completed
+    ok 3 - is idempotent when the format check is already completed
+      ---
+      duration_ms: 0.7913
+      type: 'test'
+      ...
+    # Subtest: throws a transient error so pg-boss retries
+    ok 4 - throws a transient error so pg-boss retries
+      ---
+      duration_ms: 1.1563
+      type: 'test'
+      ...
+    # Subtest: marks the check failed on the final retry attempt
+    ok 5 - marks the check failed on the final retry attempt
+      ---
+      duration_ms: 1.6296
+      type: 'test'
+      ...
+    1..5
+ok 5 - Format worker
+  ---
+  duration_ms: 98.0644
+  type: 'suite'
+  ...
+# Subtest: golden: template Informatik produces zero format errors
+ok 6 - golden: template Informatik produces zero format errors # SKIP
+  ---
+  duration_ms: 1.8548
+  type: 'test'
+  ...
+# Subtest: Manuscript submission service
+    # Subtest: rejects upload when the tenant has no active rule
+    ok 1 - rejects upload when the tenant has no active rule
+      ---
+      duration_ms: 2.1602
+      type: 'test'
+      ...
+    # Subtest: stores the DOCX and creates an atomic queued submission
+    ok 2 - stores the DOCX and creates an atomic queued submission
+      ---
+      duration_ms: 34.8693
+      type: 'test'
+      ...
+    # Subtest: deletes the stored object when the submission transaction fails
+    ok 3 - deletes the stored object when the submission transaction fails
+      ---
+      duration_ms: 5.1443
+      type: 'test'
+      ...
+    # Subtest: legacy upload skips strict DOCX validation
+    ok 4 - legacy upload skips strict DOCX validation
+      ---
+      duration_ms: 0.7904
+      type: 'test'
+      ...
+    # Subtest: increments revision number for a parent owned by the same author
+    ok 5 - increments revision number for a parent owned by the same author
+      ---
+      duration_ms: 5.7367
+      type: 'test'
+      ...
+    # Subtest: maps the report and enforces tenant and author isolation
+    ok 6 - maps the report and enforces tenant and author isolation
+      ---
+      duration_ms: 3.9343
+      type: 'test'
+      ...
+    1..6
+ok 7 - Manuscript submission service
+  ---
+  duration_ms: 54.8579
+  type: 'suite'
+  ...
+# Subtest: OpenAPI tenant restrictions
+    # Subtest: OpenAPI document is valid
+    ok 1 - OpenAPI document is valid
+      ---
+      duration_ms: 305.0826
+      type: 'test'
+      ...
+    # Subtest: every tenant-scoped operation documents auth and isolation
+    ok 2 - every tenant-scoped operation documents auth and isolation
+      ---
+      duration_ms: 0.7831
+      type: 'test'
+      ...
+    # Subtest: author in tenant-a can read the tenant-a report
+    ok 3 - author in tenant-a can read the tenant-a report
+      ---
+      duration_ms: 200.6302
+      type: 'test'
+      ...
+    # Subtest: author in tenant-b receives 404 for a tenant-a manuscript
+    ok 4 - author in tenant-b receives 404 for a tenant-a manuscript
+      ---
+      duration_ms: 31.2748
+      type: 'test'
+      ...
+    # Subtest: editor in tenant-a can read the tenant-a report
+    ok 5 - editor in tenant-a can read the tenant-a report
+      ---
+      duration_ms: 7.687
+      type: 'test'
+      ...
+    # Subtest: editor cannot use the author-only upload endpoint
+    ok 6 - editor cannot use the author-only upload endpoint
+      ---
+      duration_ms: 12.6434
+      type: 'test'
+      ...
+    # Subtest: missing bearer token is rejected with 401
+    ok 7 - missing bearer token is rejected with 401
+      ---
+      duration_ms: 17.9336
+      type: 'test'
+      ...
+    # Subtest: a forged X-Tenant-ID is ignored when a valid JWT is present
+    ok 8 - a forged X-Tenant-ID is ignored when a valid JWT is present
+      ---
+      duration_ms: 12.1546
+      type: 'test'
+      ...
+    # Subtest: header mode still enforces tenant isolation
+    ok 9 - header mode still enforces tenant isolation
+      ---
+      duration_ms: 23.2755
+      type: 'test'
+      ...
+    1..9
+ok 8 - OpenAPI tenant restrictions
+  ---
+  duration_ms: 635.1935
+  type: 'suite'
+  ...
+# Subtest: DOCX parser
+    # Subtest: reads page size, margins, columns, abstract, keywords and headings
+    ok 1 - reads page size, margins, columns, abstract, keywords and headings
+      ---
+      duration_ms: 79.5835
+      type: 'test'
+      ...
+    # Subtest: collects abstract text from consecutive rows in the same table column
+    ok 2 - collects abstract text from consecutive rows in the same table column
+      ---
+      duration_ms: 25.4406
+      type: 'test'
+      ...
+    # Subtest: resolves font and size through basedOn and docDefaults
+    ok 3 - resolves font and size through basedOn and docDefaults
+      ---
+      duration_ms: 10.5647
+      type: 'test'
+      ...
+    # Subtest: uses paragraph mark run properties when a run has no explicit size
+    ok 4 - uses paragraph mark run properties when a run has no explicit size
+      ---
+      duration_ms: 11.3927
+      type: 'test'
+      ...
+    # Subtest: detects literal heading numbering without a Word heading style
+    ok 5 - detects literal heading numbering without a Word heading style
+      ---
+      duration_ms: 13.2301
+      type: 'test'
+      ...
+    # Subtest: rejects a non-DOCX buffer with INVALID_FILE
+    ok 6 - rejects a non-DOCX buffer with INVALID_FILE
+      ---
+      duration_ms: 1.9518
+      type: 'test'
+      ...
+    # Subtest: rejects a DOCX with too many ZIP entries
+    ok 7 - rejects a DOCX with too many ZIP entries
+      ---
+      duration_ms: 207.6823
+      type: 'test'
+      ...
+    # Subtest: validateDocx returns the entry count for a valid file
+    ok 8 - validateDocx returns the entry count for a valid file
+      ---
+      duration_ms: 5.4739
+      type: 'test'
+      ...
+    1..8
+ok 9 - DOCX parser
+  ---
+  duration_ms: 360.1867
+  type: 'suite'
+  ...
+# Subtest: Tier 1 rule engine
+    # Subtest: compliant document produces no findings
+    ok 1 - compliant document produces no findings
+      ---
+      duration_ms: 87.0125
+      type: 'test'
+      ...
+    # Subtest: FMT-001 detects an exact one-twip paper size difference
+    ok 2 - FMT-001 detects an exact one-twip paper size difference
+      ---
+      duration_ms: 26.5681
+      type: 'test'
+      ...
+    # Subtest: FMT-002 detects an exact one-twip margin difference
+    ok 3 - FMT-002 detects an exact one-twip margin difference
+      ---
+      duration_ms: 23.945
+      type: 'test'
+      ...
+    # Subtest: FMT-003 detects a single-column body
+    ok 4 - FMT-003 detects a single-column body
+      ---
+      duration_ms: 18.8373
+      type: 'test'
+      ...
+    # Subtest: FMT-004 detects a wrong body font
+    ok 5 - FMT-004 detects a wrong body font
+      ---
+      duration_ms: 15.358
+      type: 'test'
+      ...
+    # Subtest: FMT-005 detects wrong body alignment
+    ok 6 - FMT-005 detects wrong body alignment
+      ---
+      duration_ms: 14.0838
+      type: 'test'
+      ...
+    # Subtest: FMT-006 detects a literal heading that does not use a Heading style
+    ok 7 - FMT-006 detects a literal heading that does not use a Heading style
+      ---
+      duration_ms: 16.5183
+      type: 'test'
+      ...
+    # Subtest: FMT-007 detects a missing required section
+    ok 8 - FMT-007 detects a missing required section
+      ---
+      duration_ms: 17.1295
+      type: 'test'
+      ...
+    # Subtest: FMT-008 detects an abstract outside the word range
+    ok 9 - FMT-008 detects an abstract outside the word range
+      ---
+      duration_ms: 18.8785
+      type: 'test'
+      ...
+    # Subtest: FMT-009 detects too few keywords
+    ok 10 - FMT-009 detects too few keywords
+      ---
+      duration_ms: 12.166
+      type: 'test'
+      ...
+    1..10
+ok 10 - Tier 1 rule engine
+  ---
+  duration_ms: 255.3481
+  type: 'suite'
+  ...
+1..10
+# tests 64
+# suites 11
+# pass 63
+# fail 0
+# cancelled 0
+# skipped 1
+# todo 0
+# duration_ms 2928.5298
+  [PASS] Unit & HTTP mock tests (node --test)
+[INFO] Menyalakan stack core Docker Compose (postgres + keycloak + app)...
+bash.exe :  Image journalfit-platform-app Building 
+At line:1 char:225
++ ... | Out-Null; & "C:\Program Files\Git\bin\bash.exe" capstone_cloud_comp ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ( Image journalfit-platform-app Building :String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+ Image journalfit-platform-db-setup Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 1.46kB done
+#1 DONE 0.0s
+
+#2 [db-setup internal] load build definition from Dockerfile
+#2 transferring dockerfile: 1.00kB 0.0s done
+#2 DONE 0.0s
+
+#3 [db-setup internal] load metadata for docker.io/library/node:22-alpine
+#3 DONE 0.0s
+
+#4 [db-setup internal] load .dockerignore
+#4 transferring context: 263B done
+#4 DONE 0.0s
+
+#5 [db-setup 1/9] FROM docker.io/library/node:22-alpine@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202
+#5 resolve docker.io/library/node:22-alpine@sha256:0e1754758c2df4cfa3e68d59e2e1b7374bb7fd9ea6328eaaacf15cc934af8202 0.0s done
+#5 DONE 0.1s
+
+#6 [db-setup internal] load build context
+#6 transferring context: 3.38kB 0.0s done
+#6 DONE 0.0s
+
+#7 [app 7/9] COPY scripts ./scripts
+#7 CACHED
+
+#8 [app 8/9] COPY migrations ./migrations
+#8 CACHED
+
+#9 [app 2/9] RUN apk add --no-cache dumb-init
+#9 CACHED
+
+#10 [app 3/9] WORKDIR /app
+#10 CACHED
+
+#11 [app 4/9] COPY package.json package-lock.json ./
+#11 CACHED
+
+#12 [app 5/9] RUN npm ci --omit=dev && npm cache clean --force
+#12 CACHED
+
+#13 [app 6/9] COPY src ./src
+#13 CACHED
+
+#14 [app 9/9] RUN mkdir -p /app/uploads && chown -R node:node /app
+#14 CACHED
+
+#7 [db-setup 7/9] COPY scripts ./scripts
+#7 CACHED
+
+#8 [db-setup 8/9] COPY migrations ./migrations
+#8 CACHED
+
+#9 [db-setup 2/9] RUN apk add --no-cache dumb-init
+#9 CACHED
+
+#11 [db-setup 4/9] COPY package.json package-lock.json ./
+#11 CACHED
+
+#13 [db-setup 6/9] COPY src ./src
+#13 CACHED
+
+#10 [db-setup 3/9] WORKDIR /app
+#10 CACHED
+
+#12 [db-setup 5/9] RUN npm ci --omit=dev && npm cache clean --force
+#12 CACHED
+
+#15 [app] exporting to image
+#15 exporting layers 0.0s done
+#15 exporting manifest sha256:4fc01b314a429aa1116817ad19c2345e1c3e4ca54ac2dbb3b4828550ef31b412 done
+#15 exporting config sha256:aa9f81d10a634a1aab846d7f59fa893cfc5b868f84eb767412bda5490c0171d1 done
+#15 exporting attestation manifest sha256:3f91ffcc6ff1f05184b6f5161fb9cdac747a85ac7a3bcee29be74346dc65cfc3 0.0s done
+#15 exporting manifest list sha256:127504be377205463d1ebbddf95d48d5defa054706f48f0724a9022e12e1d571
+#15 exporting manifest list sha256:127504be377205463d1ebbddf95d48d5defa054706f48f0724a9022e12e1d571 0.0s done
+#15 naming to docker.io/library/journalfit-platform-app:latest done
+#15 unpacking to docker.io/library/journalfit-platform-app:latest 0.0s done
+#15 DONE 0.2s
+
+#16 [db-setup] exporting to image
+#16 exporting layers 0.0s done
+#16 exporting manifest sha256:524d4c6c1daafe2866c22704e96bbe028e6e6e334973322ecc697144f20952c8 done
+#16 exporting config sha256:548977b9f9fd789a07df0f7e90a45e546b53b8a9e8a2d83be90d545e779cf776 done
+#16 exporting attestation manifest sha256:7437dadfe3dc8f538d3312c39688253d5f3e6d322280cb85e7f03918ea2c6a52 0.0s done
+#16 exporting manifest list sha256:5b729fe7fd7078d24f4fc60512c1ecba001a96c531e076584e3b2f9670635447 0.0s done
+#16 naming to docker.io/library/journalfit-platform-db-setup:latest done
+#16 unpacking to docker.io/library/journalfit-platform-db-setup:latest 0.0s done
+#16 DONE 0.2s
+
+#17 [db-setup] resolving provenance for metadata file
+#17 DONE 0.0s
+
+#18 [app] resolving provenance for metadata file
+#18 DONE 0.0s
+ Image journalfit-platform-db-setup Built 
+ Image journalfit-platform-app Built 
+time="2026-11-23T18:53:00+07:00" level=warning msg="a network with name capstone-net exists but was not created by compose.\nSet 
+`external: true` to use an existing network"
+ Container capstone-keycloak Running 
+ Container journalfit-app Running 
+ Container journalfit-postgres Running 
+ Container journalfit-postgres Waiting 
+ Container journalfit-postgres Healthy 
+ Container journalfit-db-setup Starting 
+ Container journalfit-db-setup Started 
+ Container journalfit-db-setup Waiting 
+ Container journalfit-postgres Waiting 
+ Container journalfit-postgres Healthy 
+ Container journalfit-db-setup Exited 
+  [PASS] Docker Compose up (postgres + keycloak + app)
+  [PASS] PostgreSQL healthy dan menerima koneksi
+  [PASS] Keycloak realm 'journalfit' siap (http://127.0.0.1:8081)
+  [PASS] Backend /health/ready HTTP 200
+  [PASS] Skema v1 (source/schema.sql): 6 tabel terverifikasi di PostgreSQL
+NOTICE:  database "journalfit_v2_test" does not exist, skipping
+  [PASS] Skema v2 draft (source/schema-v2.sql): DDL & seed lolos tanpa error FK
+  [PASS] GET /health/live mengembalikan HTTP 200
+  [PASS] Keycloak mengeluarkan JWT access_token untuk author.a, editor.a, author.b
+  [PASS] GET /api/auth/me dengan JWT author.a mengembalikan HTTP 200 (tenant-a)
+  [PASS] POST /api/manuscripts/upload (JWT author.a) HTTP 201 (id=ms-1c86a59c-2a83-4100-a119-308cfabc35d3)
+  [PASS] GET /api/manuscripts/ms-1c86a59c-2a83-4100-a119-308cfabc35d3/report (JWT author.a) HTTP 200
+  [PASS] Persistensi DB & file setelah restart container app (HTTP 200)
+
+=== [M3] Platform Docker Non-Root & Sinkronisasi Kubernetes (k3d) ===
+  [PASS] Build image non-root (localhost:5001/journalfit-backend:7e8607b)
+  [PASS] Container berjalan sebagai non-root (UID=1000)
+  [PASS] Direktori /app/uploads writable oleh non-root user
+  [PASS] kubectl kustomize deployment/ berhasil dirender
+[INFO] Menyalakan registry lokal (profile ci-cd)...
+  [PASS] Registry lokal siap di http://127.0.0.1:5001
+  [PASS] Push image immutable localhost:5001/journalfit-backend:7e8607b ke registry lokal
+  [PASS] Sinkronisasi tag Kustomize (0c2cf92) ke registry lokal
+  [PASS] Sinkronisasi kluster k3d (capstone) & label node storage
+  [PASS] Secret runtime journalfit-backend-secret tersedia di namespace default
+  [PASS] Keycloak: database dan Secret runtime siap
+configmap/journalfit-backend-config configured (server dry run)
+configmap/keycloak-config configured (server dry run)
+configmap/keycloak-realm-g24kkd2hkb unchanged (server dry run)
+service/journalfit-backend configured (server dry run)
+service/keycloak configured (server dry run)
+persistentvolumeclaim/journalfit-uploads configured (server dry run)
+deployment.apps/journalfit-backend configured (server dry run)
+deployment.apps/journalfit-worker-format configured (server dry run)
+deployment.apps/keycloak configured (server dry run)
+horizontalpodautoscaler.autoscaling/journalfit-backend configured (server dry run)
+job.batch/journalfit-db-setup configured (server dry run)
+ingress.networking.k8s.io/journalfit-backend configured (server dry run)
+ingress.networking.k8s.io/keycloak configured (server dry run)
+  [PASS] K8s: server dry-run manifest Kustomize
+  [PASS] K8s: kubectl apply -k deployment/ berhasil
+  [PASS] K8s: rollout deployment/journalfit-backend selesai & Ready
+  [PASS] K8s: 2 replica pod app=journalfit Running
+  [PASS] K8s: PVC journalfit-uploads berstatus Bound
+  [PASS] K8s: HPA journalfit-backend aktif
+  [PASS] K8s Ingress /health/ready HTTP 200
+  [PASS] K8s Ingress /metrics HTTP 200
+  [SKIP] K8s Ingress Keycloak belum ready (HTTP 503; cold start bisa ~72 detik)
+  [SKIP] K8s Ingress transaksi JWT dilewati karena token Keycloak K8s belum tersedia
+
+=== [M4] CI/CD, GitOps & Trivy Security Scan ===
+  [PASS] Pipeline CI (GitHub Actions & Gitea) memuat langkah Trivy scan
+  [PASS] Argo CD Application manifest valid (targetRevision main + path deployment + ignoreDifferences HPA)
+  [PASS] Trivy container scan selesai pada localhost:5001/journalfit-backend:7e8607b
+[INFO] Memasang/memverifikasi Argo CD via install-argocd.sh...
+  [PASS] Instalasi & apply Argo CD Application selesai
+  [SKIP] Argo CD Application terdaftar (status saat ini: sync=Synced, health=Degraded)
+
+=== [M5] Security: Keycloak JWT, RBAC & Isolasi Multi-Tenant ===
+  [PASS] Negative test tanpa Bearer token -> HTTP 401 UNAUTHENTICATED
+  [PASS] Negative test token rusak -> HTTP 401 UNAUTHENTICATED
+  [PASS] Akses sah editor.a (tenant-a) ke ms-001 -> HTTP 200
+  [PASS] Negative test lintas tenant (author.b -> ms-001 milik tenant-a) -> HTTP 404 NOT_FOUND
+  [PASS] Negative test RBAC (editor.a memanggil upload author-only) -> HTTP 403 FORBIDDEN
+  [PASS] Negative test header palsu X-Tenant-ID: tenant-b diabaikan (tetap tenant-a)
+
+=== [M6] Observability (/metrics) & Verifikasi SLO ===
+  [PASS] GET /metrics HTTP 200 dengan metrik Prometheus valid
+  [PASS] SLO check (20/20 request HTTP 200, 0 request > 2s)
+  [PASS] Prometheus ready (:9090)
+  [PASS] Grafana healthy (:3000)
+
+=== [M7] Reliability & Disaster Recovery (Backup & Restore) ===
+  [PASS] Backup database berhasil dibuat (backup_journalfit_20261123_185513.sql)
+  [PASS] Restore database ke DB verifikasi berhasil (data manuscripts pulih: 15 baris)
+
+==================================================================
+  RINGKASAN HASIL E2E MILESTONE TEST
+==================================================================
+  PASS | Tool tersedia: git
+  PASS | Tool tersedia: node
+  PASS | Tool tersedia: docker
+  PASS | Tool tersedia: curl
+  PASS | Docker daemon aktif
+  PASS | File wajib tersedia: README.md
+  PASS | File wajib tersedia: .env.example
+  PASS | File wajib tersedia: docker-compose.yml
+  PASS | File wajib tersedia: source/package.json
+  PASS | File wajib tersedia: source/Dockerfile
+  PASS | File wajib tersedia: source/schema.sql
+  PASS | File wajib tersedia: source/schema-v2.sql
+  PASS | File wajib tersedia: deployment/kustomization.yaml
+  PASS | File wajib tersedia: deployment/k3d-registries.yaml
+  PASS | File wajib tersedia: automation/argocd/application.yaml
+  PASS | File wajib tersedia: .github/workflows/ci.yaml
+  PASS | File wajib tersedia: .gitea/workflows/ci.yml
+  PASS | Security check: tidak ada file .env ter-track di Git
+  PASS | Validasi sintaks docker compose config
+  PASS | Sintaks bash valid: build-and-tag.sh
+  PASS | Sintaks bash valid: capture-evidence-06-08-09-10.sh
+  PASS | Sintaks bash valid: create-cluster.sh
+  PASS | Sintaks bash valid: db-backup-restore.sh
+  PASS | Sintaks bash valid: doctor.sh
+  PASS | Sintaks bash valid: e2e-milestone-test.sh
+  PASS | Sintaks bash valid: install-argocd.sh
+  PASS | Sintaks bash valid: prepare-image-update.sh
+  PASS | Sintaks bash valid: setup-keycloak.sh
+  PASS | Sintaks bash valid: simulate-rollback.sh
+  PASS | Unit & HTTP mock tests (node --test)
+  PASS | Docker Compose up (postgres + keycloak + app)
+  PASS | PostgreSQL healthy dan menerima koneksi
+  PASS | Keycloak realm 'journalfit' siap (http://127.0.0.1:8081)
+  PASS | Backend /health/ready HTTP 200
+  PASS | Skema v1 (source/schema.sql): 6 tabel terverifikasi di PostgreSQL
+  PASS | Skema v2 draft (source/schema-v2.sql): DDL & seed lolos tanpa error FK
+  PASS | GET /health/live mengembalikan HTTP 200
+  PASS | Keycloak mengeluarkan JWT access_token untuk author.a, editor.a, author.b
+  PASS | GET /api/auth/me dengan JWT author.a mengembalikan HTTP 200 (tenant-a)
+  PASS | POST /api/manuscripts/upload (JWT author.a) HTTP 201 (id=ms-1c86a59c-2a83-4100-a119-308cfabc35d3)
+  PASS | GET /api/manuscripts/ms-1c86a59c-2a83-4100-a119-308cfabc35d3/report (JWT author.a) HTTP 200
+  PASS | Persistensi DB & file setelah restart container app (HTTP 200)
+  PASS | Build image non-root (localhost:5001/journalfit-backend:7e8607b)
+  PASS | Container berjalan sebagai non-root (UID=1000)
+  PASS | Direktori /app/uploads writable oleh non-root user
+  PASS | kubectl kustomize deployment/ berhasil dirender
+  PASS | Registry lokal siap di http://127.0.0.1:5001
+  PASS | Push image immutable localhost:5001/journalfit-backend:7e8607b ke registry lokal
+  PASS | Sinkronisasi tag Kustomize (0c2cf92) ke registry lokal
+  PASS | Sinkronisasi kluster k3d (capstone) & label node storage
+  PASS | Secret runtime journalfit-backend-secret tersedia di namespace default
+  PASS | Keycloak: database dan Secret runtime siap
+  PASS | K8s: server dry-run manifest Kustomize
+  PASS | K8s: kubectl apply -k deployment/ berhasil
+  PASS | K8s: rollout deployment/journalfit-backend selesai & Ready
+  PASS | K8s: 2 replica pod app=journalfit Running
+  PASS | K8s: PVC journalfit-uploads berstatus Bound
+  PASS | K8s: HPA journalfit-backend aktif
+  PASS | K8s Ingress /health/ready HTTP 200
+  PASS | K8s Ingress /metrics HTTP 200
+  SKIP | K8s Ingress Keycloak belum ready (HTTP 503; cold start bisa ~72 detik)
+  SKIP | K8s Ingress transaksi JWT dilewati karena token Keycloak K8s belum tersedia
+  PASS | Pipeline CI (GitHub Actions & Gitea) memuat langkah Trivy scan
+  PASS | Argo CD Application manifest valid (targetRevision main + path deployment + ignoreDifferences HPA)
+  PASS | Trivy container scan selesai pada localhost:5001/journalfit-backend:7e8607b
+  PASS | Instalasi & apply Argo CD Application selesai
+  SKIP | Argo CD Application terdaftar (status saat ini: sync=Synced, health=Degraded)
+  PASS | Negative test tanpa Bearer token -> HTTP 401 UNAUTHENTICATED
+  PASS | Negative test token rusak -> HTTP 401 UNAUTHENTICATED
+  PASS | Akses sah editor.a (tenant-a) ke ms-001 -> HTTP 200
+  PASS | Negative test lintas tenant (author.b -> ms-001 milik tenant-a) -> HTTP 404 NOT_FOUND
+  PASS | Negative test RBAC (editor.a memanggil upload author-only) -> HTTP 403 FORBIDDEN
+  PASS | Negative test header palsu X-Tenant-ID: tenant-b diabaikan (tetap tenant-a)
+  PASS | GET /metrics HTTP 200 dengan metrik Prometheus valid
+  PASS | SLO check (20/20 request HTTP 200, 0 request > 2s)
+  PASS | Prometheus ready (:9090)
+  PASS | Grafana healthy (:3000)
+  PASS | Backup database berhasil dibuat (backup_journalfit_20261123_185513.sql)
+  PASS | Restore database ke DB verifikasi berhasil (data manuscripts pulih: 15 baris)
+------------------------------------------------------------------
+  PASS: 76 | FAIL: 0 | SKIP: 3
+==================================================================
+  Grafana UI    : http://localhost:3000 (admin / admin)
+  Prometheus UI : http://localhost:9090
+  Argo CD UI    : kubectl port-forward svc/argocd-server -n argocd 8082:443 -> https://localhost:8082

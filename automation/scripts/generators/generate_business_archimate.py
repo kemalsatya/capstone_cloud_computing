@@ -1,0 +1,301 @@
+import os
+import shutil
+
+# Generates 01_evidence (ArchiMate 3.2 Motivation, Strategy & Business Layer)
+# Aligned with origin/main (7e8607b): Keycloak OIDC, pg-boss worker-format,
+# native OOXML (jszip + fast-xml-parser) Tier-1 FMT-001..009, 08 verified RTO 0.78s.
+
+svg_business = """<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1620 1240" width="100%" height="100%" style="background:#F4F6F7; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <defs>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1.5" dy="2.5" stdDeviation="2.5" flood-opacity="0.10" flood-color="#000"/>
+    </filter>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#2C3E50" />
+    </marker>
+    <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#7D3C98" />
+    </marker>
+  </defs>
+
+  <!-- HEADER -->
+  <rect x="30" y="25" width="1560" height="85" rx="8" fill="#1B365D" filter="url(#shadow)"/>
+  <text x="55" y="62" font-size="23" font-weight="bold" fill="#FFFFFF">01 — Business Case, Motivation &amp; Cloud Rationale (ArchiMate 3.2 View)</text>
+  <text x="55" y="90" font-size="13.5" fill="#D0E1F9">JournalFit Cloud-Native Platform (Team 7) | Milestone 2 Baseline (main 7e8607b / tag 0c2cf92) | Rubric: Business Case &amp; Cloud Fit (10%)</text>
+  <rect x="1355" y="45" width="210" height="42" rx="6" fill="#27AE60"/>
+  <text x="1460" y="71" font-size="13" font-weight="bold" fill="#FFF" text-anchor="middle">M0/M2 ALIGNED VIEW</text>
+
+  <!-- ========================================================================= -->
+  <!-- 1. MOTIVATION LAYER (PURPLE - ARCHIMATE 3.2) -->
+  <!-- ========================================================================= -->
+  <rect x="30" y="130" width="1560" height="395" rx="10" fill="#F5EEF8" stroke="#8E44AD" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="42" y="140" width="445" height="30" rx="6" fill="#E8DAEF" stroke="#8E44AD"/>
+  <text x="54" y="160" font-size="13.5" font-weight="bold" fill="#4A235A">1. MOTIVATION LAYER — Stakeholders, Drivers, Goals &amp; Cloud Requirements</text>
+
+  <!-- Column 1: Stakeholders -->
+  <g transform="translate(55, 185)">
+    <rect x="0" y="0" width="320" height="320" rx="8" fill="#FFFFFF" stroke="#AF7AC5" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="10" y="10" width="300" height="26" rx="4" fill="#EBDEF0"/>
+    <text x="20" y="28" font-size="12" font-weight="bold" fill="#512E5F">Stakeholders (Pemangku Kepentingan)</text>
+
+    <rect x="15" y="48" width="290" height="58" rx="5" fill="#F9EBEA" stroke="#C39BD3"/>
+    <text x="25" y="67" font-size="11.5" font-weight="bold" fill="#4A235A">Author (Penulis Naskah)</text>
+    <text x="25" y="83" font-size="10" fill="#566573">Upload .docx pre-submission, terima skor &amp; daftar</text>
+    <text x="25" y="96" font-size="10" fill="#566573">perbaikan format FMT-001..009 sebelum submit.</text>
+
+    <rect x="15" y="114" width="290" height="58" rx="5" fill="#F9EBEA" stroke="#C39BD3"/>
+    <text x="25" y="133" font-size="11.5" font-weight="bold" fill="#4A235A">Journal Editor (Pengelola Jurnal)</text>
+    <text x="25" y="149" font-size="10" fill="#566573">Meninjau laporan naskah terfilter &amp; mengatur</text>
+    <text x="25" y="162" font-size="10" fill="#566573">template aturan format jurnal per tenant.</text>
+
+    <rect x="15" y="180" width="290" height="58" rx="5" fill="#F9EBEA" stroke="#C39BD3"/>
+    <text x="25" y="199" font-size="11.5" font-weight="bold" fill="#4A235A">Tenant Admin (Institusi / Penerbit)</text>
+    <text x="25" y="215" font-size="10" fill="#566573">Mengelola akses editorial &amp; isolasi data naskah</text>
+    <text x="25" y="228" font-size="10" fill="#566573">antar-jurnal (tenant-a vs tenant-b).</text>
+
+    <rect x="15" y="246" width="290" height="58" rx="5" fill="#F9EBEA" stroke="#C39BD3"/>
+    <text x="25" y="265" font-size="11.5" font-weight="bold" fill="#4A235A">Platform Admin / DevOps</text>
+    <text x="25" y="281" font-size="10" fill="#566573">Menjaga SLO, keamanan container, HPA, GitOps,</text>
+    <text x="25" y="294" font-size="10" fill="#566573">backup/restore RTO, dan efisiensi biaya FinOps.</text>
+  </g>
+
+  <path d="M 378 345 L 403 345" stroke="#7D3C98" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+  <!-- Column 2: Drivers & Assessments (The Core Problem) -->
+  <g transform="translate(405, 185)">
+    <rect x="0" y="0" width="350" height="320" rx="8" fill="#FFFFFF" stroke="#AF7AC5" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="10" y="10" width="330" height="26" rx="4" fill="#FADBD8"/>
+    <text x="20" y="28" font-size="12" font-weight="bold" fill="#78281F">Drivers &amp; Problem Assessment</text>
+
+    <rect x="15" y="48" width="320" height="78" rx="5" fill="#FDEDEC" stroke="#E74C3C"/>
+    <text x="25" y="68" font-size="11.5" font-weight="bold" fill="#922B21">[D1] &gt;30% Administrative Desk Rejection</text>
+    <text x="25" y="86" font-size="10" fill="#424949">Naskah ditolak langsung sebelum peer-review hanya</text>
+    <text x="25" y="101" font-size="10" fill="#424949">karena ukuran kertas, margin, font, atau abstrak salah.</text>
+    <text x="25" y="116" font-size="9.5" fill="#C0392B">Impact: Umpan balik lambat berminggu-minggu.</text>
+
+    <rect x="15" y="136" width="320" height="78" rx="5" fill="#FDEDEC" stroke="#E74C3C"/>
+    <text x="25" y="156" font-size="11.5" font-weight="bold" fill="#922B21">[D2] 20–40 Menit Cek Manual per Naskah</text>
+    <text x="25" y="174" font-size="10" fill="#424949">Editor membuang waktu memeriksa format teknis</text>
+    <text x="25" y="189" font-size="10" fill="#424949">berulang kali secara manual di Microsoft Word.</text>
+    <text x="25" y="204" font-size="9.5" fill="#C0392B">Impact: Bottleneck meja editorial jurnal.</text>
+
+    <rect x="15" y="224" width="320" height="80" rx="5" fill="#FEF5E7" stroke="#E67E22"/>
+    <text x="25" y="244" font-size="11.5" font-weight="bold" fill="#A04000">[D3] Beban Bursty hingga 10x saat Deadline</text>
+    <text x="25" y="262" font-size="10" fill="#424949">Trafik tenang di awal bulan, melonjak ekstrem 48 jam</text>
+    <text x="25" y="277" font-size="10" fill="#424949">menjelang batas call-for-papers konferensi/jurnal.</text>
+    <text x="25" y="292" font-size="9.5" fill="#D35400">Impact: Server statis over-provisioned atau tumbang.</text>
+  </g>
+
+  <path d="M 758 345 L 783 345" stroke="#7D3C98" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+  <!-- Column 3: Goals & Success Criteria -->
+  <g transform="translate(785, 185)">
+    <rect x="0" y="0" width="360" height="320" rx="8" fill="#FFFFFF" stroke="#AF7AC5" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="10" y="10" width="340" height="26" rx="4" fill="#D5F5E3"/>
+    <text x="20" y="28" font-size="12" font-weight="bold" fill="#145A32">Goals &amp; Measurable Success Criteria</text>
+
+    <rect x="15" y="48" width="330" height="58" rx="5" fill="#EAFAF1" stroke="#27AE60"/>
+    <text x="25" y="67" font-size="11.5" font-weight="bold" fill="#1E8449">[G1] Automated Tier-1 Audit (FMT-001..009)</text>
+    <text x="25" y="84" font-size="10" fill="#2C3E50">Async pipeline pg-boss + OOXML parser (0 error pada</text>
+    <text x="25" y="98" font-size="10" fill="#2C3E50">golden template), latensi API report p95 &lt; 50 ms.</text>
+
+    <rect x="15" y="114" width="330" height="58" rx="5" fill="#EAFAF1" stroke="#27AE60"/>
+    <text x="25" y="133" font-size="11.5" font-weight="bold" fill="#1E8449">[G2] Cryptographic Multi-Tenant Isolation</text>
+    <text x="25" y="150" font-size="10" fill="#2C3E50">Keycloak OIDC RS256 JWKS: 401 tanpa token, 404</text>
+    <text x="25" y="164" font-size="10" fill="#2C3E50">lintas-tenant, 403 RBAC, X-Tenant-ID palsu diabaikan.</text>
+
+    <rect x="15" y="180" width="330" height="58" rx="5" fill="#EAFAF1" stroke="#27AE60"/>
+    <text x="25" y="199" font-size="11.5" font-weight="bold" fill="#1E8449">[G3] Verified Resilience &amp; Fast Recovery</text>
+    <text x="25" y="216" font-size="10" fill="#2C3E50">Pod self-healing 7.1s (08_evidence), rolling update</text>
+    <text x="25" y="230" font-size="10" fill="#2C3E50">0 failed (777 req), DB Restore RTO 0.78s (&lt; 300s SLO).</text>
+
+    <rect x="15" y="246" width="330" height="58" rx="5" fill="#EAFAF1" stroke="#27AE60"/>
+    <text x="25" y="265" font-size="11.5" font-weight="bold" fill="#1E8449">[G4] FinOps Efficiency ($0 AI Cost in v1)</text>
+    <text x="25" y="282" font-size="10" fill="#2C3E50">100% deterministik tanpa biaya token LLM di v1;</text>
+    <text x="25" y="296" font-size="10" fill="#2C3E50">unit-cost komputasi rendah (~$0.0011/cek).</text>
+  </g>
+
+  <path d="M 1148 345 L 1173 345" stroke="#7D3C98" stroke-width="2" marker-end="url(#arrow-purple)"/>
+
+  <!-- Column 4: Cloud-Native Requirements (5 Pillars) -->
+  <g transform="translate(1175, 185)">
+    <rect x="0" y="0" width="390" height="320" rx="8" fill="#FFFFFF" stroke="#2980B9" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="10" y="10" width="370" height="26" rx="4" fill="#D4E6F1"/>
+    <text x="20" y="28" font-size="12" font-weight="bold" fill="#154360">5 Pillars: Why Cloud-Native (Not Just Hosted)?</text>
+
+    <text x="20" y="58" font-size="11" font-weight="bold" fill="#1B4F72">1. Rapid Elasticity (Kubernetes HPA)</text>
+    <text x="28" y="74" font-size="9.5" fill="#566573">Auto-scale 2→3→2 pod @ CPU 70% + async worker-format.</text>
+
+    <text x="20" y="102" font-size="11" font-weight="bold" fill="#1B4F72">2. Pooled Multi-Tenancy &amp; Strict Isolation</text>
+    <text x="28" y="118" font-size="9.5" fill="#566573">1 kluster &amp; PostgreSQL bersama, isolasi via claim tenant_id.</text>
+
+    <text x="20" y="146" font-size="11" font-weight="bold" fill="#1B4F72">3. Provider-Neutral Portability (OCI + Kustomize)</text>
+    <text x="28" y="162" font-size="9.5" fill="#566573">Container non-root UID 10001; siap ke CloudStack/EKS/GKE.</text>
+
+    <text x="20" y="190" font-size="11" font-weight="bold" fill="#1B4F72">4. Fault Tolerance &amp; Automated Self-Healing</text>
+    <text x="28" y="206" font-size="9.5" fill="#566573">ReplicaSet recovery 7.1s, PVC persisten, pg-boss retry + DLQ.</text>
+
+    <text x="20" y="234" font-size="11" font-weight="bold" fill="#1B4F72">5. Measured Service &amp; FinOps Control</text>
+    <text x="28" y="250" font-size="9.5" fill="#566573">Prometheus /metrics + Grafana SLO; deterministik $0 AI fee.</text>
+
+    <rect x="15" y="268" width="360" height="38" rx="4" fill="#FCF3CF" stroke="#F39C12"/>
+    <text x="25" y="284" font-size="9.5" font-weight="bold" fill="#7D6608">Honest Scope Boundary (v2 Roadmap):</text>
+    <text x="25" y="298" font-size="9" fill="#5D6D7E">Garage S3 multi-AZ &amp; Groq AI scope worker belum aktif di v1.</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 2. BUSINESS LAYER (YELLOW - CORE TRANSACTION WORKFLOW) -->
+  <!-- ========================================================================= -->
+  <rect x="30" y="545" width="1560" height="235" rx="10" fill="#FFFDE7" stroke="#FBC02D" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="42" y="555" width="465" height="30" rx="6" fill="#FFF9C4" stroke="#FBC02D"/>
+  <text x="54" y="575" font-size="13.5" font-weight="bold" fill="#7F6000">2. BUSINESS LAYER — Core Asynchronous Manuscript Checking Workflow</text>
+
+  <g transform="translate(55, 600)">
+    <!-- Step 1 -->
+    <rect x="0" y="0" width="275" height="155" rx="7" fill="#FFF2B2" stroke="#D4AC0D" stroke-width="1.5" filter="url(#shadow)"/>
+    <circle cx="24" cy="24" r="11" fill="#B7950B"/>
+    <text x="24" y="28" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">1</text>
+    <text x="44" y="28" font-size="12" font-weight="bold" fill="#1C2833">OIDC Tenant Login</text>
+    <text x="15" y="52" font-size="10.5" fill="#2C3E50">Author / Editor autentikasi ke</text>
+    <text x="15" y="68" font-size="10.5" fill="#2C3E50">Keycloak (realm journalfit).</text>
+    <text x="15" y="92" font-size="10" font-weight="bold" fill="#27AE60">Output: Bearer JWT (RS256)</text>
+    <text x="15" y="108" font-size="9.5" fill="#5D6D7E">Embed claim: tenant_id &amp; role</text>
+    <text x="15" y="138" font-size="9.5" fill="#8E44AD">Endpoints: /realms/journalfit/token</text>
+
+    <path d="M 280 78 L 305 78" stroke="#2C3E50" stroke-width="2.2" marker-end="url(#arrow)"/>
+
+    <!-- Step 2 -->
+    <rect x="310" y="0" width="285" height="155" rx="7" fill="#FFF2B2" stroke="#D4AC0D" stroke-width="1.5" filter="url(#shadow)"/>
+    <circle cx="334" cy="24" r="11" fill="#B7950B"/>
+    <text x="334" y="28" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">2</text>
+    <text x="354" y="28" font-size="12" font-weight="bold" fill="#1C2833">Submit &amp; Atomic Enqueue</text>
+    <text x="325" y="52" font-size="10.5" fill="#2C3E50">POST /api/manuscripts (.docx)</text>
+    <text x="325" y="68" font-size="10.5" fill="#2C3E50">Validasi JWT + simpan ke PVC.</text>
+    <text x="325" y="92" font-size="10" font-weight="bold" fill="#2980B9">Transaksi DB + Job pg-boss</text>
+    <text x="325" y="108" font-size="9.5" fill="#5D6D7E">Queue: format-check (+ DLQ)</text>
+    <text x="325" y="138" font-size="9.5" fill="#1E8449">Response: HTTP 202 Accepted</text>
+
+    <path d="M 600 78 L 625 78" stroke="#2C3E50" stroke-width="2.2" marker-end="url(#arrow)"/>
+
+    <!-- Step 3 -->
+    <rect x="630" y="0" width="285" height="155" rx="7" fill="#FFF2B2" stroke="#D4AC0D" stroke-width="1.5" filter="url(#shadow)"/>
+    <circle cx="654" cy="24" r="11" fill="#B7950B"/>
+    <text x="654" y="28" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">3</text>
+    <text x="674" y="28" font-size="12" font-weight="bold" fill="#1C2833">OOXML Parse (worker-format)</text>
+    <text x="645" y="52" font-size="10.5" fill="#2C3E50">Worker ambil job format-check</text>
+    <text x="645" y="68" font-size="10.5" fill="#2C3E50">secara asinkron &amp; idempoten.</text>
+    <text x="645" y="92" font-size="10" font-weight="bold" fill="#C0392B">jszip + fast-xml-parser</text>
+    <text x="645" y="108" font-size="9.5" fill="#5D6D7E">ZIP safety, document.xml, styles.xml</text>
+    <text x="645" y="138" font-size="9.5" fill="#5D6D7E">Theme, margin, font, section, abstract</text>
+
+    <path d="M 920 78 L 945 78" stroke="#2C3E50" stroke-width="2.2" marker-end="url(#arrow)"/>
+
+    <!-- Step 4 -->
+    <rect x="950" y="0" width="275" height="155" rx="7" fill="#FFF2B2" stroke="#D4AC0D" stroke-width="1.5" filter="url(#shadow)"/>
+    <circle cx="974" cy="24" r="11" fill="#B7950B"/>
+    <text x="974" y="28" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">4</text>
+    <text x="994" y="28" font-size="12" font-weight="bold" fill="#1C2833">Tier-1 Rules Evaluation</text>
+    <text x="965" y="52" font-size="10.5" fill="#2C3E50">Evaluasi 9 aturan deterministik</text>
+    <text x="965" y="68" font-size="10.5" fill="#2C3E50">terhadap template tenant.</text>
+    <text x="965" y="92" font-size="10" font-weight="bold" fill="#27AE60">FMT-001 s.d. FMT-009 ($0 AI)</text>
+    <text x="965" y="108" font-size="9.5" fill="#5D6D7E">A4, margin, kolom, font, heading,</text>
+    <text x="965" y="123" font-size="9.5" fill="#5D6D7E">section, abstrak (100-200), keywords</text>
+
+    <path d="M 1230 78 L 1255 78" stroke="#2C3E50" stroke-width="2.2" marker-end="url(#arrow)"/>
+
+    <!-- Step 5 -->
+    <rect x="1260" y="0" width="250" height="155" rx="7" fill="#FFF2B2" stroke="#D4AC0D" stroke-width="1.5" filter="url(#shadow)"/>
+    <circle cx="1284" cy="24" r="11" fill="#B7950B"/>
+    <text x="1284" y="28" font-size="11" font-weight="bold" fill="#FFF" text-anchor="middle">5</text>
+    <text x="1304" y="28" font-size="12" font-weight="bold" fill="#1C2833">Audit Report &amp; Revise</text>
+    <text x="1275" y="52" font-size="10.5" fill="#2C3E50">GET /api/manuscripts/:id/report</text>
+    <text x="1275" y="68" font-size="10.5" fill="#2C3E50">Skor + temuan spesifik baris.</text>
+    <text x="1275" y="92" font-size="10" font-weight="bold" fill="#2980B9">p95 &lt; 50 ms | Tenant-Scoped</text>
+    <text x="1275" y="108" font-size="9.5" fill="#8E44AD">Akses lintas-tenant → 404</text>
+    <text x="1275" y="138" font-size="9.5" fill="#5D6D7E">Author perbaiki &amp; unggah revisi</text>
+  </g>
+
+  <!-- ========================================================================= -->
+  <!-- 3. STRATEGY LAYER (ORANGE/PEACH - ALTERNATIVES EVALUATED & REJECTED) -->
+  <!-- ========================================================================= -->
+  <rect x="30" y="800" width="1560" height="410" rx="10" fill="#FEF5E7" stroke="#E67E22" stroke-width="2" filter="url(#shadow)"/>
+  <rect x="42" y="810" width="510" height="30" rx="6" fill="#FDEBD0" stroke="#E67E22"/>
+  <text x="54" y="830" font-size="13.5" font-weight="bold" fill="#7E5109">3. STRATEGY LAYER — Capabilities, Course of Action &amp; Alternatives Rejected</text>
+
+  <!-- Table of Alternatives -->
+  <g transform="translate(55, 855)">
+    <rect x="0" y="0" width="1510" height="330" rx="8" fill="#FFFFFF" stroke="#DC7633" stroke-width="1.5" filter="url(#shadow)"/>
+    <rect x="0" y="0" width="1510" height="40" rx="8" fill="#2C3E50"/>
+    <text x="20" y="25" font-size="12" font-weight="bold" fill="#FFF">Dimensi Keputusan</text>
+    <text x="260" y="25" font-size="12" font-weight="bold" fill="#FFF">Alternatif yang Ditolak</text>
+    <text x="640" y="25" font-size="12" font-weight="bold" fill="#FFF">Alasan Penolakan (Trade-Off)</text>
+    <text x="1080" y="25" font-size="12" font-weight="bold" fill="#FFF">Course of Action Terpilih (JournalFit M2)</text>
+
+    <!-- Row 1 -->
+    <rect x="1" y="41" width="1508" height="68" fill="#F8F9F9"/>
+    <text x="20" y="70" font-size="11.5" font-weight="bold" fill="#1B365D">Arsitektur Komputasi</text>
+    <text x="20" y="88" font-size="10" fill="#566573">ADR-001</text>
+    <text x="260" y="78" font-size="11" font-weight="bold" fill="#922B21">Microservices Penuh Terpisah</text>
+    <text x="640" y="70" font-size="10.5" fill="#2C3E50">Overhead RAM &gt;1.5 GB di kluster lab &amp; memperumit</text>
+    <text x="640" y="88" font-size="10.5" fill="#2C3E50">networking / distributed tracing sejak tahap awal.</text>
+    <text x="1080" y="70" font-size="11" font-weight="bold" fill="#1E8449">Modular Monolith Express 5 + Worker Async</text>
+    <text x="1080" y="88" font-size="10" fill="#566573">Hemat RAM (~128Mi/pod), queue pg-boss terpisah rapi.</text>
+
+    <!-- Row 2 -->
+    <rect x="1" y="110" width="1508" height="68" fill="#FFFFFF"/>
+    <text x="20" y="139" font-size="11.5" font-weight="bold" fill="#1B365D">Mesin Pemeriksa Format</text>
+    <text x="20" y="157" font-size="10" fill="#566573">ADR-008</text>
+    <text x="260" y="147" font-size="11" font-weight="bold" fill="#922B21">Kirim Full DOCX ke Paid LLM API</text>
+    <text x="640" y="139" font-size="10.5" fill="#2C3E50">Biaya token mahal (~$0.05/cek), latensi tinggi (5–15s),</text>
+    <text x="640" y="157" font-size="10.5" fill="#2C3E50">dan non-deterministik untuk cek margin/font/twips.</text>
+    <text x="1080" y="139" font-size="11" font-weight="bold" fill="#1E8449">Native OOXML Parser + Rule Engine Tier-1</text>
+    <text x="1080" y="157" font-size="10" fill="#566573">jszip + fast-xml-parser (FMT-001..009), $0 AI cost v1.</text>
+
+    <!-- Row 3 -->
+    <rect x="1" y="179" width="1508" height="68" fill="#F8F9F9"/>
+    <text x="20" y="208" font-size="11.5" font-weight="bold" fill="#1B365D">Isolasi Data Multi-Tenant</text>
+    <text x="20" y="226" font-size="10" fill="#566573">ADR-002 &amp; ADR-009</text>
+    <text x="260" y="216" font-size="11" font-weight="bold" fill="#922B21">Dedicated DB per Tenant / Header-Only</text>
+    <text x="640" y="208" font-size="10.5" fill="#2C3E50">Dedicated DB boros RAM &amp; migrasi lambat; header</text>
+    <text x="640" y="226" font-size="10.5" fill="#2C3E50">X-Tenant-ID mentah rentan spoofing tanpa verifikasi.</text>
+    <text x="1080" y="208" font-size="11" font-weight="bold" fill="#1E8449">Shared PostgreSQL 17 + Keycloak RS256 JWT</text>
+    <text x="1080" y="226" font-size="10" fill="#566573">Claim tenant_id kriptografis + filter query + 404 guard.</text>
+
+    <!-- Row 4 -->
+    <rect x="1" y="248" width="1508" height="78" rx="6" fill="#EBF5FB"/>
+    <text x="20" y="278" font-size="11.5" font-weight="bold" fill="#154360">Platform &amp; Penyimpanan</text>
+    <text x="20" y="296" font-size="10" fill="#1B4F72">ADR-003, 004, 005</text>
+    <text x="260" y="286" font-size="11" font-weight="bold" fill="#922B21">Single VM / Manual Deploy / S3 di v1</text>
+    <text x="640" y="278" font-size="10.5" fill="#2C3E50">Single VM tidak elastis &amp; rawan drift; cluster S3 penuh</text>
+    <text x="640" y="296" font-size="10.5" fill="#2C3E50">menambah beban memori host lokal 8 GB RAM.</text>
+    <text x="1080" y="278" font-size="11" font-weight="bold" fill="#154360">k3d + HPA + Argo CD GitOps + 1Gi RWO PVC</text>
+    <text x="1080" y="296" font-size="10" fill="#1B4F72">Portabel ke CloudStack/IaaS; migrasi S3 masuk Roadmap v2.</text>
+  </g>
+</svg>"""
+
+os.makedirs("capstone_cloud_computing/evidence/business", exist_ok=True)
+with open("capstone_cloud_computing/evidence/business/business-archimate.svg", "w", encoding="utf-8") as f:
+    f.write(svg_business)
+
+html_business = f"""<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>01_evidence — Business Case &amp; Cloud Rationale (ArchiMate 3.2)</title>
+  <style>
+    body {{ margin: 0; padding: 20px; background: #1A252F; font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; align-items: center; }}
+    .wrapper {{ background: #FFF; border-radius: 8px; max-width: 1620px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }}
+  </style>
+</head>
+<body>
+  <div class="wrapper">{svg_business}</div>
+</body>
+</html>"""
+
+with open("capstone_cloud_computing/evidence/business/business-archimate.html", "w", encoding="utf-8") as f:
+    f.write(html_business)
+
+os.makedirs("cloud-capstone-team-7/01-business", exist_ok=True)
+shutil.copy("capstone_cloud_computing/evidence/business/business-archimate.svg", "cloud-capstone-team-7/01-business/business-archimate.svg")
+shutil.copy("capstone_cloud_computing/evidence/business/business-archimate.html", "cloud-capstone-team-7/01-business/business-archimate.html")
+print("Business ArchiMate SVG & HTML generated!")

@@ -1,0 +1,184 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1120" width="100%" height="100%" style="background:#F4F6F7; font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;">
+  <defs>
+    <filter id="shadow" x="-2%" y="-2%" width="104%" height="104%" filterUnits="userSpaceOnUse">
+      <feDropShadow dx="1" dy="2" stdDeviation="2.5" flood-opacity="0.10" flood-color="#000"/>
+    </filter>
+  </defs>
+
+  <!-- HEADER -->
+  <rect x="30" y="25" width="1540" height="85" rx="8" fill="#1B365D" filter="url(#shadow)"/>
+  <text x="55" y="62" font-size="23" font-weight="bold" fill="#FFFFFF">10 — Architecture Decision Records (ADR-001 s.d. ADR-009) &amp; Architecture Mapping</text>
+  <text x="55" y="90" font-size="13.5" fill="#D0E1F9">JournalFit Cloud-Native Platform (Team 7) | Milestone 2 Verified Baseline (main 7e8607b / tag 0c2cf92) | Rubric: Architecture &amp; ADRs (15%)</text>
+  <rect x="1335" y="45" width="210" height="42" rx="6" fill="#27AE60"/>
+  <text x="1440" y="71" font-size="13" font-weight="bold" fill="#FFF" text-anchor="middle">9/9 ADR CONFORMANCE PASS</text>
+
+  <!-- MINI ARCHITECTURE MAP (TOP BAR: HOW ADRs MAP TO ARCHIMATE LAYERS) -->
+  <rect x="30" y="125" width="1540" height="135" rx="8" fill="#FFFFFF" stroke="#BDC3C7" stroke-width="1.5" filter="url(#shadow)"/>
+  <text x="50" y="150" font-size="13.5" font-weight="bold" fill="#1B365D">PEMETAAN KEPUTUSAN ARSITEKTUR (ADR) KE LAYER DIAGRAM ARCHIMATE 3.2:</text>
+
+  <!-- Box 1: App & Business -->
+  <rect x="50" y="165" width="355" height="78" rx="6" fill="#FFFDE7" stroke="#FBC02D" stroke-width="1.5"/>
+  <text x="65" y="187" font-size="12" font-weight="bold" fill="#7F6000">Business &amp; Application Logic Layer</text>
+  <text x="65" y="207" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-001:</tspan> Modular Monolith + pg-boss Worker</text>
+  <text x="65" y="226" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-008:</tspan> OOXML Rule-Engine ($0 AI Token Fee)</text>
+
+  <!-- Box 2: Identity & Security -->
+  <rect x="425" y="165" width="365" height="78" rx="6" fill="#EBF5FB" stroke="#2980B9" stroke-width="1.5"/>
+  <text x="440" y="187" font-size="12" font-weight="bold" fill="#1B4F72">Identity, Trust &amp; Security Boundary</text>
+  <text x="440" y="207" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-009:</tspan> Keycloak OIDC RS256 JWKS + Claim tenant_id</text>
+  <text x="440" y="226" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-006:</tspan> K8s Secret Separation + Trivy CI Scan Gate</text>
+
+  <!-- Box 3: K8s Platform & Data -->
+  <rect x="810" y="165" width="375" height="78" rx="6" fill="#E8F8F5" stroke="#27AE60" stroke-width="1.5"/>
+  <text x="825" y="187" font-size="12" font-weight="bold" fill="#145A32">Kubernetes Platform &amp; Data Persistence</text>
+  <text x="825" y="207" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-003:</tspan> k3d + Non-Root UID 10001 + HPA (2-3 Pods)</text>
+  <text x="825" y="226" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-002 &amp; ADR-005:</tspan> Postgres Multi-Tenant + 1Gi RWO PVC</text>
+
+  <!-- Box 4: GitOps & Ops -->
+  <rect x="1205" y="165" width="345" height="78" rx="6" fill="#E8DAEF" stroke="#8E44AD" stroke-width="1.5"/>
+  <text x="1220" y="187" font-size="12" font-weight="bold" fill="#512E5F">GitOps Delivery, SLO &amp; Disaster Recovery</text>
+  <text x="1220" y="207" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-004:</tspan> Argo CD Auto-Sync + Immutable SHA-7 Tag</text>
+  <text x="1220" y="226" font-size="11" fill="#2C3E50">• <tspan font-weight="bold">ADR-007 &amp; ADR-008:</tspan> Prometheus SLO + pg_dump (0.78s)</text>
+
+  <!-- ========================================================================= -->
+  <!-- ADR MATRIX TABLE -->
+  <!-- ========================================================================= -->
+  <rect x="30" y="275" width="1540" height="645" rx="8" fill="#FFFFFF" stroke="#BDC3C7" stroke-width="1.5" filter="url(#shadow)"/>
+  
+  <!-- Table Header -->
+  <rect x="30" y="275" width="1540" height="44" rx="8" fill="#2C3E50"/>
+  <text x="50" y="302" font-size="12.5" font-weight="bold" fill="#FFFFFF">ID</text>
+  <text x="135" y="302" font-size="12.5" font-weight="bold" fill="#FFFFFF">Keputusan Arsitektur (Decision)</text>
+  <text x="430" y="302" font-size="12.5" font-weight="bold" fill="#FFFFFF">Status</text>
+  <text x="530" y="302" font-size="12.5" font-weight="bold" fill="#FFFFFF">Alternatif yang Ditolak</text>
+  <text x="790" y="302" font-size="12.5" font-weight="bold" fill="#FFFFFF">Konsekuensi &amp; Trade-Off Utama</text>
+  <text x="1210" y="302" font-size="12.5" font-weight="bold" fill="#FFFFFF">Bukti Implementasi &amp; Conformance Test</text>
+
+  <!-- Row 1: ADR-001 -->
+  <rect x="31" y="320" width="1538" height="64" fill="#F8F9F9"/>
+  <text x="50" y="356" font-size="12" font-weight="bold" fill="#1B365D">ADR-001</text>
+  <text x="135" y="346" font-size="12" font-weight="bold" fill="#1C2833">Modular Monolith + Async Worker</text>
+  <text x="135" y="366" font-size="10.5" fill="#566573">Node.js 22 + Express 5.3 + pg-boss</text>
+  <rect x="430" y="338" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="354" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="356" font-size="11" fill="#922B21">Microservices penuh terpisah</text>
+  <text x="790" y="346" font-size="11" fill="#2C3E50">(+) Hemat RAM (~128Mi/pod), format-check async via queue</text>
+  <text x="790" y="366" font-size="10.5" fill="#566573">(-) Scaling API tetap di level replika pod utuh</text>
+  <text x="1210" y="346" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] source/src/modules/ + worker-format.yaml</text>
+  <text x="1210" y="366" font-size="10" fill="#566573">express@^5.3.0, pg-boss@^12.39 | 03_evidence.jpg</text>
+
+  <!-- Row 2: ADR-002 -->
+  <rect x="31" y="385" width="1538" height="64" fill="#FFFFFF"/>
+  <text x="50" y="421" font-size="12" font-weight="bold" fill="#1B365D">ADR-002</text>
+  <text x="135" y="411" font-size="12" font-weight="bold" fill="#1C2833">PostgreSQL 17 Multi-Tenancy</text>
+  <text x="135" y="431" font-size="10.5" fill="#566573">Shared Schema + Kolom tenant_id</text>
+  <rect x="430" y="403" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="419" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="421" font-size="11" fill="#922B21">Database terpisah per tenant / NoSQL</text>
+  <text x="790" y="411" font-size="11" fill="#2C3E50">(+) Integritas ACID, 1 connection pool hemat memori</text>
+  <text x="790" y="431" font-size="10.5" fill="#566573">(-) Wajib disiplin filter tenant_id pada setiap query service</text>
+  <text x="1210" y="411" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] source/schema.sql (6 tabel relasional)</text>
+  <text x="1210" y="431" font-size="10" fill="#566573">Isolasi lintas-tenant 404 | 03 &amp; 06_evidence.jpg</text>
+
+  <!-- Row 3: ADR-003 -->
+  <rect x="31" y="450" width="1538" height="64" fill="#F8F9F9"/>
+  <text x="50" y="486" font-size="12" font-weight="bold" fill="#1B365D">ADR-003</text>
+  <text x="135" y="476" font-size="12" font-weight="bold" fill="#1C2833">Kluster k3d, HPA &amp; Non-Root</text>
+  <text x="135" y="496" font-size="10.5" fill="#566573">node:22-alpine (UID 10001, HPA 2-3)</text>
+  <rect x="430" y="468" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="484" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="486" font-size="11" fill="#922B21">Docker Compose saja / Root container</text>
+  <text x="790" y="476" font-size="11" fill="#2C3E50">(+) Image ringkas (~276MB), HPA scale 2-&gt;3-&gt;2, non-root</text>
+  <text x="790" y="496" font-size="10.5" fill="#566573">(-) Koneksi DB lab via host.docker.internal</text>
+  <text x="1210" y="476" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] deployment/deployment.yaml &amp; hpa.yaml</text>
+  <text x="1210" y="496" font-size="10" fill="#566573">UID 10001, drop ALL, HPA 70% | 04_evidence.jpg</text>
+
+  <!-- Row 4: ADR-004 -->
+  <rect x="31" y="515" width="1538" height="64" fill="#FFFFFF"/>
+  <text x="50" y="551" font-size="12" font-weight="bold" fill="#1B365D">ADR-004</text>
+  <text x="135" y="541" font-size="12" font-weight="bold" fill="#1C2833">Declarative GitOps Argo CD</text>
+  <text x="135" y="561" font-size="10.5" fill="#566573">Auto-Sync + Immutable Tag SHA-7</text>
+  <rect x="430" y="533" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="549" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="551" font-size="11" fill="#922B21">Manual kubectl apply &amp; tag :latest</text>
+  <text x="790" y="541" font-size="11" fill="#2C3E50">(+) Traceability 1:1 ke commit Git, anti-drift (selfHeal)</text>
+  <text x="790" y="561" font-size="10.5" fill="#566573">(-) Butuh update newTag SHA-7 di kustomization.yaml</text>
+  <text x="1210" y="541" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] automation/argocd/application.yaml</text>
+  <text x="1210" y="561" font-size="10" fill="#566573">newTag: 0c2cf92, selfHeal: true | 05_evidence.jpg</text>
+
+  <!-- Row 5: ADR-005 -->
+  <rect x="31" y="580" width="1538" height="64" fill="#F8F9F9"/>
+  <text x="50" y="616" font-size="12" font-weight="bold" fill="#1B365D">ADR-005</text>
+  <text x="135" y="606" font-size="12" font-weight="bold" fill="#1C2833">PVC ReadWriteOnce (1Gi)</text>
+  <text x="135" y="626" font-size="10.5" fill="#566573">local-path + Node Storage Pinning</text>
+  <rect x="430" y="598" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="614" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="616" font-size="11" fill="#922B21">Deploy S3 / MinIO cluster di v1</text>
+  <text x="790" y="606" font-size="11" fill="#2C3E50">(+) File .docx utuh saat pod diganti (SHA-256 cocok 100%)</text>
+  <text x="790" y="626" font-size="10.5" fill="#566573">(-) Replika terikat 1 node (Residual Risk R1 -&gt; S3 di v2)</text>
+  <text x="1210" y="606" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] deployment/pvc.yaml (Prune=false)</text>
+  <text x="1210" y="626" font-size="10" fill="#566573">nodeSelector: journalfit-storage | 08_evidence.jpg</text>
+
+  <!-- Row 6: ADR-006 -->
+  <rect x="31" y="645" width="1538" height="64" fill="#FFFFFF"/>
+  <text x="50" y="681" font-size="12" font-weight="bold" fill="#1B365D">ADR-006</text>
+  <text x="135" y="671" font-size="12" font-weight="bold" fill="#1C2833">Runtime Secret &amp; Trivy Gate</text>
+  <text x="135" y="691" font-size="10.5" fill="#566573">K8s secretKeyRef + CI Scan Gate</text>
+  <rect x="430" y="663" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="679" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="681" font-size="11" fill="#922B21">Hardcoded password di YAML / Git</text>
+  <text x="790" y="671" font-size="11" fill="#2C3E50">(+) 0 kredensial di Git, Trivy memblokir CVE HIGH/CRITICAL</text>
+  <text x="790" y="691" font-size="10.5" fill="#566573">(-) Secret diinisialisasi imperatif saat setup kluster</text>
+  <text x="1210" y="671" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] .github/workflows/ci.yaml (trivy-action)</text>
+  <text x="1210" y="691" font-size="10" fill="#566573">secretKeyRef: journalfit-backend-secret | 06_evidence</text>
+
+  <!-- Row 7: ADR-007 -->
+  <rect x="31" y="710" width="1538" height="64" fill="#F8F9F9"/>
+  <text x="50" y="746" font-size="12" font-weight="bold" fill="#1B365D">ADR-007</text>
+  <text x="135" y="736" font-size="12" font-weight="bold" fill="#1C2833">Prometheus &amp; Grafana SLO</text>
+  <text x="135" y="756" font-size="10.5" fill="#566573">Pull /metrics + TSDB Retention 3d</text>
+  <rect x="430" y="728" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="744" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="746" font-size="11" fill="#922B21">Paid SaaS APM Agent (Datadog/NewRelic)</text>
+  <text x="790" y="736" font-size="11" fill="#2C3E50">(+) Vendor-neutral, ringan, memantau 4 Golden Signals &amp; SLO</text>
+  <text x="790" y="756" font-size="10.5" fill="#566573">(-) Belum mencakup distributed tracing (OpenTelemetry)</text>
+  <text x="1210" y="736" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] source/src/common/utils/metrics.js</text>
+  <text x="1210" y="756" font-size="10" fill="#566573">SLO p95 &lt; 500ms, avail &gt;= 99% | 07_evidence.jpg</text>
+
+  <!-- Row 8: ADR-008 -->
+  <rect x="31" y="775" width="1538" height="64" fill="#FFFFFF"/>
+  <text x="50" y="811" font-size="12" font-weight="bold" fill="#1B365D">ADR-008</text>
+  <text x="135" y="801" font-size="12" font-weight="bold" fill="#1C2833">Isolated Restore &amp; Rule Engine</text>
+  <text x="135" y="821" font-size="10.5" fill="#566573">pg_dump Test DB + OOXML FMT-001..009</text>
+  <rect x="430" y="793" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="809" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="811" font-size="11" fill="#922B21">Full-text DOCX ke Paid LLM API di v1</text>
+  <text x="790" y="801" font-size="11" fill="#2C3E50">(+) RTO teruji 0.78s (&lt;5m), biaya AI $0 ($0.001125/cek)</text>
+  <text x="790" y="821" font-size="10.5" fill="#566573">(-) Scope checker AI (Groq) masuk roadmap v2</text>
+  <text x="1210" y="801" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] jszip + fast-xml-parser + db-backup-restore.sh</text>
+  <text x="1210" y="821" font-size="10" fill="#566573">RTO 0.78s, 6+101 tabel cocok | 08_evidence.jpg</text>
+
+  <!-- Row 9: ADR-009 -->
+  <rect x="31" y="840" width="1538" height="75" rx="6" fill="#EBF5FB"/>
+  <text x="50" y="880" font-size="12" font-weight="bold" fill="#1B365D">ADR-009</text>
+  <text x="135" y="868" font-size="12" font-weight="bold" fill="#154360">Keycloak OIDC &amp; Tenant Claim</text>
+  <text x="135" y="888" font-size="10.5" fill="#1B4F72">RS256 JWKS + 404 Anti-Enumeration</text>
+  <rect x="430" y="862" width="80" height="24" rx="4" fill="#D5F5E3" stroke="#27AE60"/>
+  <text x="470" y="878" font-size="10.5" font-weight="bold" fill="#1E8449" text-anchor="middle">Accepted</text>
+  <text x="530" y="870" font-size="11" fill="#922B21">Mock Token / Spoofable X-Tenant-ID</text>
+  <text x="530" y="890" font-size="10" fill="#7F8C8D">External SaaS IdP (Auth0/Cognito)</text>
+  <text x="790" y="868" font-size="11" fill="#2C3E50">(+) Verifikasi kriptografis RS256, X-Tenant-ID palsu diabaikan</text>
+  <text x="790" y="888" font-size="10.5" fill="#566573">(-) Pod Keycloak butuh ~596 MiB RAM &amp; cold start ~72 detik</text>
+  <text x="1210" y="868" font-size="10.5" font-weight="bold" fill="#1E8449">[PASS] source/src/common/middlewares/auth.js</text>
+  <text x="1210" y="888" font-size="10" fill="#1B4F72">63/64 Tests PASS (0 fail) | 06_evidence.jpg</text>
+
+  <!-- ========================================================================= -->
+  <!-- BOTTOM PANEL: AUTOMATED CONFORMANCE TEST & EVIDENCE STANDARD SUMMARY -->
+  <!-- ========================================================================= -->
+  <rect x="30" y="935" width="1540" height="160" rx="8" fill="#1C2833" filter="url(#shadow)"/>
+  <text x="55" y="965" font-size="13.5" font-weight="bold" fill="#2ECC71">&gt;&gt;&gt; AUTOMATED ARCHITECTURE CONFORMANCE &amp; FITNESS FUNCTION TEST (python automation/scripts/test-adr-conformance.py &amp;&amp; npm test)</text>
+  <text x="55" y="992" font-size="12" font-family="Consolas,monospace" fill="#ECF0F1">[PASS] ADR-001..009 Static &amp; Contract Conformance : 9/9 Decisions Verified Against source/, deployment/, and .github/workflows/ (100% Compliant)</text>
+  <text x="55" y="1016" font-size="12" font-family="Consolas,monospace" fill="#ECF0F1">[PASS] Full Test Suite (Auth, OOXML, Worker, OpenAPI): 63/64 Passed (11 Suites, 0 Failures, 1 Skipped local golden template)</text>
+  <text x="55" y="1044" font-size="11.5" fill="#F39C12">Interpretation: Setiap keputusan arsitektur memiliki alasan trade-off yang terukur, terhubung langsung ke komponen diagram ArchiMate (02_evidence.jpg), dan lulus verifikasi otomatis.</text>
+  <text x="55" y="1068" font-size="11.5" fill="#BDC3C7">Limitation: PVC RWO single-node (ADR-005) &amp; Keycloak direct-grant dev flow (ADR-009) disesuaikan untuk lab k3d lokal dan masuk ke Improvement Roadmap v2 (MinIO S3 + OAuth2 PKCE).</text>
+</svg>

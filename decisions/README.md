@@ -12,8 +12,8 @@
 | :--- | :--- |
 | **Scope** | Keputusan arsitektur fundamental sistem **JournalFit** (aplikasi, data & multi-tenancy, platform Kubernetes, GitOps CI/CD, keamanan, observabilitas, dan recovery). |
 | **Owner** | Anggota 1 (Aplikasi/Data), Anggota 2 (Platform/K8s), Anggota 3 (CI/CD & GitOps), Anggota 4 (Security, Observability, Recovery, FinOps). |
-| **Source / Version** | Repositori `capstone_cloud_computing` (Commit `d9e9bab`, Express `5.3.0`, Node `22-alpine`, PostgreSQL `17`, k3d/k3s, Argo CD). |
-| **Timestamp** | Disusun & disinkronkan: 2026-11-18 |
+| **Source / Version** | Repositori `capstone_cloud_computing` (Commit `7e8607b` / image tag `0c2cf92`, Express `5.3.0`, `pg-boss` `12.39.0`, `jszip` + `fast-xml-parser`, Node `22-alpine`, Keycloak `26.8.2`, PostgreSQL `17`, k3d/k3s, Argo CD). |
+| **Timestamp** | Disusun awal: 2026-11-18 \| Sinkronisasi PR #15/#16 (pg-boss, OOXML, 06 & 08): 2026-11-23 |
 | **Method** | Evaluasi trade-off MADR (Context, Options, Decision, Consequences) terhadap batasan laptop lokal (8 GB RAM) dan kesiapan migrasi cloud. |
 | **Observation** | Seluruh 9 keputusan arsitektural kunci (ADR-001 s.d. ADR-009) telah diterapkan secara nyata dalam kode, manifest K8s, skrip CI/CD, Keycloak realm, dan skema DB. |
 | **Interpretation** | Tidak ada komponen yang dipilih secara asal; setiap pilihan teknologi menyeimbangkan isolasi tenant, keamanan kriptografis, portabilitas cloud, dan efisiensi sumber daya lokal. |
@@ -38,13 +38,28 @@
 
 ---
 
-## 3. Cara Mengambil Bukti `10_evidence.jpg`
+## 3. Kasus Pengujian (Test Case) — Automated ADR Conformance & Fitness Test
+
+Untuk membuktikan bahwa `ADR-001` s.d. `ADR-009` bukan sekadar dokumen teks melainkan benar-benar dipatuhi oleh kode sumber, manifest Kubernetes, dan pipeline CI/CD, dijalankan pengujian otomatis **Architecture Fitness Functions** melalui [`automation/scripts/tests/test_milestone_10_adr.py`](../automation/scripts/tests/test_milestone_10_adr.py) (log hasil tersimpan di [`adr-conformance-test.txt`](./adr-conformance-test.txt)):
+
+```bash
+python automation/scripts/tests/test_milestone_10_adr.py
+cd source && npm test
+```
+
+- **Hasil Automated ADR Conformance Test:** **9/9 ADR LULUS (`[PASS]` 100% compliant)** terhadap `source/`, `deployment/`, dan `.github/workflows/ci.yaml`.
+- **Hasil Full Test Suite (Auth, OOXML Parser, Worker, OpenAPI):** **63/64 tests LULUS (`11 suites, 0 fail, 1 skipped local golden template`)**.
+
+---
+
+## 4. Cara Mengambil Bukti `10_evidence.jpg`
 
 Untuk menghasilkan gambar `10_evidence.jpg` yang bersih dan terbaca jelas saat penilaian:
 1. Buka terminal di root repositori `capstone_cloud_computing`, lalu jalankan:
    ```bash
    bash automation/scripts/capture-evidence-06-08-09-10.sh 10
+   python automation/scripts/tests/test_milestone_10_adr.py
    ```
-2. Skrip akan mencetak **Matriks ADR-001 s.d. ADR-008** beserta detail **Trade-Off & Implementasi Nyata di Kode** secara rapi di terminal (atau buka file `README.md` ini dalam tampilan Rendered Markdown yang rapi).
-3. Ambil tangkapan layar (screenshot) penuh dari matriks tersebut dan simpan sebagai:
+2. Skrip akan mencetak **Matriks ADR-001 s.d. ADR-009** beserta hasil **Automated ADR Conformance Test (9/9 PASS)** secara rapi di terminal.
+3. Ambil tangkapan layar (screenshot) penuh dari matriks dan hasil tes tersebut, lalu simpan sebagai:
    `cloud-capstone-team-7/10-decisions-adr/10_evidence.jpg`.

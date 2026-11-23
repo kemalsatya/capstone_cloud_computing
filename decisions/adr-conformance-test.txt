@@ -1,0 +1,21 @@
+============================================================================================================
+  [10-DECISIONS-ADR] AUTOMATED ARCHITECTURE CONFORMANCE TEST (FITNESS FUNCTIONS) - TEAM 7
+  Timestamp : 2026-11-23T18:56:17+07:00
+  Method    : Static & Contract Fitness Verification against source/, deployment/, and automation/
+============================================================================================================
+
+ADR ID   | Decision Title                               | Result   | Verified Implementation Evidence
+---------+----------------------------------------------+----------+-----------------------------------------
+ADR-001  | Modular Monolith Express 5 + Async Worker    | [PASS]   | express=^5.3.0, pg-boss=^12.39.0, worker-format.yaml present
+ADR-002  | Shared PostgreSQL + tenant_id Discriminator  | [PASS]   | 6 relational tables verified, tenant_id references=6
+ADR-003  | k3d K8s, HPA Autoscaling & Non-Root (UID 10001) | [PASS]   | Base=node:22-alpine, UID=10001, drop=[ALL], HPA=(min:2, max:3, CPU:70%)
+ADR-004  | Argo CD GitOps & Immutable SHA-7 Image Tag   | [PASS]   | ArgoCD=(selfHeal:true, ignoreReplicasForHPA, targetRevision:main), newTag=0c2cf92
+ADR-005  | PVC ReadWriteOnce (1Gi) & Single-Node Pinning | [PASS]   | PVC=1Gi RWO (Prune=false,Delete=false), nodeSelector=journalfit-storage:uploads
+ADR-006  | K8s Secret Separation & Trivy CI Vulnerability Gate | [PASS]   | DB_PASSWORD via secretKeyRef(journalfit-backend-secret), CI Trivy gate=CRITICAL,HIGH
+ADR-007  | Prometheus /metrics Endpoint & Grafana SLO   | [PASS]   | GET /metrics (renderPrometheusMetrics) active in app.js, slo-sli.md present
+ADR-008  | PostgreSQL Isolated Backup/Restore & Deterministic Rule Engine | [PASS]   | jszip=^3.10.2, fast-xml-parser=^5.12.1, RTO=0.78s ($0 AI fee)
+ADR-009  | Keycloak OIDC RS256 JWKS & Tenant Claim Enforcement | [PASS]   | jose=^6.2.18, ConfigMap AUTH_MODE=jwt + KEYCLOAK_JWKS_URI, Kustomize includes keycloak
+
+SUMMARY: 9/9 Architecture Decision Records passed automated conformance checks (100% compliant).
+UNIT, OOXML PARSER, WORKER & JWT AUTH TEST SUITE: 63/64 tests passed (11 suites, 0 failures, 1 skipped local golden template).
+============================================================================================================
