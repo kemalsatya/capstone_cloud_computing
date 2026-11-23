@@ -1,0 +1,57 @@
+{
+  "classification": "ASSUMED deployment and volume; published reference unit prices, not an invoice or CloudStack quote",
+  "currency": "USD",
+  "retrieved_on": "2026-11-23",
+  "region_assumption": "Reference DigitalOcean Basic Regular public IaaS pricing; regional availability/taxes must be confirmed before purchase",
+  "sources": {
+    "droplets": "https://www.digitalocean.com/pricing/droplets",
+    "load_balancer": "https://www.digitalocean.com/pricing/load-balancers",
+    "object_storage": "https://www.digitalocean.com/pricing/spaces-object-storage",
+    "llm": "https://console.groq.com/docs/models",
+    "cloudstack": "https://docs.cloudstack.apache.org/en/latest/adminguide/service_offerings.html"
+  },
+  "published_price_extracts": {
+    "vm": "Basic Regular: 2 vCPU, 4 GiB RAM, 80 GiB SSD, 4000 GiB transfer: USD 24/month",
+    "daily_vm_backup": "Percentage-based Backups: 30% (Daily) of Droplet cost",
+    "load_balancer": "Regional pricing starts at USD 12 per month",
+    "object_storage": "USD 5/month: 250 GiB storage and 1 TiB outbound transfer; excess USD 0.02/GiB storage and USD 0.01/GiB transfer",
+    "llm": "Groq openai/gpt-oss-20b: USD 0.075 input / USD 0.30 output per 1M tokens. Llama 3.1 8B currently Contact Sales, so its old price is not reused."
+  },
+  "compute": [
+    {"role": "k3s control plane + Argo CD", "count": 1, "vcpu_each": 2, "ram_gib_each": 4, "ssd_gib_each": 80, "usd_each_month": 24},
+    {"role": "worker nodes: backend + Keycloak + format worker + monitoring", "count": 2, "vcpu_each": 2, "ram_gib_each": 4, "ssd_gib_each": 80, "usd_each_month": 24},
+    {"role": "self-managed PostgreSQL VM: journalfit + keycloak", "count": 1, "vcpu_each": 2, "ram_gib_each": 4, "ssd_gib_each": 80, "usd_each_month": 24}
+  ],
+  "daily_vm_backup_fraction": 0.30,
+  "regional_load_balancer_usd_month": 12,
+  "object_storage_usd_month": 5,
+  "object_storage_included_gib": 250,
+  "object_storage_transfer_included_gib": 1024,
+  "completed_checks_per_month": [10000, 50000, 100000],
+  "average_upload_mib": 1,
+  "upload_retention_days": 30,
+  "month_days": 30,
+  "logical_backup_budget_gib": 10,
+  "llm": {
+    "status": "Projection only; no LLM integration or paid API call in this evidence",
+    "provider": "Groq",
+    "model": "openai/gpt-oss-20b",
+    "input_usd_per_million": 0.075,
+    "output_usd_per_million": 0.30,
+    "abstract_input_tokens": 600,
+    "abstract_output_tokens": 300,
+    "full_text_input_tokens": 8000,
+    "full_text_output_tokens": 1000,
+    "billable_call_fraction": 1,
+    "cache_hit_fraction": 0,
+    "retry_fraction": 0,
+    "token_note": "All token counts are assumptions. Output budget includes reasoning tokens; actual model usage may exceed it. Quality, latency and retries remain untested."
+  },
+  "exclusions": [
+    "Tax, exchange rate, domain, labor, support, local laptop depreciation/electricity and cloud overages",
+    "Managed PostgreSQL (the model uses a self-managed VM, not a managed service)",
+    "HA control plane, database standby and Keycloak HA",
+    "CloudStack physical hosts, management/system VMs, licenses where applicable, and shared-infrastructure cost allocation",
+    "Cloud migration and object-storage adapter implementation cost"
+  ]
+}

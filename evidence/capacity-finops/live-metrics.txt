@@ -1,0 +1,2587 @@
+JOURNALFIT / MODUL 09 / LIVE CAPACITY EVIDENCE
+{
+  "started_at": "2026-11-23T14:20:42+00:00",
+  "owner": "RafaelKyKy",
+  "context": "k3d-capstone",
+  "load_condition": "Idle; health probes, pg-boss polling, Prometheus scrapes and platform background work. No load generator.",
+  "sample_count": 5,
+  "pause_between_samples_seconds": 30.0,
+  "method_note": "kubectl top rounds CPU/memory. Samples are sequential, not simultaneous. /proc is the shared Docker Linux VM, not Windows host memory.",
+  "file_sha256": {
+    "deployment/deployment.yaml": "4f6d4884d53785ff5d71f8648fb231b446527d08d7f042f6a023d92ca96d703d",
+    "deployment/worker-format.yaml": "792d92da256a8cdfae35e4799223ebffd1c6843ba43528014e4b87aac318a9e2",
+    "deployment/keycloak/deployment.yaml": "ff7db9a225538395c3bbd1d223510aaa6aa2076e3a5ee88927d035763f8c1bcb",
+    "deployment/hpa.yaml": "6d82720b8c526e41ff0ffe69c12c5a3645ccd72493d0531d0758920cac57e116",
+    "deployment/pvc.yaml": "0fc406fdfadb532ad273caca25623d9dc1e0f2a896c5e3e19a77c0a7337eaca2",
+    "deployment/kustomization.yaml": "463fe478a1bdc09d8f7e6aeb1e4f66e53290cda62f479cc6d65721e4524b82d5",
+    "source/Dockerfile": "c090426a3a7a478145570d6c261b16eceeb39d15226b5db986d6bad231531540",
+    "docker-compose.yml": "d6b5fbb5a6b64b0c09c9b7de442f3c560c072faa29514e19548fb54b17a623c5",
+    "evidence/observability/prometheus.yml": "7f0299bd1ae60043c356238ea35a606aa278ac4a8c32c0a96c95571e53179000",
+    "automation/scripts/capture-capacity-finops.py": "29fc2abc462fe88ee1240c387c486a1284f5dfc90ea4439ad18db9b27e9bebfb"
+  }
+}
+
+=== git_commit | 2026-11-23T14:20:42+00:00 ===
+$ git rev-parse HEAD
+be509cd230f7ffa153adce01657923f1a32b582c
+
+[exit_code=0]
+
+=== git_branch | 2026-11-23T14:20:42+00:00 ===
+$ git branch --show-current
+feat/m2-paket-c-capacity-finops
+
+[exit_code=0]
+
+=== git_status | 2026-11-23T14:20:42+00:00 ===
+$ git --no-optional-locks status --short
+ M automation/scripts/capture-evidence-06-08-09-10.sh
+ M deployment/kustomization.yaml
+?? PANDUAN_PEMBAGIAN_TUGAS_LANJUTAN_06_08_09_10(1).md
+?? automation/scripts/analyze-capacity-finops.py
+?? automation/scripts/capture-capacity-finops.py
+?? evidence/capacity-finops/finops-assumptions.json
+?? evidence/capacity-finops/live-metrics.txt
+?? evidence/superpowers/
+
+[exit_code=0]
+
+=== kubernetes_version | 2026-11-23T14:20:43+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s version -o json
+{
+  "clientVersion": {
+    "major": "1",
+    "minor": "36",
+    "gitVersion": "v1.36.1",
+    "gitCommit": "756939600b9a7180fc2df6550a4585b638875e67",
+    "gitTreeState": "clean",
+    "buildDate": "2026-05-12T09:54:35Z",
+    "goVersion": "go1.26.2",
+    "compiler": "gc",
+    "platform": "windows/amd64"
+  },
+  "kustomizeVersion": "v5.8.1",
+  "serverVersion": {
+    "major": "1",
+    "minor": "35",
+    "emulationMajor": "1",
+    "emulationMinor": "35",
+    "minCompatibilityMajor": "1",
+    "minCompatibilityMinor": "34",
+    "gitVersion": "v1.35.5+k3s1",
+    "gitCommit": "6a4781ad53ee5cad273bedcd9462ae36ac97d798",
+    "gitTreeState": "clean",
+    "buildDate": "2026-05-20T11:15:10Z",
+    "goVersion": "go1.25.9",
+    "compiler": "gc",
+    "platform": "linux/amd64"
+  }
+}
+
+[exit_code=0]
+
+=== docker_engine | 2026-11-23T14:20:44+00:00 ===
+$ docker info --format '{{.NCPU}} {{.MemTotal}} {{.OperatingSystem}}'
+12 7928496128 Docker Desktop
+
+[exit_code=0]
+
+=== docker_containers | 2026-11-23T14:20:47+00:00 ===
+$ docker ps --format '{"name":{{json .Names}},"image":{{json .Image}},"status":{{json .Status}},"ports":{{json .Ports}}}'
+{"name":"capstone-grafana","image":"grafana/grafana:11.4.0","status":"Up 22 minutes","ports":"127.0.0.1:3000->3000/tcp"}
+{"name":"capstone-prometheus","image":"prom/prometheus:v3.1.0","status":"Up 22 minutes","ports":"127.0.0.1:9090->9090/tcp"}
+{"name":"k3d-capstone-tools","image":"ghcr.io/k3d-io/k3d-tools:5.9.0","status":"Up 22 minutes","ports":""}
+{"name":"capstone-postgres","image":"postgres:17-alpine","status":"Up 24 minutes (healthy)","ports":"127.0.0.1:5432->5432/tcp"}
+{"name":"capstone-registry","image":"registry:2","status":"Up 24 minutes","ports":"127.0.0.1:5001->5000/tcp"}
+{"name":"k3d-capstone-serverlb","image":"ghcr.io/k3d-io/k3d-proxy:5.9.0","status":"Up 22 minutes","ports":"0.0.0.0:8088->80/tcp, [::]:8088->80/tcp, 0.0.0.0:8443->443/tcp, [::]:8443->443/tcp, 0.0.0.0:6550->6443/tcp"}
+{"name":"k3d-capstone-agent-0","image":"rancher/k3s:v1.35.5-k3s1","status":"Up 21 minutes","ports":""}
+{"name":"k3d-capstone-server-0","image":"rancher/k3s:v1.35.5-k3s1","status":"Up 22 minutes","ports":""}
+
+[exit_code=0]
+
+=== workload_status | 2026-11-23T14:20:48+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get deployment,pods,pvc,hpa -n default -o wide
+NAME                                       READY   UP-TO-DATE   AVAILABLE   AGE   CONTAINERS      IMAGES                                     SELECTOR
+deployment.apps/journalfit-backend         2/2     2            2           13d   backend         registry:5000/journalfit-backend:be509cd   app=journalfit
+deployment.apps/journalfit-worker-format   1/1     1            1           17m   worker-format   registry:5000/journalfit-backend:be509cd   app=journalfit-worker-format
+deployment.apps/keycloak                   1/1     1            1           17m   keycloak        quay.io/keycloak/keycloak:26.8.2           app=keycloak
+
+NAME                                           READY   STATUS      RESTARTS   AGE   IP            NODE                    NOMINATED NODE   READINESS GATES
+pod/journalfit-backend-554c89f5bd-5xcdg        1/1     Running     0          16m   10.42.0.107   k3d-capstone-agent-0    <none>           <none>
+pod/journalfit-backend-554c89f5bd-726lk        1/1     Running     0          17m   10.42.0.105   k3d-capstone-agent-0    <none>           <none>
+pod/journalfit-db-setup-78n8c                  0/1     Completed   0          17m   10.42.1.66    k3d-capstone-server-0   <none>           <none>
+pod/journalfit-worker-format-db89f9968-dmsdl   1/1     Running     0          17m   10.42.0.106   k3d-capstone-agent-0    <none>           <none>
+pod/keycloak-564dbfb48b-cvl5r                  1/1     Running     0          17m   10.42.1.67    k3d-capstone-server-0   <none>           <none>
+
+NAME                                       STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE   VOLUMEMODE
+persistentvolumeclaim/journalfit-uploads   Bound    pvc-462818b8-6b0b-475e-9511-34f656284417   1Gi        RWO            local-path     <unset>                 13d   Filesystem
+
+NAME                                                     REFERENCE                       TARGETS       MINPODS   MAXPODS   REPLICAS   AGE
+horizontalpodautoscaler.autoscaling/journalfit-backend   Deployment/journalfit-backend   cpu: 7%/70%   2         3         2          13d
+
+[exit_code=0]
+
+=== all_pods_status | 2026-11-23T14:20:48+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get pods -A -o wide
+NAMESPACE        NAME                                                READY   STATUS      RESTARTS       AGE   IP            NODE                    NOMINATED NODE   READINESS GATES
+argocd           argocd-application-controller-0                     1/1     Running     11 (22m ago)   8d    10.42.0.101   k3d-capstone-agent-0    <none>           <none>
+argocd           argocd-applicationset-controller-7567dc5fbb-vfbrg   1/1     Running     11 (22m ago)   8d    10.42.0.96    k3d-capstone-agent-0    <none>           <none>
+argocd           argocd-dex-server-776dbb476d-6ggl5                  1/1     Running     11 (22m ago)   8d    10.42.0.100   k3d-capstone-agent-0    <none>           <none>
+argocd           argocd-notifications-controller-7fc8df5f57-smw6k    1/1     Running     16 (22m ago)   13d   10.42.0.95    k3d-capstone-agent-0    <none>           <none>
+argocd           argocd-redis-7f849fd769-97t4f                       1/1     Running     11 (22m ago)   8d    10.42.0.99    k3d-capstone-agent-0    <none>           <none>
+argocd           argocd-repo-server-58c976b9df-sgg7x                 1/1     Running     16 (22m ago)   13d   10.42.0.98    k3d-capstone-agent-0    <none>           <none>
+argocd           argocd-server-947dccccf-rdq66                       1/1     Running     11 (22m ago)   8d    10.42.0.94    k3d-capstone-agent-0    <none>           <none>
+capstone-smoke   capstone-smoke-6dcfd95769-7wwnk                     1/1     Running     11 (22m ago)   8d    10.42.0.103   k3d-capstone-agent-0    <none>           <none>
+default          journalfit-backend-554c89f5bd-5xcdg                 1/1     Running     0              16m   10.42.0.107   k3d-capstone-agent-0    <none>           <none>
+default          journalfit-backend-554c89f5bd-726lk                 1/1     Running     0              17m   10.42.0.105   k3d-capstone-agent-0    <none>           <none>
+default          journalfit-db-setup-78n8c                           0/1     Completed   0              17m   10.42.1.66    k3d-capstone-server-0   <none>           <none>
+default          journalfit-worker-format-db89f9968-dmsdl            1/1     Running     0              17m   10.42.0.106   k3d-capstone-agent-0    <none>           <none>
+default          keycloak-564dbfb48b-cvl5r                           1/1     Running     0              17m   10.42.1.67    k3d-capstone-server-0   <none>           <none>
+kube-system      coredns-8db54c48d-bp6fr                             1/1     Running     18 (22m ago)   13d   10.42.0.91    k3d-capstone-agent-0    <none>           <none>
+kube-system      local-path-provisioner-5d9d9885bc-6gwnf             1/1     Running     11 (22m ago)   8d    10.42.0.102   k3d-capstone-agent-0    <none>           <none>
+kube-system      metrics-server-786d997795-7nb7v                     1/1     Running     19 (22m ago)   13d   10.42.0.92    k3d-capstone-agent-0    <none>           <none>
+kube-system      svclb-traefik-c9622c4f-5hdwl                        2/2     Running     46 (22m ago)   13d   10.42.0.90    k3d-capstone-agent-0    <none>           <none>
+kube-system      svclb-traefik-c9622c4f-xzfg8                        2/2     Running     34 (22m ago)   13d   10.42.1.65    k3d-capstone-server-0   <none>           <none>
+kube-system      traefik-9bcdbbd9-qkg5g                              1/1     Running     18 (22m ago)   13d   10.42.0.93    k3d-capstone-agent-0    <none>           <none>
+
+[exit_code=0]
+
+=== argocd_applications | 2026-11-23T14:20:49+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get applications -n argocd
+
+[stderr]
+No resources found in argocd namespace.
+
+[exit_code=0]
+
+=== database_sizes | 2026-11-23T14:20:49+00:00 ===
+$ docker exec capstone-postgres psql -U capstone -d postgres -Atc 'SELECT datname,pg_database_size(oid) FROM pg_database WHERE datname IN ('"'"'journalfit'"'"','"'"'keycloak'"'"') ORDER BY datname;'
+journalfit|9295539
+keycloak|14038707
+
+[exit_code=0]
+
+=== upload_filesystem | 2026-11-23T14:20:49+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s exec -n default deployment/journalfit-backend -- df -Pk /app/uploads
+Filesystem           1024-blocks    Used Available Capacity Mounted on
+/dev/sdd             1055762868  63623508 938435888   6% /app/uploads
+
+[exit_code=0]
+
+=== nodes | 2026-11-23T14:20:50+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get nodes -o json
+Projection: resource/image/status fields only; env/annotations omitted
+[
+  {
+    "name": "k3d-capstone-agent-0",
+    "storage_label": "uploads",
+    "capacity": {
+      "cpu": "12",
+      "ephemeral-storage": "1055762868Ki",
+      "hugepages-1Gi": "0",
+      "hugepages-2Mi": "0",
+      "memory": "7742672Ki",
+      "pods": "110"
+    },
+    "allocatable": {
+      "cpu": "12",
+      "ephemeral-storage": "1027046117185",
+      "hugepages-1Gi": "0",
+      "hugepages-2Mi": "0",
+      "memory": "7742672Ki",
+      "pods": "110"
+    },
+    "conditions": [
+      {
+        "lastHeartbeatTime": "2026-11-23T14:19:03Z",
+        "lastTransitionTime": "2026-11-09T16:59:00Z",
+        "message": "kubelet has sufficient memory available",
+        "reason": "KubeletHasSufficientMemory",
+        "status": "False",
+        "type": "MemoryPressure"
+      },
+      {
+        "lastHeartbeatTime": "2026-11-23T14:19:03Z",
+        "lastTransitionTime": "2026-11-09T16:59:00Z",
+        "message": "kubelet has no disk pressure",
+        "reason": "KubeletHasNoDiskPressure",
+        "status": "False",
+        "type": "DiskPressure"
+      },
+      {
+        "lastHeartbeatTime": "2026-11-23T14:19:03Z",
+        "lastTransitionTime": "2026-11-09T16:59:00Z",
+        "message": "kubelet has sufficient PID available",
+        "reason": "KubeletHasSufficientPID",
+        "status": "False",
+        "type": "PIDPressure"
+      },
+      {
+        "lastHeartbeatTime": "2026-11-23T14:19:03Z",
+        "lastTransitionTime": "2026-11-10T07:49:25Z",
+        "message": "kubelet is posting ready status",
+        "reason": "KubeletReady",
+        "status": "True",
+        "type": "Ready"
+      }
+    ]
+  },
+  {
+    "name": "k3d-capstone-server-0",
+    "storage_label": null,
+    "capacity": {
+      "cpu": "12",
+      "ephemeral-storage": "1055762868Ki",
+      "hugepages-1Gi": "0",
+      "hugepages-2Mi": "0",
+      "memory": "7742672Ki",
+      "pods": "110"
+    },
+    "allocatable": {
+      "cpu": "12",
+      "ephemeral-storage": "1027046117185",
+      "hugepages-1Gi": "0",
+      "hugepages-2Mi": "0",
+      "memory": "7742672Ki",
+      "pods": "110"
+    },
+    "conditions": [
+      {
+        "lastHeartbeatTime": "2026-11-23T14:18:17Z",
+        "lastTransitionTime": "2026-11-09T16:58:57Z",
+        "message": "kubelet has sufficient memory available",
+        "reason": "KubeletHasSufficientMemory",
+        "status": "False",
+        "type": "MemoryPressure"
+      },
+      {
+        "lastHeartbeatTime": "2026-11-23T14:18:17Z",
+        "lastTransitionTime": "2026-11-09T16:58:57Z",
+        "message": "kubelet has no disk pressure",
+        "reason": "KubeletHasNoDiskPressure",
+        "status": "False",
+        "type": "DiskPressure"
+      },
+      {
+        "lastHeartbeatTime": "2026-11-23T14:18:17Z",
+        "lastTransitionTime": "2026-11-09T16:58:57Z",
+        "message": "kubelet has sufficient PID available",
+        "reason": "KubeletHasSufficientPID",
+        "status": "False",
+        "type": "PIDPressure"
+      },
+      {
+        "lastHeartbeatTime": "2026-11-23T14:18:17Z",
+        "lastTransitionTime": "2026-11-18T12:25:55Z",
+        "message": "kubelet is posting ready status",
+        "reason": "KubeletReady",
+        "status": "True",
+        "type": "Ready"
+      }
+    ]
+  }
+]
+
+[exit_code=0]
+
+=== pods | 2026-11-23T14:20:51+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get pods -A -o json
+Projection: resource/image/status fields only; env/annotations omitted
+[
+  {
+    "namespace": "argocd",
+    "name": "argocd-application-controller-0",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "argocd-application-controller",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "argocd-application-controller",
+        "ready": true,
+        "restartCount": 11,
+        "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:52Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "argocd",
+    "name": "argocd-applicationset-controller-7567dc5fbb-vfbrg",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "argocd-applicationset-controller",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "argocd-applicationset-controller",
+        "ready": true,
+        "restartCount": 11,
+        "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:51Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "argocd",
+    "name": "argocd-dex-server-776dbb476d-6ggl5",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "dex",
+        "image": "ghcr.io/dexidp/dex:v2.45.1",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "runAsUser": 1001,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "init_containers": [
+      {
+        "name": "copyutil",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "container_statuses": [
+      {
+        "name": "dex",
+        "ready": true,
+        "restartCount": 11,
+        "imageID": "ghcr.io/dexidp/dex@sha256:8499afd690c437f52301efd2b05b2455da5bd2dfc20332cd697dc9937f808462",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:52Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "argocd",
+    "name": "argocd-notifications-controller-7fc8df5f57-smw6k",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {
+      "runAsNonRoot": true,
+      "seccompProfile": {
+        "type": "RuntimeDefault"
+      }
+    },
+    "containers": [
+      {
+        "name": "argocd-notifications-controller",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "argocd-notifications-controller",
+        "ready": true,
+        "restartCount": 16,
+        "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:26Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "argocd",
+    "name": "argocd-redis-7f849fd769-97t4f",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {
+      "runAsNonRoot": true,
+      "runAsUser": 999,
+      "seccompProfile": {
+        "type": "RuntimeDefault"
+      }
+    },
+    "containers": [
+      {
+        "name": "redis",
+        "image": "public.ecr.aws/docker/library/redis:8.2.3-alpine",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true
+        }
+      }
+    ],
+    "init_containers": [
+      {
+        "name": "secret-init",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "container_statuses": [
+      {
+        "name": "redis",
+        "ready": true,
+        "restartCount": 11,
+        "imageID": "public.ecr.aws/docker/library/redis@sha256:08ad0b1d280850169a790dba1393ff7a90aef951fc19632cf4d3ce4f78e679ba",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:29Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "argocd",
+    "name": "argocd-repo-server-58c976b9df-sgg7x",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "argocd-repo-server",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "init_containers": [
+      {
+        "name": "copyutil",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "container_statuses": [
+      {
+        "name": "argocd-repo-server",
+        "ready": true,
+        "restartCount": 16,
+        "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:40Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "argocd",
+    "name": "argocd-server-947dccccf-rdq66",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "argocd-server",
+        "image": "quay.io/argoproj/argocd:v3.5.6",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "seccompProfile": {
+            "type": "RuntimeDefault"
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "argocd-server",
+        "ready": true,
+        "restartCount": 11,
+        "imageID": "quay.io/argoproj/argocd@sha256:8e5cc5bb008df8a09dba439462e58c94c55b7735888d3ebde0c25fc05e4e5335",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:26Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "capstone-smoke",
+    "name": "capstone-smoke-6dcfd95769-7wwnk",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "smoke",
+        "image": "registry:5000/capstone/smoke:v1",
+        "resources": {},
+        "securityContext": null
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "smoke",
+        "ready": true,
+        "restartCount": 11,
+        "imageID": "registry:5000/capstone/smoke@sha256:efdc8215d87a41b0badab43b6d2bff124284042bf827d67ef885c2d5d5a650bc",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:26Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "default",
+    "name": "journalfit-backend-554c89f5bd-5xcdg",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "Burstable",
+    "pod_security_context": {
+      "fsGroup": 10001,
+      "fsGroupChangePolicy": "OnRootMismatch",
+      "runAsGroup": 10001,
+      "runAsNonRoot": true,
+      "runAsUser": 10001
+    },
+    "containers": [
+      {
+        "name": "backend",
+        "image": "registry:5000/journalfit-backend:be509cd",
+        "resources": {
+          "limits": {
+            "cpu": "250m",
+            "memory": "256Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "128Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "backend",
+        "ready": true,
+        "restartCount": 0,
+        "imageID": "registry:5000/journalfit-backend@sha256:6d8955735c54e3cb9077d3f4c2901c3c03a7730bcfad33cb5ae99a53dee4a6a1",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T14:04:18Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "default",
+    "name": "journalfit-backend-554c89f5bd-726lk",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "Burstable",
+    "pod_security_context": {
+      "fsGroup": 10001,
+      "fsGroupChangePolicy": "OnRootMismatch",
+      "runAsGroup": 10001,
+      "runAsNonRoot": true,
+      "runAsUser": 10001
+    },
+    "containers": [
+      {
+        "name": "backend",
+        "image": "registry:5000/journalfit-backend:be509cd",
+        "resources": {
+          "limits": {
+            "cpu": "250m",
+            "memory": "256Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "128Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "backend",
+        "ready": true,
+        "restartCount": 0,
+        "imageID": "registry:5000/journalfit-backend@sha256:6d8955735c54e3cb9077d3f4c2901c3c03a7730bcfad33cb5ae99a53dee4a6a1",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T14:03:49Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "default",
+    "name": "journalfit-db-setup-78n8c",
+    "node": "k3d-capstone-server-0",
+    "phase": "Succeeded",
+    "qos": "Burstable",
+    "pod_security_context": {
+      "runAsGroup": 10001,
+      "runAsNonRoot": true,
+      "runAsUser": 10001
+    },
+    "containers": [
+      {
+        "name": "seed",
+        "image": "registry:5000/journalfit-backend:be509cd",
+        "resources": {
+          "limits": {
+            "cpu": "200m",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "50m",
+            "memory": "64Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ],
+    "init_containers": [
+      {
+        "name": "migrate",
+        "image": "registry:5000/journalfit-backend:be509cd",
+        "resources": {
+          "limits": {
+            "cpu": "200m",
+            "memory": "192Mi"
+          },
+          "requests": {
+            "cpu": "50m",
+            "memory": "64Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ],
+    "container_statuses": [
+      {
+        "name": "seed",
+        "ready": false,
+        "restartCount": 0,
+        "imageID": "registry:5000/journalfit-backend@sha256:6d8955735c54e3cb9077d3f4c2901c3c03a7730bcfad33cb5ae99a53dee4a6a1",
+        "state": {
+          "terminated": {
+            "containerID": "containerd://b4b9999a33cdaa95d628503915828b8cd1f5a7eec07a428caa338bd184572ec1",
+            "exitCode": 0,
+            "finishedAt": "2026-11-23T14:04:08Z",
+            "reason": "Completed",
+            "startedAt": "2026-11-23T14:04:06Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "default",
+    "name": "journalfit-worker-format-db89f9968-dmsdl",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "Burstable",
+    "pod_security_context": {
+      "fsGroup": 10001,
+      "fsGroupChangePolicy": "OnRootMismatch",
+      "runAsGroup": 10001,
+      "runAsNonRoot": true,
+      "runAsUser": 10001
+    },
+    "containers": [
+      {
+        "name": "worker-format",
+        "image": "registry:5000/journalfit-backend:be509cd",
+        "resources": {
+          "limits": {
+            "cpu": "250m",
+            "memory": "256Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "128Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "worker-format",
+        "ready": true,
+        "restartCount": 0,
+        "imageID": "registry:5000/journalfit-backend@sha256:6d8955735c54e3cb9077d3f4c2901c3c03a7730bcfad33cb5ae99a53dee4a6a1",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T14:03:49Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "default",
+    "name": "keycloak-564dbfb48b-cvl5r",
+    "node": "k3d-capstone-server-0",
+    "phase": "Running",
+    "qos": "Burstable",
+    "pod_security_context": {
+      "fsGroup": 1000,
+      "fsGroupChangePolicy": "OnRootMismatch",
+      "runAsGroup": 1000,
+      "runAsNonRoot": true,
+      "runAsUser": 1000
+    },
+    "containers": [
+      {
+        "name": "keycloak",
+        "image": "quay.io/keycloak/keycloak:26.8.2",
+        "resources": {
+          "limits": {
+            "cpu": "1",
+            "memory": "1Gi"
+          },
+          "requests": {
+            "cpu": "250m",
+            "memory": "512Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "keycloak",
+        "ready": true,
+        "restartCount": 0,
+        "imageID": "quay.io/keycloak/keycloak@sha256:7e66a96e4739239070aeaf72e4c5decf0f7f682cfc725b9f7ea2b336eaba38b3",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T14:04:39Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "kube-system",
+    "name": "coredns-8db54c48d-bp6fr",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "Burstable",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "coredns",
+        "image": "rancher/mirrored-coredns-coredns:1.14.3",
+        "resources": {
+          "limits": {
+            "memory": "170Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "70Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "add": [
+              "NET_BIND_SERVICE"
+            ],
+            "drop": [
+              "all"
+            ]
+          },
+          "readOnlyRootFilesystem": true
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "coredns",
+        "ready": true,
+        "restartCount": 18,
+        "imageID": "docker.io/rancher/mirrored-coredns-coredns@sha256:b21d26b915e10acb5bc78715c1e8b6047ab2675389b2bcc18b3a6499d90e74c0",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:23Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "kube-system",
+    "name": "local-path-provisioner-5d9d9885bc-6gwnf",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "local-path-provisioner",
+        "image": "rancher/local-path-provisioner:v0.0.36",
+        "resources": {},
+        "securityContext": null
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "local-path-provisioner",
+        "ready": true,
+        "restartCount": 11,
+        "imageID": "docker.io/rancher/local-path-provisioner@sha256:1eba82e9c386038b4af6d69cca7519fac738c28c42735ed48ce70c882ad0d80f",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:23Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "kube-system",
+    "name": "metrics-server-786d997795-7nb7v",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "Burstable",
+    "pod_security_context": {},
+    "containers": [
+      {
+        "name": "metrics-server",
+        "image": "rancher/mirrored-metrics-server:v0.8.1",
+        "resources": {
+          "requests": {
+            "cpu": "100m",
+            "memory": "70Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "readOnlyRootFilesystem": true,
+          "runAsNonRoot": true,
+          "runAsUser": 1000
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "metrics-server",
+        "ready": true,
+        "restartCount": 19,
+        "imageID": "docker.io/rancher/mirrored-metrics-server@sha256:b2d2efaf5ac3b366ed0f839d2412a2c4279d4fc2a2a733f12c52133faed36c41",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:23Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "kube-system",
+    "name": "svclb-traefik-c9622c4f-5hdwl",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {
+      "sysctls": [
+        {
+          "name": "net.ipv4.ip_forward",
+          "value": "1"
+        }
+      ]
+    },
+    "containers": [
+      {
+        "name": "lb-tcp-80",
+        "image": "rancher/klipper-lb:v0.4.17",
+        "resources": {},
+        "securityContext": {
+          "capabilities": {
+            "add": [
+              "NET_ADMIN"
+            ]
+          }
+        }
+      },
+      {
+        "name": "lb-tcp-443",
+        "image": "rancher/klipper-lb:v0.4.17",
+        "resources": {},
+        "securityContext": {
+          "capabilities": {
+            "add": [
+              "NET_ADMIN"
+            ]
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "lb-tcp-443",
+        "ready": true,
+        "restartCount": 22,
+        "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:23Z"
+          }
+        }
+      },
+      {
+        "name": "lb-tcp-80",
+        "ready": true,
+        "restartCount": 24,
+        "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:23Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "kube-system",
+    "name": "svclb-traefik-c9622c4f-xzfg8",
+    "node": "k3d-capstone-server-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {
+      "sysctls": [
+        {
+          "name": "net.ipv4.ip_forward",
+          "value": "1"
+        }
+      ]
+    },
+    "containers": [
+      {
+        "name": "lb-tcp-80",
+        "image": "rancher/klipper-lb:v0.4.17",
+        "resources": {},
+        "securityContext": {
+          "capabilities": {
+            "add": [
+              "NET_ADMIN"
+            ]
+          }
+        }
+      },
+      {
+        "name": "lb-tcp-443",
+        "image": "rancher/klipper-lb:v0.4.17",
+        "resources": {},
+        "securityContext": {
+          "capabilities": {
+            "add": [
+              "NET_ADMIN"
+            ]
+          }
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "lb-tcp-443",
+        "ready": true,
+        "restartCount": 17,
+        "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:58:28Z"
+          }
+        }
+      },
+      {
+        "name": "lb-tcp-80",
+        "ready": true,
+        "restartCount": 17,
+        "imageID": "docker.io/rancher/klipper-lb@sha256:910944bb0bd94f060a82a56ca1ea1c577d3e49b3473a093a47a985f32e92d94a",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:58:24Z"
+          }
+        }
+      }
+    ]
+  },
+  {
+    "namespace": "kube-system",
+    "name": "traefik-9bcdbbd9-qkg5g",
+    "node": "k3d-capstone-agent-0",
+    "phase": "Running",
+    "qos": "BestEffort",
+    "pod_security_context": {
+      "runAsGroup": 65532,
+      "runAsNonRoot": true,
+      "runAsUser": 65532,
+      "seccompProfile": {
+        "type": "RuntimeDefault"
+      }
+    },
+    "containers": [
+      {
+        "name": "traefik",
+        "image": "rancher/mirrored-library-traefik:3.6.13",
+        "resources": {},
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          },
+          "readOnlyRootFilesystem": true
+        }
+      }
+    ],
+    "init_containers": [],
+    "container_statuses": [
+      {
+        "name": "traefik",
+        "ready": true,
+        "restartCount": 18,
+        "imageID": "docker.io/rancher/mirrored-library-traefik@sha256:34d5089d0b414945342848518b383f11f5b3a645504ed87b77ffeb9d683d0e48",
+        "state": {
+          "running": {
+            "startedAt": "2026-11-23T13:59:23Z"
+          }
+        }
+      }
+    ]
+  }
+]
+
+[exit_code=0]
+
+=== deployments | 2026-11-23T14:20:51+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get deployments -n default -o json
+Projection: resource/image/status fields only; env/annotations omitted
+[
+  {
+    "name": "journalfit-backend",
+    "replicas": 2,
+    "ready_replicas": 2,
+    "strategy": {
+      "rollingUpdate": {
+        "maxSurge": 1,
+        "maxUnavailable": 0
+      },
+      "type": "RollingUpdate"
+    },
+    "node_selector": {
+      "journalfit-storage": "uploads"
+    },
+    "containers": [
+      {
+        "name": "backend",
+        "image": "registry:5000/journalfit-backend:be509cd",
+        "resources": {
+          "limits": {
+            "cpu": "250m",
+            "memory": "256Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "128Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "journalfit-worker-format",
+    "replicas": 1,
+    "ready_replicas": 1,
+    "strategy": {
+      "rollingUpdate": {
+        "maxSurge": "25%",
+        "maxUnavailable": "25%"
+      },
+      "type": "RollingUpdate"
+    },
+    "node_selector": {
+      "journalfit-storage": "uploads"
+    },
+    "containers": [
+      {
+        "name": "worker-format",
+        "image": "registry:5000/journalfit-backend:be509cd",
+        "resources": {
+          "limits": {
+            "cpu": "250m",
+            "memory": "256Mi"
+          },
+          "requests": {
+            "cpu": "100m",
+            "memory": "128Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "keycloak",
+    "replicas": 1,
+    "ready_replicas": 1,
+    "strategy": {
+      "type": "Recreate"
+    },
+    "node_selector": {},
+    "containers": [
+      {
+        "name": "keycloak",
+        "image": "quay.io/keycloak/keycloak:26.8.2",
+        "resources": {
+          "limits": {
+            "cpu": "1",
+            "memory": "1Gi"
+          },
+          "requests": {
+            "cpu": "250m",
+            "memory": "512Mi"
+          }
+        },
+        "securityContext": {
+          "allowPrivilegeEscalation": false,
+          "capabilities": {
+            "drop": [
+              "ALL"
+            ]
+          }
+        }
+      }
+    ]
+  }
+]
+
+[exit_code=0]
+
+=== hpa | 2026-11-23T14:20:51+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get hpa journalfit-backend -n default -o json
+Projection: resource/image/status fields only; env/annotations omitted
+{
+  "spec": {
+    "behavior": {
+      "scaleDown": {
+        "policies": [
+          {
+            "periodSeconds": 30,
+            "type": "Pods",
+            "value": 1
+          }
+        ],
+        "selectPolicy": "Max",
+        "stabilizationWindowSeconds": 60
+      },
+      "scaleUp": {
+        "policies": [
+          {
+            "periodSeconds": 30,
+            "type": "Pods",
+            "value": 1
+          }
+        ],
+        "selectPolicy": "Max",
+        "stabilizationWindowSeconds": 0
+      }
+    },
+    "maxReplicas": 3,
+    "metrics": [
+      {
+        "resource": {
+          "name": "cpu",
+          "target": {
+            "averageUtilization": 70,
+            "type": "Utilization"
+          }
+        },
+        "type": "Resource"
+      }
+    ],
+    "minReplicas": 2,
+    "scaleTargetRef": {
+      "apiVersion": "apps/v1",
+      "kind": "Deployment",
+      "name": "journalfit-backend"
+    }
+  },
+  "status": {
+    "conditions": [
+      {
+        "lastTransitionTime": "2026-11-09T17:38:23Z",
+        "message": "recommended size matches current size",
+        "reason": "ReadyForNewScale",
+        "status": "True",
+        "type": "AbleToScale"
+      },
+      {
+        "lastTransitionTime": "2026-11-23T14:05:01Z",
+        "message": "the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)",
+        "reason": "ValidMetricFound",
+        "status": "True",
+        "type": "ScalingActive"
+      },
+      {
+        "lastTransitionTime": "2026-11-23T14:05:33Z",
+        "message": "the desired replica count is less than the minimum replica count",
+        "reason": "TooFewReplicas",
+        "status": "True",
+        "type": "ScalingLimited"
+      }
+    ],
+    "currentMetrics": [
+      {
+        "resource": {
+          "current": {
+            "averageUtilization": 7,
+            "averageValue": "7m"
+          },
+          "name": "cpu"
+        },
+        "type": "Resource"
+      }
+    ],
+    "currentReplicas": 2,
+    "desiredReplicas": 2,
+    "lastScaleTime": "2026-11-22T07:01:15Z"
+  }
+}
+
+[exit_code=0]
+
+=== backend_config | 2026-11-23T14:20:52+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s get configmap journalfit-backend-config -n default -o json
+Projection: resource/image/status fields only; env/annotations omitted
+{
+  "NODE_ENV": "production",
+  "AUTH_MODE": "jwt",
+  "DB_HOST": "host.docker.internal",
+  "KEYCLOAK_ISSUER": "http://keycloak.localhost:8088/realms/journalfit",
+  "KEYCLOAK_AUDIENCE": "journalfit-api"
+}
+
+[exit_code=0]
+
+=== backend_image | 2026-11-23T14:20:52+00:00 ===
+$ docker image inspect localhost:5001/journalfit-backend:be509cd --format '{"id":{{json .Id}},"size_bytes":{{.Size}},"repo_digests":{{json .RepoDigests}},"labels":{{json .Config.Labels}}}'
+{"id":"sha256:6d8955735c54e3cb9077d3f4c2901c3c03a7730bcfad33cb5ae99a53dee4a6a1","size_bytes":76695755,"repo_digests":["localhost:5001/journalfit-backend@sha256:6d8955735c54e3cb9077d3f4c2901c3c03a7730bcfad33cb5ae99a53dee4a6a1"],"labels":{"org.opencontainers.image.revision":"be509cd230f7ffa153adce01657923f1a32b582c","org.opencontainers.image.source":"https://github.com/kemalsatya/capstone_cloud_computing"}}
+
+[exit_code=0]
+
+=== docker_limits_capstone-grafana | 2026-11-23T14:20:52+00:00 ===
+$ docker inspect capstone-grafana --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/capstone-grafana","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== docker_limits_capstone-prometheus | 2026-11-23T14:20:52+00:00 ===
+$ docker inspect capstone-prometheus --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/capstone-prometheus","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== docker_limits_k3d-capstone-tools | 2026-11-23T14:20:53+00:00 ===
+$ docker inspect k3d-capstone-tools --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/k3d-capstone-tools","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== docker_limits_capstone-postgres | 2026-11-23T14:20:53+00:00 ===
+$ docker inspect capstone-postgres --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/capstone-postgres","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== docker_limits_capstone-registry | 2026-11-23T14:20:53+00:00 ===
+$ docker inspect capstone-registry --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/capstone-registry","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== docker_limits_k3d-capstone-serverlb | 2026-11-23T14:20:53+00:00 ===
+$ docker inspect k3d-capstone-serverlb --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/k3d-capstone-serverlb","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== docker_limits_k3d-capstone-agent-0 | 2026-11-23T14:20:53+00:00 ===
+$ docker inspect k3d-capstone-agent-0 --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/k3d-capstone-agent-0","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== docker_limits_k3d-capstone-server-0 | 2026-11-23T14:20:53+00:00 ===
+$ docker inspect k3d-capstone-server-0 --format '{"name":{{json .Name}},"memory_limit_bytes":{{.HostConfig.Memory}},"nano_cpus":{{.HostConfig.NanoCpus}}}'
+{"name":"/k3d-capstone-server-0","memory_limit_bytes":0,"nano_cpus":0}
+
+[exit_code=0]
+
+=== HTTP probes (credentials and tokens excluded) ===
+{
+  "api_readiness": {
+    "timestamp": "2026-11-23T14:20:53+00:00",
+    "url": "http://127.0.0.1:8088/health/ready",
+    "host": "journalfit.localhost",
+    "http_status": 200,
+    "body": "{\"status\":\"ready\",\"database\":\"connected\",\"queue\":\"ready\",\"timestamp\":\"2026-11-23T14:20:54.819Z\"}"
+  },
+  "api_without_token": {
+    "timestamp": "2026-11-23T14:20:54+00:00",
+    "url": "http://127.0.0.1:8088/api/auth/me",
+    "host": "journalfit.localhost",
+    "http_status": 401,
+    "body": "{\"error\":{\"code\":\"UNAUTHENTICATED\",\"message\":\"Authorization bearer token is required.\",\"request_id\":\"5a272023-e205-470f-806b-97371dfabb89\"}}"
+  },
+  "keycloak_discovery": {
+    "timestamp": "2026-11-23T14:20:54+00:00",
+    "url": "http://127.0.0.1:8088/realms/journalfit/.well-known/openid-configuration",
+    "host": "keycloak.localhost",
+    "http_status": 200,
+    "body": {
+      "issuer": "http://keycloak.localhost:8088/realms/journalfit"
+    }
+  },
+  "prometheus_ready": {
+    "timestamp": "2026-11-23T14:20:54+00:00",
+    "url": "http://127.0.0.1:9090/-/ready",
+    "host": null,
+    "http_status": 200,
+    "body": "Prometheus Server is Ready."
+  },
+  "grafana_health": {
+    "timestamp": "2026-11-23T14:20:54+00:00",
+    "url": "http://127.0.0.1:3000/api/health",
+    "host": null,
+    "http_status": 200,
+    "body": "{\n  \"database\": \"ok\",\n  \"version\": \"11.4.0\",\n  \"commit\": \"b58701869e1a11b696010a6f28bd96b68a2cf0d0\"\n}"
+  },
+  "demo_token_grant": {
+    "http_status": 200,
+    "token_present": true
+  },
+  "api_valid_jwt": {
+    "http_status": 200,
+    "body": {
+      "user_id": "user-a-01",
+      "sub": "11111111-1111-4111-8111-000000000001",
+      "tenant_id": "tenant-a",
+      "role": "author",
+      "roles": [
+        "author"
+      ],
+      "name": "Author Tenant A",
+      "email": "author.a@tenant-a.test"
+    }
+  },
+  "prometheus_targets": {
+    "http_status": 200,
+    "data": {
+      "status": "success",
+      "data": {
+        "activeTargets": [
+          {
+            "discoveredLabels": {
+              "__address__": "app:8000",
+              "__metrics_path__": "/metrics",
+              "__scheme__": "http",
+              "__scrape_interval__": "10s",
+              "__scrape_timeout__": "10s",
+              "environment": "local-compose",
+              "job": "journalfit-backend"
+            },
+            "labels": {
+              "environment": "local-compose",
+              "instance": "app:8000",
+              "job": "journalfit-backend"
+            },
+            "scrapePool": "journalfit-backend",
+            "scrapeUrl": "http://app:8000/metrics",
+            "globalUrl": "http://app:8000/metrics",
+            "lastError": "Get \"http://app:8000/metrics\": dial tcp: lookup app on 127.0.0.11:53: server misbehaving",
+            "lastScrape": "2026-11-23T14:20:52.622556637Z",
+            "lastScrapeDuration": 8.003337652,
+            "health": "down",
+            "scrapeInterval": "10s",
+            "scrapeTimeout": "10s"
+          },
+          {
+            "discoveredLabels": {
+              "__address__": "journalfit.localhost:8088",
+              "__metrics_path__": "/metrics",
+              "__scheme__": "http",
+              "__scrape_interval__": "10s",
+              "__scrape_timeout__": "10s",
+              "environment": "k3d-ingress",
+              "job": "journalfit-backend"
+            },
+            "labels": {
+              "environment": "k3d-ingress",
+              "instance": "journalfit.localhost:8088",
+              "job": "journalfit-backend"
+            },
+            "scrapePool": "journalfit-backend",
+            "scrapeUrl": "http://journalfit.localhost:8088/metrics",
+            "globalUrl": "http://journalfit.localhost:8088/metrics",
+            "lastError": "",
+            "lastScrape": "2026-11-23T14:20:58.095189309Z",
+            "lastScrapeDuration": 0.007361493,
+            "health": "up",
+            "scrapeInterval": "10s",
+            "scrapeTimeout": "10s"
+          },
+          {
+            "discoveredLabels": {
+              "__address__": "localhost:9090",
+              "__metrics_path__": "/metrics",
+              "__scheme__": "http",
+              "__scrape_interval__": "10s",
+              "__scrape_timeout__": "10s",
+              "job": "prometheus"
+            },
+            "labels": {
+              "instance": "localhost:9090",
+              "job": "prometheus"
+            },
+            "scrapePool": "prometheus",
+            "scrapeUrl": "http://localhost:9090/metrics",
+            "globalUrl": "http://d95d5fa2fd1c:9090/metrics",
+            "lastError": "",
+            "lastScrape": "2026-11-23T14:21:00.315727142Z",
+            "lastScrapeDuration": 0.01158436,
+            "health": "up",
+            "scrapeInterval": "10s",
+            "scrapeTimeout": "10s"
+          }
+        ],
+        "droppedTargets": [],
+        "droppedTargetCounts": {
+          "journalfit-backend": 0,
+          "prometheus": 0
+        }
+      }
+    }
+  }
+}
+
+=== sample_1_top_nodes | 2026-11-23T14:21:01+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top nodes
+NAME                    CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+k3d-capstone-agent-0    194m         1%       774Mi           10%         
+k3d-capstone-server-0   458m         3%       1597Mi          21%         
+
+[exit_code=0]
+
+=== sample_1_top_pods_default | 2026-11-23T14:21:02+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -n default
+NAME                                       CPU(cores)   MEMORY(bytes)   
+journalfit-backend-554c89f5bd-5xcdg        9m           41Mi            
+journalfit-backend-554c89f5bd-726lk        7m           36Mi            
+journalfit-worker-format-db89f9968-dmsdl   12m          29Mi            
+keycloak-564dbfb48b-cvl5r                  139m         568Mi           
+
+[exit_code=0]
+
+=== sample_1_top_pods_all | 2026-11-23T14:21:02+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -A
+NAMESPACE        NAME                                                CPU(cores)   MEMORY(bytes)   
+argocd           argocd-application-controller-0                     31m          29Mi            
+argocd           argocd-applicationset-controller-7567dc5fbb-vfbrg   4m           21Mi            
+argocd           argocd-dex-server-776dbb476d-6ggl5                  1m           41Mi            
+argocd           argocd-notifications-controller-7fc8df5f57-smw6k    2m           20Mi            
+argocd           argocd-redis-7f849fd769-97t4f                       5m           8Mi             
+argocd           argocd-repo-server-58c976b9df-sgg7x                 2m           25Mi            
+argocd           argocd-server-947dccccf-rdq66                       1m           29Mi            
+capstone-smoke   capstone-smoke-6dcfd95769-7wwnk                     0m           12Mi            
+default          journalfit-backend-554c89f5bd-5xcdg                 9m           41Mi            
+default          journalfit-backend-554c89f5bd-726lk                 7m           36Mi            
+default          journalfit-worker-format-db89f9968-dmsdl            12m          29Mi            
+default          keycloak-564dbfb48b-cvl5r                           139m         568Mi           
+kube-system      coredns-8db54c48d-bp6fr                             6m           28Mi            
+kube-system      local-path-provisioner-5d9d9885bc-6gwnf             1m           20Mi            
+kube-system      metrics-server-786d997795-7nb7v                     10m          38Mi            
+kube-system      svclb-traefik-c9622c4f-5hdwl                        0m           1Mi             
+kube-system      svclb-traefik-c9622c4f-xzfg8                        0m           1Mi             
+kube-system      traefik-9bcdbbd9-qkg5g                              10m          56Mi            
+
+[exit_code=0]
+
+=== sample_1_hpa_description | 2026-11-23T14:21:03+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s describe hpa journalfit-backend -n default
+Name:                                                  journalfit-backend
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Tue, 10 Nov 2026 00:38:08 +0700
+Reference:                                             Deployment/journalfit-backend
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  10% (10m) / 70%
+Min replicas:                                          2
+Max replicas:                                          3
+Behavior:
+  Scale Up:
+    Stabilization Window: 0 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+  Scale Down:
+    Stabilization Window: 60 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+Deployment pods:    2 current / 2 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type     Reason                        Age                From                       Message
+  ----     ------                        ----               ----                       -------
+  Warning  FailedGetResourceMetric       21m (x5 over 22m)  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedComputeMetricsReplicas  21m (x5 over 22m)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedGetResourceMetric       21m                horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedComputeMetricsReplicas  21m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedGetResourceMetric       16m                horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  16m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+
+[exit_code=0]
+
+=== sample_1_docker_stats | 2026-11-23T14:21:03+00:00 ===
+$ docker stats --no-stream --format '{{json .}}'
+{"BlockIO":"1.87MB / 45.4MB","CPUPerc":"0.07%","Container":"36905fe49b744993061805c266d33cf0ba4a5d4251c5972d4126521230145ae7","ID":"36905fe49b74","MemPerc":"0.75%","MemUsage":"56.5MiB / 7.384GiB","Name":"capstone-grafana","NetIO":"10.6MB / 312kB","PIDs":"20"}
+{"BlockIO":"889kB / 786kB","CPUPerc":"0.02%","Container":"d95d5fa2fd1c4c1ad0bfe4f637599da8a854581c634783a008f8602ca8069f0f","ID":"d95d5fa2fd1c","MemPerc":"0.42%","MemUsage":"31.84MiB / 7.384GiB","Name":"capstone-prometheus","NetIO":"209kB / 84.9kB","PIDs":"16"}
+{"BlockIO":"651kB / 0B","CPUPerc":"0.00%","Container":"85da9ac33cd58604c494824527c6b65454c8f34d48fef466c7431ddd29f12da9","ID":"85da9ac33cd5","MemPerc":"0.04%","MemUsage":"2.887MiB / 7.384GiB","Name":"k3d-capstone-tools","NetIO":"8.01kB / 564B","PIDs":"6"}
+{"BlockIO":"53.6MB / 51.6MB","CPUPerc":"0.02%","Container":"1ccfc13b268cf70b039497dfee837862ad27d81a0b2d6b5e6110d1c62e10a2c2","ID":"1ccfc13b268c","MemPerc":"1.18%","MemUsage":"88.97MiB / 7.384GiB","Name":"capstone-postgres","NetIO":"5.94MB / 7.01MB","PIDs":"14"}
+{"BlockIO":"79MB / 15.7MB","CPUPerc":"0.00%","Container":"24b90b523c78fa6438ee4960879472a376db66c10df1f241485f3be8e7eb5f04","ID":"24b90b523c78","MemPerc":"0.32%","MemUsage":"24.51MiB / 7.384GiB","Name":"capstone-registry","NetIO":"15.5MB / 92.7MB","PIDs":"15"}
+{"BlockIO":"22.9MB / 28.7kB","CPUPerc":"0.00%","Container":"d034a462b509853fb61e7480350566ac408d32ddfc1a7c0be20d5c246fdf0bc2","ID":"d034a462b509","MemPerc":"0.31%","MemUsage":"23.18MiB / 7.384GiB","Name":"k3d-capstone-serverlb","NetIO":"6.79MB / 6.78MB","PIDs":"24"}
+{"BlockIO":"822MB / 366MB","CPUPerc":"10.92%","Container":"f746277afe9076f783900963f7c7e63fdd9939274fd24b99dcc06a5b6582ca19","ID":"f746277afe90","MemPerc":"10.25%","MemUsage":"775.3MiB / 7.384GiB","Name":"k3d-capstone-agent-0","NetIO":"23.6MB / 4.78MB","PIDs":"446"}
+{"BlockIO":"283MB / 1.37GB","CPUPerc":"13.78%","Container":"2e7f1b44e7ac93b8f43e8f2366be9831ed62078cbbcd3f354952749838f56bc1","ID":"2e7f1b44e7ac","MemPerc":"21.16%","MemUsage":"1.563GiB / 7.384GiB","Name":"k3d-capstone-server-0","NetIO":"408MB / 29.8MB","PIDs":"134"}
+
+[exit_code=0]
+
+=== sample_1_vm_meminfo | 2026-11-23T14:21:06+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/meminfo
+MemTotal:        7742672 kB
+MemFree:          285980 kB
+MemAvailable:    4373284 kB
+Buffers:          459048 kB
+Cached:          3619988 kB
+SwapCached:         2984 kB
+Active:          1908404 kB
+Inactive:        4741376 kB
+Active(anon):     346552 kB
+Inactive(anon):  2331240 kB
+Active(file):    1561852 kB
+Inactive(file):  2410136 kB
+Unevictable:         132 kB
+Mlocked:               0 kB
+SwapTotal:       2097152 kB
+SwapFree:        1966972 kB
+Dirty:              4480 kB
+Writeback:             8 kB
+AnonPages:       2567556 kB
+Mapped:          1141008 kB
+Shmem:            107048 kB
+KReclaimable:     310376 kB
+Slab:             467940 kB
+SReclaimable:     310376 kB
+SUnreclaim:       157564 kB
+KernelStack:       23828 kB
+PageTables:        33732 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     5968488 kB
+Committed_AS:   10400648 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       55040 kB
+VmallocChunk:          0 kB
+Percpu:            16384 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      230400 kB
+DirectMap2M:     7761920 kB
+DirectMap1G:     8388608 kB
+
+[exit_code=0]
+
+=== sample_1_vm_cpu_stat | 2026-11-23T14:21:06+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/stat
+cpu  1991417 529 1473456 23812696 69445 0 165690 0 0 0
+cpu0 173990 0 139823 1945256 8703 0 56606 0 0 0
+cpu1 155257 0 103791 2012645 10262 0 33845 0 0 0
+cpu2 173030 0 141119 1949758 9670 0 14797 0 0 0
+cpu3 156936 0 104387 2018517 4816 0 14250 0 0 0
+cpu4 176740 0 141663 1950727 5926 0 7123 0 0 0
+cpu5 156597 10 104466 2019996 4149 0 9105 0 0 0
+cpu6 176381 49 141379 1951775 5322 0 5278 0 0 0
+cpu7 156732 160 104307 2020039 4076 0 6642 0 0 0
+cpu8 176223 48 141544 1952170 5030 0 4294 0 0 0
+cpu9 156462 104 104813 2019529 3568 0 5427 0 0 0
+cpu10 175854 143 141618 1952549 4754 0 3846 0 0 0
+cpu11 157210 12 104541 2019730 3164 0 4473 0 0 0
+intr 387750993 0 0 0 0 0 0 0 0 0 317 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2046 1 3 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ctxt 572339844
+btime 1795420498
+processes 2072050
+procs_running 4
+procs_blocked 0
+softirq 92780674 0 5941368 727 22257507 4564 0 1639336 30259573 0 32677599
+
+[exit_code=0]
+
+=== sample_2_top_nodes | 2026-11-23T14:21:36+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top nodes
+NAME                    CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+k3d-capstone-agent-0    184m         1%       777Mi           10%         
+k3d-capstone-server-0   147m         1%       1599Mi          21%         
+
+[exit_code=0]
+
+=== sample_2_top_pods_default | 2026-11-23T14:21:37+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -n default
+NAME                                       CPU(cores)   MEMORY(bytes)   
+journalfit-backend-554c89f5bd-5xcdg        9m           41Mi            
+journalfit-backend-554c89f5bd-726lk        8m           39Mi            
+journalfit-worker-format-db89f9968-dmsdl   11m          30Mi            
+keycloak-564dbfb48b-cvl5r                  4m           568Mi           
+
+[exit_code=0]
+
+=== sample_2_top_pods_all | 2026-11-23T14:21:37+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -A
+NAMESPACE        NAME                                                CPU(cores)   MEMORY(bytes)   
+argocd           argocd-application-controller-0                     3m           29Mi            
+argocd           argocd-applicationset-controller-7567dc5fbb-vfbrg   2m           21Mi            
+argocd           argocd-dex-server-776dbb476d-6ggl5                  1m           41Mi            
+argocd           argocd-notifications-controller-7fc8df5f57-smw6k    28m          21Mi            
+argocd           argocd-redis-7f849fd769-97t4f                       5m           9Mi             
+argocd           argocd-repo-server-58c976b9df-sgg7x                 3m           25Mi            
+argocd           argocd-server-947dccccf-rdq66                       43m          29Mi            
+capstone-smoke   capstone-smoke-6dcfd95769-7wwnk                     0m           12Mi            
+default          journalfit-backend-554c89f5bd-5xcdg                 9m           41Mi            
+default          journalfit-backend-554c89f5bd-726lk                 8m           39Mi            
+default          journalfit-worker-format-db89f9968-dmsdl            11m          30Mi            
+default          keycloak-564dbfb48b-cvl5r                           4m           568Mi           
+kube-system      coredns-8db54c48d-bp6fr                             5m           28Mi            
+kube-system      local-path-provisioner-5d9d9885bc-6gwnf             15m          20Mi            
+kube-system      metrics-server-786d997795-7nb7v                     10m          38Mi            
+kube-system      svclb-traefik-c9622c4f-5hdwl                        0m           1Mi             
+kube-system      svclb-traefik-c9622c4f-xzfg8                        0m           1Mi             
+kube-system      traefik-9bcdbbd9-qkg5g                              47m          56Mi            
+
+[exit_code=0]
+
+=== sample_2_hpa_description | 2026-11-23T14:21:37+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s describe hpa journalfit-backend -n default
+Name:                                                  journalfit-backend
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Tue, 10 Nov 2026 00:38:08 +0700
+Reference:                                             Deployment/journalfit-backend
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  17% (17m) / 70%
+Min replicas:                                          2
+Max replicas:                                          3
+Behavior:
+  Scale Up:
+    Stabilization Window: 0 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+  Scale Down:
+    Stabilization Window: 60 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+Deployment pods:    2 current / 2 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type     Reason                        Age                From                       Message
+  ----     ------                        ----               ----                       -------
+  Warning  FailedGetResourceMetric       21m (x5 over 23m)  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedComputeMetricsReplicas  21m (x5 over 23m)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedGetResourceMetric       21m                horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedComputeMetricsReplicas  21m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedGetResourceMetric       16m                horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  16m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+
+[exit_code=0]
+
+=== sample_2_docker_stats | 2026-11-23T14:21:38+00:00 ===
+$ docker stats --no-stream --format '{{json .}}'
+{"BlockIO":"1.87MB / 45.4MB","CPUPerc":"9.19%","Container":"36905fe49b744993061805c266d33cf0ba4a5d4251c5972d4126521230145ae7","ID":"36905fe49b74","MemPerc":"0.75%","MemUsage":"56.52MiB / 7.384GiB","Name":"capstone-grafana","NetIO":"10.6MB / 312kB","PIDs":"20"}
+{"BlockIO":"889kB / 799kB","CPUPerc":"0.13%","Container":"d95d5fa2fd1c4c1ad0bfe4f637599da8a854581c634783a008f8602ca8069f0f","ID":"d95d5fa2fd1c","MemPerc":"0.42%","MemUsage":"31.9MiB / 7.384GiB","Name":"capstone-prometheus","NetIO":"215kB / 86.8kB","PIDs":"16"}
+{"BlockIO":"651kB / 0B","CPUPerc":"0.00%","Container":"85da9ac33cd58604c494824527c6b65454c8f34d48fef466c7431ddd29f12da9","ID":"85da9ac33cd5","MemPerc":"0.04%","MemUsage":"2.887MiB / 7.384GiB","Name":"k3d-capstone-tools","NetIO":"8.01kB / 564B","PIDs":"6"}
+{"BlockIO":"53.6MB / 51.8MB","CPUPerc":"0.49%","Container":"1ccfc13b268cf70b039497dfee837862ad27d81a0b2d6b5e6110d1c62e10a2c2","ID":"1ccfc13b268c","MemPerc":"1.18%","MemUsage":"89.38MiB / 7.384GiB","Name":"capstone-postgres","NetIO":"6.05MB / 7.06MB","PIDs":"14"}
+{"BlockIO":"79MB / 15.7MB","CPUPerc":"0.00%","Container":"24b90b523c78fa6438ee4960879472a376db66c10df1f241485f3be8e7eb5f04","ID":"24b90b523c78","MemPerc":"0.32%","MemUsage":"24.49MiB / 7.384GiB","Name":"capstone-registry","NetIO":"15.5MB / 92.7MB","PIDs":"15"}
+{"BlockIO":"22.9MB / 28.7kB","CPUPerc":"0.00%","Container":"d034a462b509853fb61e7480350566ac408d32ddfc1a7c0be20d5c246fdf0bc2","ID":"d034a462b509","MemPerc":"0.31%","MemUsage":"23.16MiB / 7.384GiB","Name":"k3d-capstone-serverlb","NetIO":"6.99MB / 6.97MB","PIDs":"24"}
+{"BlockIO":"822MB / 366MB","CPUPerc":"7.88%","Container":"f746277afe9076f783900963f7c7e63fdd9939274fd24b99dcc06a5b6582ca19","ID":"f746277afe90","MemPerc":"10.27%","MemUsage":"776.3MiB / 7.384GiB","Name":"k3d-capstone-agent-0","NetIO":"23.6MB / 4.93MB","PIDs":"446"}
+{"BlockIO":"283MB / 1.37GB","CPUPerc":"10.95%","Container":"2e7f1b44e7ac93b8f43e8f2366be9831ed62078cbbcd3f354952749838f56bc1","ID":"2e7f1b44e7ac","MemPerc":"21.17%","MemUsage":"1.563GiB / 7.384GiB","Name":"k3d-capstone-server-0","NetIO":"408MB / 30MB","PIDs":"134"}
+
+[exit_code=0]
+
+=== sample_2_vm_meminfo | 2026-11-23T14:21:39+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/meminfo
+MemTotal:        7742672 kB
+MemFree:          127472 kB
+MemAvailable:    4205252 kB
+Buffers:          458820 kB
+Cached:          3610892 kB
+SwapCached:         2996 kB
+Active:          1901364 kB
+Inactive:        4915084 kB
+Active(anon):     348676 kB
+Inactive(anon):  2505276 kB
+Active(file):    1552688 kB
+Inactive(file):  2409808 kB
+Unevictable:         132 kB
+Mlocked:               0 kB
+SwapTotal:       2097152 kB
+SwapFree:        1966716 kB
+Dirty:              6108 kB
+Writeback:           132 kB
+AnonPages:       2743168 kB
+Mapped:          1221508 kB
+Shmem:            107048 kB
+KReclaimable:     310344 kB
+Slab:             467952 kB
+SReclaimable:     310344 kB
+SUnreclaim:       157608 kB
+KernelStack:       23932 kB
+PageTables:        34148 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     5968488 kB
+Committed_AS:   10491976 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       55216 kB
+VmallocChunk:          0 kB
+Percpu:            16384 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      230400 kB
+DirectMap2M:     7761920 kB
+DirectMap1G:     8388608 kB
+
+[exit_code=0]
+
+=== sample_2_vm_cpu_stat | 2026-11-23T14:21:40+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/stat
+cpu  1995116 529 1475983 23842375 69546 0 165944 0 0 0
+cpu0 174302 0 140047 1947680 8720 0 56706 0 0 0
+cpu1 155534 0 103991 2015164 10277 0 33883 0 0 0
+cpu2 173350 0 141351 1952168 9691 0 14817 0 0 0
+cpu3 157245 0 104573 2021037 4819 0 14276 0 0 0
+cpu4 177059 0 141915 1953156 5931 0 7134 0 0 0
+cpu5 156882 10 104663 2022523 4150 0 9117 0 0 0
+cpu6 176690 49 141613 1954210 5326 0 5290 0 0 0
+cpu7 157002 160 104497 2022588 4081 0 6651 0 0 0
+cpu8 176553 48 141781 1954594 5048 0 4300 0 0 0
+cpu9 156768 104 104978 2022058 3571 0 5434 0 0 0
+cpu10 176216 143 141838 1954957 4761 0 3850 0 0 0
+cpu11 157510 12 104732 2022236 3166 0 4482 0 0 0
+intr 388414434 0 0 0 0 0 0 0 0 0 317 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2046 1 3 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ctxt 573303090
+btime 1795420502
+processes 2074707
+procs_running 6
+procs_blocked 0
+softirq 92921546 0 5950171 728 22288476 4564 0 1642873 30306633 0 32728101
+
+[exit_code=0]
+
+=== sample_3_top_nodes | 2026-11-23T14:22:10+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top nodes
+NAME                    CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+k3d-capstone-agent-0    129m         1%       777Mi           10%         
+k3d-capstone-server-0   146m         1%       1599Mi          21%         
+
+[exit_code=0]
+
+=== sample_3_top_pods_default | 2026-11-23T14:22:10+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -n default
+NAME                                       CPU(cores)   MEMORY(bytes)   
+journalfit-backend-554c89f5bd-5xcdg        6m           40Mi            
+journalfit-backend-554c89f5bd-726lk        5m           39Mi            
+journalfit-worker-format-db89f9968-dmsdl   5m           29Mi            
+keycloak-564dbfb48b-cvl5r                  5m           568Mi           
+
+[exit_code=0]
+
+=== sample_3_top_pods_all | 2026-11-23T14:22:11+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -A
+NAMESPACE        NAME                                                CPU(cores)   MEMORY(bytes)   
+argocd           argocd-application-controller-0                     2m           29Mi            
+argocd           argocd-applicationset-controller-7567dc5fbb-vfbrg   27m          21Mi            
+argocd           argocd-dex-server-776dbb476d-6ggl5                  65m          41Mi            
+argocd           argocd-notifications-controller-7fc8df5f57-smw6k    1m           20Mi            
+argocd           argocd-redis-7f849fd769-97t4f                       5m           8Mi             
+argocd           argocd-repo-server-58c976b9df-sgg7x                 7m           25Mi            
+argocd           argocd-server-947dccccf-rdq66                       1m           29Mi            
+capstone-smoke   capstone-smoke-6dcfd95769-7wwnk                     0m           12Mi            
+default          journalfit-backend-554c89f5bd-5xcdg                 6m           40Mi            
+default          journalfit-backend-554c89f5bd-726lk                 5m           39Mi            
+default          journalfit-worker-format-db89f9968-dmsdl            5m           29Mi            
+default          keycloak-564dbfb48b-cvl5r                           5m           568Mi           
+kube-system      coredns-8db54c48d-bp6fr                             4m           28Mi            
+kube-system      local-path-provisioner-5d9d9885bc-6gwnf             6m           20Mi            
+kube-system      metrics-server-786d997795-7nb7v                     8m           38Mi            
+kube-system      svclb-traefik-c9622c4f-5hdwl                        0m           1Mi             
+kube-system      svclb-traefik-c9622c4f-xzfg8                        0m           1Mi             
+kube-system      traefik-9bcdbbd9-qkg5g                              1m           56Mi            
+
+[exit_code=0]
+
+=== sample_3_hpa_description | 2026-11-23T14:22:11+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s describe hpa journalfit-backend -n default
+Name:                                                  journalfit-backend
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Tue, 10 Nov 2026 00:38:08 +0700
+Reference:                                             Deployment/journalfit-backend
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  7% (7m) / 70%
+Min replicas:                                          2
+Max replicas:                                          3
+Behavior:
+  Scale Up:
+    Stabilization Window: 0 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+  Scale Down:
+    Stabilization Window: 60 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+Deployment pods:    2 current / 2 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type     Reason                        Age                From                       Message
+  ----     ------                        ----               ----                       -------
+  Warning  FailedGetResourceMetric       22m (x5 over 23m)  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedComputeMetricsReplicas  22m (x5 over 23m)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedGetResourceMetric       22m                horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedComputeMetricsReplicas  22m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedGetResourceMetric       17m                horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  17m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+
+[exit_code=0]
+
+=== sample_3_docker_stats | 2026-11-23T14:22:11+00:00 ===
+$ docker stats --no-stream --format '{{json .}}'
+{"BlockIO":"1.87MB / 45.4MB","CPUPerc":"1.43%","Container":"36905fe49b744993061805c266d33cf0ba4a5d4251c5972d4126521230145ae7","ID":"36905fe49b74","MemPerc":"0.75%","MemUsage":"56.52MiB / 7.384GiB","Name":"capstone-grafana","NetIO":"10.6MB / 312kB","PIDs":"20"}
+{"BlockIO":"889kB / 819kB","CPUPerc":"0.06%","Container":"d95d5fa2fd1c4c1ad0bfe4f637599da8a854581c634783a008f8602ca8069f0f","ID":"d95d5fa2fd1c","MemPerc":"0.43%","MemUsage":"32.55MiB / 7.384GiB","Name":"capstone-prometheus","NetIO":"221kB / 88.7kB","PIDs":"16"}
+{"BlockIO":"651kB / 0B","CPUPerc":"0.00%","Container":"85da9ac33cd58604c494824527c6b65454c8f34d48fef466c7431ddd29f12da9","ID":"85da9ac33cd5","MemPerc":"0.04%","MemUsage":"2.887MiB / 7.384GiB","Name":"k3d-capstone-tools","NetIO":"8.01kB / 564B","PIDs":"6"}
+{"BlockIO":"53.6MB / 51.9MB","CPUPerc":"0.12%","Container":"1ccfc13b268cf70b039497dfee837862ad27d81a0b2d6b5e6110d1c62e10a2c2","ID":"1ccfc13b268c","MemPerc":"1.18%","MemUsage":"89.39MiB / 7.384GiB","Name":"capstone-postgres","NetIO":"6.13MB / 7.1MB","PIDs":"14"}
+{"BlockIO":"79MB / 15.7MB","CPUPerc":"0.00%","Container":"24b90b523c78fa6438ee4960879472a376db66c10df1f241485f3be8e7eb5f04","ID":"24b90b523c78","MemPerc":"0.32%","MemUsage":"24.46MiB / 7.384GiB","Name":"capstone-registry","NetIO":"15.5MB / 92.7MB","PIDs":"15"}
+{"BlockIO":"22.9MB / 28.7kB","CPUPerc":"0.00%","Container":"d034a462b509853fb61e7480350566ac408d32ddfc1a7c0be20d5c246fdf0bc2","ID":"d034a462b509","MemPerc":"0.31%","MemUsage":"23.14MiB / 7.384GiB","Name":"k3d-capstone-serverlb","NetIO":"7.18MB / 7.17MB","PIDs":"24"}
+{"BlockIO":"822MB / 366MB","CPUPerc":"16.38%","Container":"f746277afe9076f783900963f7c7e63fdd9939274fd24b99dcc06a5b6582ca19","ID":"f746277afe90","MemPerc":"10.27%","MemUsage":"776.4MiB / 7.384GiB","Name":"k3d-capstone-agent-0","NetIO":"23.7MB / 5.04MB","PIDs":"446"}
+{"BlockIO":"283MB / 1.37GB","CPUPerc":"13.00%","Container":"2e7f1b44e7ac93b8f43e8f2366be9831ed62078cbbcd3f354952749838f56bc1","ID":"2e7f1b44e7ac","MemPerc":"21.17%","MemUsage":"1.563GiB / 7.384GiB","Name":"k3d-capstone-server-0","NetIO":"409MB / 30.3MB","PIDs":"133"}
+
+[exit_code=0]
+
+=== sample_3_vm_meminfo | 2026-11-23T14:22:14+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/meminfo
+MemTotal:        7742672 kB
+MemFree:          291848 kB
+MemAvailable:    4369704 kB
+Buffers:          459004 kB
+Cached:          3611888 kB
+SwapCached:         3028 kB
+Active:          1902756 kB
+Inactive:        4737276 kB
+Active(anon):     349224 kB
+Inactive(anon):  2328204 kB
+Active(file):    1553532 kB
+Inactive(file):  2409072 kB
+Unevictable:         132 kB
+Mlocked:               0 kB
+SwapTotal:       2097152 kB
+SwapFree:        1966716 kB
+Dirty:              3912 kB
+Writeback:           108 kB
+AnonPages:       2566288 kB
+Mapped:          1140760 kB
+Shmem:            107060 kB
+KReclaimable:     310312 kB
+Slab:             467984 kB
+SReclaimable:     310312 kB
+SUnreclaim:       157672 kB
+KernelStack:       23656 kB
+PageTables:        33496 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     5968488 kB
+Committed_AS:   10273132 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       54960 kB
+VmallocChunk:          0 kB
+Percpu:            16384 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      230400 kB
+DirectMap2M:     7761920 kB
+DirectMap1G:     8388608 kB
+
+[exit_code=0]
+
+=== sample_3_vm_cpu_stat | 2026-11-23T14:22:14+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/stat
+cpu  1998491 529 1478310 23872929 69648 0 166187 0 0 0
+cpu0 174628 0 140250 1950145 8736 0 56772 0 0 0
+cpu1 155788 0 104166 2017749 10295 0 33942 0 0 0
+cpu2 173652 0 141565 1954662 9708 0 14839 0 0 0
+cpu3 157490 0 104755 2023660 4825 0 14298 0 0 0
+cpu4 177344 0 142138 1955654 5934 0 7144 0 0 0
+cpu5 157154 10 104824 2025120 4159 0 9133 0 0 0
+cpu6 176953 49 141841 1956722 5336 0 5298 0 0 0
+cpu7 157284 160 104676 2025168 4086 0 6662 0 0 0
+cpu8 176843 48 141994 1957107 5060 0 4308 0 0 0
+cpu9 157068 104 105139 2024636 3573 0 5444 0 0 0
+cpu10 176518 143 142039 1957470 4763 0 3854 0 0 0
+cpu11 157765 12 104919 2024832 3168 0 4488 0 0 0
+intr 389088922 0 0 0 0 0 0 0 0 0 317 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2046 1 3 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ctxt 574280217
+btime 1795420508
+processes 2077601
+procs_running 6
+procs_blocked 0
+softirq 93060816 0 5958757 730 22318974 4564 0 1646539 30352865 0 32778387
+
+[exit_code=0]
+
+=== sample_4_top_nodes | 2026-11-23T14:22:44+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top nodes
+NAME                    CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+k3d-capstone-agent-0    153m         1%       778Mi           10%         
+k3d-capstone-server-0   797m         6%       1606Mi          21%         
+
+[exit_code=0]
+
+=== sample_4_top_pods_default | 2026-11-23T14:22:45+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -n default
+NAME                                       CPU(cores)   MEMORY(bytes)   
+journalfit-backend-554c89f5bd-5xcdg        50m          41Mi            
+journalfit-backend-554c89f5bd-726lk        7m           40Mi            
+journalfit-worker-format-db89f9968-dmsdl   7m           29Mi            
+keycloak-564dbfb48b-cvl5r                  593m         570Mi           
+
+[exit_code=0]
+
+=== sample_4_top_pods_all | 2026-11-23T14:22:45+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -A
+NAMESPACE        NAME                                                CPU(cores)   MEMORY(bytes)   
+argocd           argocd-application-controller-0                     5m           29Mi            
+argocd           argocd-applicationset-controller-7567dc5fbb-vfbrg   1m           21Mi            
+argocd           argocd-dex-server-776dbb476d-6ggl5                  2m           41Mi            
+argocd           argocd-notifications-controller-7fc8df5f57-smw6k    1m           20Mi            
+argocd           argocd-redis-7f849fd769-97t4f                       5m           9Mi             
+argocd           argocd-repo-server-58c976b9df-sgg7x                 3m           25Mi            
+argocd           argocd-server-947dccccf-rdq66                       1m           29Mi            
+capstone-smoke   capstone-smoke-6dcfd95769-7wwnk                     0m           12Mi            
+default          journalfit-backend-554c89f5bd-5xcdg                 50m          41Mi            
+default          journalfit-backend-554c89f5bd-726lk                 7m           40Mi            
+default          journalfit-worker-format-db89f9968-dmsdl            7m           29Mi            
+default          keycloak-564dbfb48b-cvl5r                           593m         570Mi           
+kube-system      coredns-8db54c48d-bp6fr                             8m           28Mi            
+kube-system      local-path-provisioner-5d9d9885bc-6gwnf             1m           20Mi            
+kube-system      metrics-server-786d997795-7nb7v                     10m          38Mi            
+kube-system      svclb-traefik-c9622c4f-5hdwl                        0m           1Mi             
+kube-system      svclb-traefik-c9622c4f-xzfg8                        0m           1Mi             
+kube-system      traefik-9bcdbbd9-qkg5g                              2m           56Mi            
+
+[exit_code=0]
+
+=== sample_4_hpa_description | 2026-11-23T14:22:45+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s describe hpa journalfit-backend -n default
+Name:                                                  journalfit-backend
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Tue, 10 Nov 2026 00:38:08 +0700
+Reference:                                             Deployment/journalfit-backend
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  6% (6m) / 70%
+Min replicas:                                          2
+Max replicas:                                          3
+Behavior:
+  Scale Up:
+    Stabilization Window: 0 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+  Scale Down:
+    Stabilization Window: 60 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+Deployment pods:    2 current / 2 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type     Reason                        Age                From                       Message
+  ----     ------                        ----               ----                       -------
+  Warning  FailedGetResourceMetric       23m (x5 over 24m)  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedComputeMetricsReplicas  23m (x5 over 24m)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedGetResourceMetric       22m                horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedComputeMetricsReplicas  22m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedGetResourceMetric       18m                horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  18m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+
+[exit_code=0]
+
+=== sample_4_docker_stats | 2026-11-23T14:22:46+00:00 ===
+$ docker stats --no-stream --format '{{json .}}'
+{"BlockIO":"1.87MB / 45.4MB","CPUPerc":"0.08%","Container":"36905fe49b744993061805c266d33cf0ba4a5d4251c5972d4126521230145ae7","ID":"36905fe49b74","MemPerc":"0.75%","MemUsage":"56.54MiB / 7.384GiB","Name":"capstone-grafana","NetIO":"10.6MB / 312kB","PIDs":"20"}
+{"BlockIO":"889kB / 831kB","CPUPerc":"0.01%","Container":"d95d5fa2fd1c4c1ad0bfe4f637599da8a854581c634783a008f8602ca8069f0f","ID":"d95d5fa2fd1c","MemPerc":"0.43%","MemUsage":"32.55MiB / 7.384GiB","Name":"capstone-prometheus","NetIO":"228kB / 90.6kB","PIDs":"16"}
+{"BlockIO":"651kB / 0B","CPUPerc":"0.00%","Container":"85da9ac33cd58604c494824527c6b65454c8f34d48fef466c7431ddd29f12da9","ID":"85da9ac33cd5","MemPerc":"0.04%","MemUsage":"2.887MiB / 7.384GiB","Name":"k3d-capstone-tools","NetIO":"8.01kB / 564B","PIDs":"6"}
+{"BlockIO":"53.6MB / 52.4MB","CPUPerc":"0.30%","Container":"1ccfc13b268cf70b039497dfee837862ad27d81a0b2d6b5e6110d1c62e10a2c2","ID":"1ccfc13b268c","MemPerc":"1.18%","MemUsage":"89.56MiB / 7.384GiB","Name":"capstone-postgres","NetIO":"6.25MB / 7.15MB","PIDs":"14"}
+{"BlockIO":"79MB / 15.7MB","CPUPerc":"0.00%","Container":"24b90b523c78fa6438ee4960879472a376db66c10df1f241485f3be8e7eb5f04","ID":"24b90b523c78","MemPerc":"0.32%","MemUsage":"24.44MiB / 7.384GiB","Name":"capstone-registry","NetIO":"15.5MB / 92.7MB","PIDs":"15"}
+{"BlockIO":"22.9MB / 28.7kB","CPUPerc":"0.04%","Container":"d034a462b509853fb61e7480350566ac408d32ddfc1a7c0be20d5c246fdf0bc2","ID":"d034a462b509","MemPerc":"0.31%","MemUsage":"23.12MiB / 7.384GiB","Name":"k3d-capstone-serverlb","NetIO":"7.38MB / 7.37MB","PIDs":"24"}
+{"BlockIO":"822MB / 366MB","CPUPerc":"16.80%","Container":"f746277afe9076f783900963f7c7e63fdd9939274fd24b99dcc06a5b6582ca19","ID":"f746277afe90","MemPerc":"10.27%","MemUsage":"776.3MiB / 7.384GiB","Name":"k3d-capstone-agent-0","NetIO":"23.8MB / 5.18MB","PIDs":"446"}
+{"BlockIO":"283MB / 1.37GB","CPUPerc":"10.55%","Container":"2e7f1b44e7ac93b8f43e8f2366be9831ed62078cbbcd3f354952749838f56bc1","ID":"2e7f1b44e7ac","MemPerc":"21.25%","MemUsage":"1.569GiB / 7.384GiB","Name":"k3d-capstone-server-0","NetIO":"409MB / 30.5MB","PIDs":"134"}
+
+[exit_code=0]
+
+=== sample_4_vm_meminfo | 2026-11-23T14:22:47+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/meminfo
+MemTotal:        7742672 kB
+MemFree:          125304 kB
+MemAvailable:    4185152 kB
+Buffers:          457384 kB
+Cached:          3594592 kB
+SwapCached:         2944 kB
+Active:          1896320 kB
+Inactive:        4916852 kB
+Active(anon):     352060 kB
+Inactive(anon):  2516504 kB
+Active(file):    1544260 kB
+Inactive(file):  2400348 kB
+Unevictable:         132 kB
+Mlocked:               0 kB
+SwapTotal:       2097152 kB
+SwapFree:        1966716 kB
+Dirty:              4404 kB
+Writeback:             0 kB
+AnonPages:       2758028 kB
+Mapped:          1215316 kB
+Shmem:            107076 kB
+KReclaimable:     310300 kB
+Slab:             467988 kB
+SReclaimable:     310300 kB
+SUnreclaim:       157688 kB
+KernelStack:       23968 kB
+PageTables:        34308 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     5968488 kB
+Committed_AS:   10500240 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       55152 kB
+VmallocChunk:          0 kB
+Percpu:            16384 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      230400 kB
+DirectMap2M:     7761920 kB
+DirectMap1G:     8388608 kB
+
+[exit_code=0]
+
+=== sample_4_vm_cpu_stat | 2026-11-23T14:22:47+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/stat
+cpu  2003430 529 1480834 23901233 69758 0 166447 0 0 0
+cpu0 175066 0 140470 1952449 8749 0 56850 0 0 0
+cpu1 156152 0 104329 2020192 10305 0 33998 0 0 0
+cpu2 174006 0 141804 1957029 9729 0 14858 0 0 0
+cpu3 157846 0 104954 2026098 4833 0 14321 0 0 0
+cpu4 177835 0 142370 1957916 5940 0 7162 0 0 0
+cpu5 157684 10 105005 2027421 4164 0 9147 0 0 0
+cpu6 177350 49 142065 1959077 5342 0 5309 0 0 0
+cpu7 157659 160 104886 2027586 4089 0 6675 0 0 0
+cpu8 177232 48 142241 1959429 5075 0 4312 0 0 0
+cpu9 157456 104 105328 2027052 3578 0 5454 0 0 0
+cpu10 177026 143 142269 1959698 4778 0 3862 0 0 0
+cpu11 158115 12 105110 2027280 3171 0 4496 0 0 0
+intr 389765949 0 0 0 0 0 0 0 0 0 319 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2046 1 3 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ctxt 575264167
+btime 1795420511
+processes 2080104
+procs_running 4
+procs_blocked 0
+softirq 93204077 0 5967607 734 22350731 4564 0 1650639 30400348 0 32829454
+
+[exit_code=0]
+
+=== sample_5_top_nodes | 2026-11-23T14:23:18+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top nodes
+NAME                    CPU(cores)   CPU(%)   MEMORY(bytes)   MEMORY(%)   
+k3d-capstone-agent-0    117m         0%       776Mi           10%         
+k3d-capstone-server-0   198m         1%       1608Mi          21%         
+
+[exit_code=0]
+
+=== sample_5_top_pods_default | 2026-11-23T14:23:18+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -n default
+NAME                                       CPU(cores)   MEMORY(bytes)   
+journalfit-backend-554c89f5bd-5xcdg        9m           41Mi            
+journalfit-backend-554c89f5bd-726lk        6m           40Mi            
+journalfit-worker-format-db89f9968-dmsdl   8m           29Mi            
+keycloak-564dbfb48b-cvl5r                  5m           570Mi           
+
+[exit_code=0]
+
+=== sample_5_top_pods_all | 2026-11-23T14:23:19+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s top pods -A
+NAMESPACE        NAME                                                CPU(cores)   MEMORY(bytes)   
+argocd           argocd-application-controller-0                     19m          29Mi            
+argocd           argocd-applicationset-controller-7567dc5fbb-vfbrg   1m           21Mi            
+argocd           argocd-dex-server-776dbb476d-6ggl5                  1m           41Mi            
+argocd           argocd-notifications-controller-7fc8df5f57-smw6k    1m           20Mi            
+argocd           argocd-redis-7f849fd769-97t4f                       6m           8Mi             
+argocd           argocd-repo-server-58c976b9df-sgg7x                 8m           25Mi            
+argocd           argocd-server-947dccccf-rdq66                       3m           29Mi            
+capstone-smoke   capstone-smoke-6dcfd95769-7wwnk                     0m           12Mi            
+default          journalfit-backend-554c89f5bd-5xcdg                 9m           41Mi            
+default          journalfit-backend-554c89f5bd-726lk                 6m           40Mi            
+default          journalfit-worker-format-db89f9968-dmsdl            8m           29Mi            
+default          keycloak-564dbfb48b-cvl5r                           5m           570Mi           
+kube-system      coredns-8db54c48d-bp6fr                             5m           28Mi            
+kube-system      local-path-provisioner-5d9d9885bc-6gwnf             1m           20Mi            
+kube-system      metrics-server-786d997795-7nb7v                     8m           38Mi            
+kube-system      svclb-traefik-c9622c4f-5hdwl                        0m           1Mi             
+kube-system      svclb-traefik-c9622c4f-xzfg8                        0m           1Mi             
+kube-system      traefik-9bcdbbd9-qkg5g                              1m           55Mi            
+
+[exit_code=0]
+
+=== sample_5_hpa_description | 2026-11-23T14:23:19+00:00 ===
+$ kubectl --context k3d-capstone --request-timeout=15s describe hpa journalfit-backend -n default
+Name:                                                  journalfit-backend
+Namespace:                                             default
+Labels:                                                <none>
+Annotations:                                           <none>
+CreationTimestamp:                                     Tue, 10 Nov 2026 00:38:08 +0700
+Reference:                                             Deployment/journalfit-backend
+Metrics:                                               ( current / target )
+  resource cpu on pods  (as a percentage of request):  7% (7m) / 70%
+Min replicas:                                          2
+Max replicas:                                          3
+Behavior:
+  Scale Up:
+    Stabilization Window: 0 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+  Scale Down:
+    Stabilization Window: 60 seconds
+    Select Policy: Max
+    Policies:
+      - Type: Pods  Value: 1  Period: 30 seconds
+Deployment pods:    2 current / 2 desired
+Conditions:
+  Type            Status  Reason            Message
+  ----            ------  ------            -------
+  AbleToScale     True    ReadyForNewScale  recommended size matches current size
+  ScalingActive   True    ValidMetricFound  the HPA was able to successfully calculate a replica count from cpu resource utilization (percentage of request)
+  ScalingLimited  True    TooFewReplicas    the desired replica count is less than the minimum replica count
+Events:
+  Type     Reason                        Age                From                       Message
+  ----     ------                        ----               ----                       -------
+  Warning  FailedGetResourceMetric       23m (x5 over 24m)  horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedComputeMetricsReplicas  23m (x5 over 24m)  horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: unable to fetch metrics from resource metrics API: the server is currently unable to handle the request (get pods.metrics.k8s.io)
+  Warning  FailedGetResourceMetric       23m                horizontal-pod-autoscaler  failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedComputeMetricsReplicas  23m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: unable to get metrics for resource cpu: no metrics returned from resource metrics API
+  Warning  FailedGetResourceMetric       18m                horizontal-pod-autoscaler  failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+  Warning  FailedComputeMetricsReplicas  18m                horizontal-pod-autoscaler  invalid metrics (1 invalid out of 1), first error is: failed to get cpu resource metric value: failed to get cpu utilization: did not receive metrics for targeted pods (pods might be unready)
+
+[exit_code=0]
+
+=== sample_5_docker_stats | 2026-11-23T14:23:19+00:00 ===
+$ docker stats --no-stream --format '{{json .}}'
+{"BlockIO":"1.87MB / 45.4MB","CPUPerc":"0.19%","Container":"36905fe49b744993061805c266d33cf0ba4a5d4251c5972d4126521230145ae7","ID":"36905fe49b74","MemPerc":"0.75%","MemUsage":"56.54MiB / 7.384GiB","Name":"capstone-grafana","NetIO":"10.6MB / 312kB","PIDs":"20"}
+{"BlockIO":"889kB / 852kB","CPUPerc":"0.00%","Container":"d95d5fa2fd1c4c1ad0bfe4f637599da8a854581c634783a008f8602ca8069f0f","ID":"d95d5fa2fd1c","MemPerc":"0.43%","MemUsage":"32.57MiB / 7.384GiB","Name":"capstone-prometheus","NetIO":"236kB / 93.2kB","PIDs":"16"}
+{"BlockIO":"651kB / 0B","CPUPerc":"0.00%","Container":"85da9ac33cd58604c494824527c6b65454c8f34d48fef466c7431ddd29f12da9","ID":"85da9ac33cd5","MemPerc":"0.04%","MemUsage":"2.887MiB / 7.384GiB","Name":"k3d-capstone-tools","NetIO":"8.01kB / 564B","PIDs":"6"}
+{"BlockIO":"53.6MB / 52.9MB","CPUPerc":"5.30%","Container":"1ccfc13b268cf70b039497dfee837862ad27d81a0b2d6b5e6110d1c62e10a2c2","ID":"1ccfc13b268c","MemPerc":"1.18%","MemUsage":"89.26MiB / 7.384GiB","Name":"capstone-postgres","NetIO":"6.33MB / 7.19MB","PIDs":"14"}
+{"BlockIO":"79MB / 15.7MB","CPUPerc":"0.05%","Container":"24b90b523c78fa6438ee4960879472a376db66c10df1f241485f3be8e7eb5f04","ID":"24b90b523c78","MemPerc":"0.32%","MemUsage":"24.37MiB / 7.384GiB","Name":"capstone-registry","NetIO":"15.5MB / 92.7MB","PIDs":"15"}
+{"BlockIO":"22.9MB / 28.7kB","CPUPerc":"0.00%","Container":"d034a462b509853fb61e7480350566ac408d32ddfc1a7c0be20d5c246fdf0bc2","ID":"d034a462b509","MemPerc":"0.31%","MemUsage":"23.07MiB / 7.384GiB","Name":"k3d-capstone-serverlb","NetIO":"7.57MB / 7.56MB","PIDs":"24"}
+{"BlockIO":"822MB / 366MB","CPUPerc":"7.04%","Container":"f746277afe9076f783900963f7c7e63fdd9939274fd24b99dcc06a5b6582ca19","ID":"f746277afe90","MemPerc":"10.24%","MemUsage":"774.6MiB / 7.384GiB","Name":"k3d-capstone-agent-0","NetIO":"23.9MB / 5.3MB","PIDs":"446"}
+{"BlockIO":"283MB / 1.37GB","CPUPerc":"12.24%","Container":"2e7f1b44e7ac93b8f43e8f2366be9831ed62078cbbcd3f354952749838f56bc1","ID":"2e7f1b44e7ac","MemPerc":"21.15%","MemUsage":"1.562GiB / 7.384GiB","Name":"k3d-capstone-server-0","NetIO":"409MB / 30.7MB","PIDs":"134"}
+
+[exit_code=0]
+
+=== sample_5_vm_meminfo | 2026-11-23T14:23:22+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/meminfo
+MemTotal:        7742672 kB
+MemFree:          317672 kB
+MemAvailable:    4366300 kB
+Buffers:          455556 kB
+Cached:          3584968 kB
+SwapCached:         3020 kB
+Active:          1897908 kB
+Inactive:        4719668 kB
+Active(anon):     356768 kB
+Inactive(anon):  2327432 kB
+Active(file):    1541140 kB
+Inactive(file):  2392236 kB
+Unevictable:         132 kB
+Mlocked:               0 kB
+SwapTotal:       2097152 kB
+SwapFree:        1966460 kB
+Dirty:              4036 kB
+Writeback:             0 kB
+AnonPages:       2573536 kB
+Mapped:          1136444 kB
+Shmem:            107136 kB
+KReclaimable:     310312 kB
+Slab:             468012 kB
+SReclaimable:     310312 kB
+SUnreclaim:       157700 kB
+KernelStack:       23748 kB
+PageTables:        33652 kB
+SecPageTables:         0 kB
+NFS_Unstable:          0 kB
+Bounce:                0 kB
+WritebackTmp:          0 kB
+CommitLimit:     5968488 kB
+Committed_AS:   10363516 kB
+VmallocTotal:   34359738367 kB
+VmallocUsed:       55008 kB
+VmallocChunk:          0 kB
+Percpu:            16384 kB
+HardwareCorrupted:     0 kB
+AnonHugePages:         0 kB
+ShmemHugePages:        0 kB
+ShmemPmdMapped:        0 kB
+FileHugePages:         0 kB
+FilePmdMapped:         0 kB
+Unaccepted:            0 kB
+HugePages_Total:       0
+HugePages_Free:        0
+HugePages_Rsvd:        0
+HugePages_Surp:        0
+Hugepagesize:       2048 kB
+Hugetlb:               0 kB
+DirectMap4k:      230400 kB
+DirectMap2M:     7761920 kB
+DirectMap1G:     8388608 kB
+
+[exit_code=0]
+
+=== sample_5_vm_cpu_stat | 2026-11-23T14:23:22+00:00 ===
+$ docker exec k3d-capstone-server-0 cat /proc/stat
+cpu  2007615 529 1483652 23930649 69896 0 166729 0 0 0
+cpu0 175424 0 140710 1954832 8775 0 56942 0 0 0
+cpu1 156508 0 104543 2022663 10324 0 34052 0 0 0
+cpu2 174344 0 142047 1959470 9747 0 14885 0 0 0
+cpu3 158159 0 105173 2028613 4842 0 14346 0 0 0
+cpu4 178189 0 142639 1960321 5959 0 7173 0 0 0
+cpu5 158058 10 105185 2029914 4165 0 9166 0 0 0
+cpu6 177762 49 142326 1961442 5356 0 5318 0 0 0
+cpu7 157974 160 105094 2030107 4092 0 6684 0 0 0
+cpu8 177627 48 142505 1961821 5081 0 4318 0 0 0
+cpu9 157796 104 105543 2029534 3589 0 5468 0 0 0
+cpu10 177330 143 142572 1962129 4783 0 3870 0 0 0
+cpu11 158439 12 105310 2029796 3178 0 4502 0 0 0
+intr 390421851 0 0 0 0 0 0 0 0 0 319 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2046 1 3 24 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+ctxt 576207859
+btime 1795420514
+processes 2082755
+procs_running 4
+procs_blocked 0
+softirq 93344730 0 5976316 736 22379860 4566 0 1654370 30448184 0 32880698
+
+[exit_code=0]
+
+FINISHED 2026-11-23T14:23:22+00:00 | failed_commands=[]

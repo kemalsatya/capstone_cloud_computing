@@ -12,4 +12,4 @@ resources:
   - keycloak
 images:
   - name: registry:5000/journalfit-backend
-    newTag: 0c2cf92
+    newTag: be509cd

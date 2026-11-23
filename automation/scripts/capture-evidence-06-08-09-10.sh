@@ -288,51 +288,19 @@ run_08() {
 # MODUL 09: CAPACITY & FINOPS
 # ==============================================================================
 run_09() {
-  local log_file="$DIR_09/capacity-finops-capture-latest.txt"
-  {
-    echo "================================================================================"
-    echo "  [09-CAPACITY-FINOPS] RESOURCE WORKSHEET, COST & ROADMAP - JOURNALFIT (TEAM 7)"
-    echo "  Owner : Anggota 4 (FinOps & Roadmap) + Anggota 2 (K8s Capacity Baseline)"
-    echo "================================================================================"
-    echo ""
-    echo ">>> PANEL 1: CAPACITY & HEADROOM WORKSHEET (Host Lab: 12 CPU, 7.4 GiB RAM)"
-    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "Komponen" "Replica" "CPU Req/Lim" "RAM Req/Lim" "Total Peak" "Storage/Retensi"
-    printf "%-30s-+-%-7s-+-%-11s-+-%-11s-+-%-12s-+-%-12s\n" "------------------------------" "-------" "-----------" "-----------" "------------" "---------------"
-    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "JournalFit Backend (Baseline)" "2" "100m / 250m" "128Mi/256Mi" "500m / 512Mi" "1Gi PVC (RWO)"
-    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "JournalFit Backend (HPA Max)" "3" "100m / 250m" "128Mi/256Mi" "750m / 768Mi" "1Gi PVC (RWO)"
-    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "Keycloak OIDC (start-dev/prod)" "1" "250m / 1000m" "512Mi/1024Mi" "~596Mi aktual" "Recreate stateful"
-    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "PostgreSQL 17 Alpine" "1" "- / ~500m" "- / ~64Mi" "~64Mi / host" "Docker Volume"
-    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "Prometheus + Grafana + Reg" "3" "- / ~500m" "- / ~350Mi" "~350Mi total" "3d Retention"
-    printf "%-30s | %-7s | %-11s | %-11s | %-12s | %-12s\n" "k3s Control Plane + Traefik" "1" "- / ~1000m" "- / ~650Mi" "~650Mi total" "local-path"
-    echo "  -> Headroom tersisa pada host pada HPA Peak (3 pod + Keycloak + full stack): ~68% RAM, >80% CPU"
-    echo ""
-
-    if command -v kubectl >/dev/null 2>&1 && kubectl top pods >/dev/null 2>&1; then
-      echo "  [LIVE CLUSTER METRICS - kubectl top pods]"
-      kubectl top pods
-      echo ""
-    fi
-
-    echo ">>> PANEL 2: CLOUD IAAS MAPPING & FINOPS UNIT-COST MODEL"
-    printf "%-34s | %-28s | %-14s\n" "Komponen Cloud Mapping" "Spesifikasi Sizing" "Est. Biaya/Bln"
-    printf "%-34s-+-%-28s-+-%-14s\n" "----------------------------------" "----------------------------" "--------------"
-    printf "%-34s | %-28s | %-14s\n" "2x Worker VM (IaaS / CloudStack)" "2 vCPU, 2-4 GB RAM / node" "~\$30.00"
-    printf "%-34s | %-28s | %-14s\n" "1x Managed PostgreSQL DB" "2 vCPU, 2 GB RAM, 20GB SSD" "~\$15.00"
-    printf "%-34s | %-28s | %-14s\n" "Object Storage (MinIO / S3)" "50 GB Multi-AZ Storage" "~\$1.25"
-    printf "%-34s | %-28s | %-14s\n" "Ingress Load Balancer & Ops" "Managed LB + Self-Prometheus" "~\$10.00"
-    echo "  -> TOTAL ESTIMASI BULANAN CLOUD SMALL PROD : ~\$56.25 / bulan"
-    echo "  -> UNIT-COST v1 (Rule-Engine Lokal)        : \$0.001125 / cek (@50.000 cek/bln) | AI Token Fee = \$0"
-    echo "  -> PROYEKSI OPTIMASI AI v2 (Abstract-Only) : \$0.0001-\$0.0004/cek (hemat >95% vs Full-Text GPT-4o)"
-    echo ""
-
-    echo ">>> PANEL 3: RESIDUAL RISKS & PRIORITIZED IMPROVEMENT ROADMAP"
-    echo "  [R1 - High] PVC ReadWriteOnce terikat 1 node -> Roadmap: Migrasi upload .docx ke S3/MinIO."
-    echo "  [R2 - Med ] Direct Access Grant dev client (password) -> Roadmap: Authorization Code Flow + PKCE & DB RLS."
-    echo "  [R3 - Med ] DB lokal via host.docker.internal -> Roadmap: Managed RDS + K8s CronJob auto-backup."
-    echo "  [R4 - Low ] Local OCI Registry tanpa auth/TLS  -> Roadmap: Pindah ke GHCR / Harbor privat."
-    echo ""
-    echo "[TIP SCREENSHOT 09_evidence.jpg] Screenshot tampilan tabel lengkap ini dari terminal Anda."
-  } | tee "$log_file"
+  local python_bin="${PYTHON_BIN:-python}"
+  local owner="${EVIDENCE_OWNER:-$(git -C "$ROOT_DIR" config --get user.name || true)}"
+  if ! command -v "$python_bin" >/dev/null 2>&1; then
+    echo "[ERROR] Python 3.10+ diperlukan; atur PYTHON_BIN bila nama executable berbeda." >&2
+    return 1
+  fi
+  "$python_bin" "$SCRIPT_DIR/capture-capacity-finops.py" \
+    --context "${KUBE_CONTEXT:-k3d-capstone}" \
+    --owner "$owner" \
+    --samples "${CAPACITY_SAMPLES:-5}" \
+    --interval "${CAPACITY_INTERVAL:-30}" \
+    --postgres-container "${CAPACITY_POSTGRES_CONTAINER:-capstone-postgres}" \
+    --output-dir "${CAPACITY_OUTPUT_DIR:-$DIR_09}"
 }
 
 # ==============================================================================
