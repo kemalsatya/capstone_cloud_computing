@@ -1,154 +1,121 @@
 import crypto from 'node:crypto';
-import fs from 'node:fs/promises';
 import path from 'node:path';
-import mammoth from 'mammoth';
-import { manuscriptRepository } from '../repositories/manuscript.repository.js';
 import { AppError } from '../../../common/middlewares/errorHandler.js';
+import { validateDocx } from '../../parser/index.js';
+import { storage, manuscriptObjectKey } from '../../storage/index.js';
+import { queueService } from '../../queue/index.js';
+import { manuscriptRepository } from '../repositories/manuscript.repository.js';
+
+function newId(prefix) {
+    return `${prefix}-${crypto.randomUUID()}`;
+}
+
+function sha256(buffer) {
+    return crypto.createHash('sha256').update(buffer).digest('hex');
+}
+
+function originalFilename(file) {
+    return path.basename(String(file?.originalname || 'manuscript.docx')).slice(0, 255);
+}
+
+function mapFinding(finding) {
+    return {
+        rule_id: finding.rule_id || finding.rule_type || null,
+        severity: finding.severity,
+        message: finding.message,
+        location: finding.location || null,
+        expected: finding.expected || null,
+        actual: finding.actual || null,
+    };
+}
+
+function mapScope(scope) {
+    const summary = scope?.summary || {};
+
+    return {
+        status: scope?.status || 'queued',
+        fit_level: scope?.outcome || null,
+        rationale: summary.rationale || null,
+        matched_topics: summary.matched_topics || [],
+        suggestions: summary.suggestions || [],
+        disclaimer: 'Saran kecocokan topik, bukan keputusan penerimaan naskah.',
+    };
+}
 
 export const manuscriptService = {
-    async extractTextFromDocx(buffer) {
-        try {
-            const result = await mammoth.extractRawText({ buffer });
-            return result.value || '';
-        } catch {
-            // Fallback for mock/test text uploads
-            return buffer.toString('utf-8');
-        }
-    },
-
-    evaluateRules(text, template) {
-        const words = text.trim() ? text.trim().split(/\s+/).filter(Boolean).length : 0;
-        const minWords = template.min_words ?? 3000;
-        const maxWords = template.max_words ?? 8000;
-        const requireAbstract = template.require_abstract ?? true;
-        const requireKeywords = template.require_keywords ?? true;
-
-        const findings = [];
-        let score = 100;
-
-        // 1. Word count rule
-        if (words < minWords) {
-            score -= 20;
-            findings.push({
-                ruleType: 'WORD_COUNT',
-                severity: 'WARNING',
-                message: `Word count (${words}) is below minimum requirement of ${minWords} words.`,
-            });
-        } else if (words > maxWords) {
-            score -= 15;
-            findings.push({
-                ruleType: 'WORD_COUNT',
-                severity: 'WARNING',
-                message: `Word count (${words}) exceeds maximum limit of ${maxWords} words.`,
-            });
-        } else {
-            findings.push({
-                ruleType: 'WORD_COUNT',
-                severity: 'INFO',
-                message: `Word count is ${words} words (compliant: ${minWords}-${maxWords} words).`,
-            });
-        }
-
-        // 2. Abstract check
-        const hasAbstract = /abstract/i.test(text);
-        if (requireAbstract) {
-            if (hasAbstract) {
-                findings.push({
-                    ruleType: 'ABSTRACT_CHECK',
-                    severity: 'INFO',
-                    message: 'Abstract section is present.',
-                });
-            } else {
-                score -= 15;
-                findings.push({
-                    ruleType: 'ABSTRACT_CHECK',
-                    severity: 'WARNING',
-                    message: 'Abstract section is required but was not found.',
-                });
-            }
-        }
-
-        // 3. Keywords check
-        const hasKeywords = /keyword|kata kunci/i.test(text);
-        if (requireKeywords) {
-            if (hasKeywords) {
-                findings.push({
-                    ruleType: 'KEYWORDS_CHECK',
-                    severity: 'INFO',
-                    message: 'Keywords section is present.',
-                });
-            } else {
-                score -= 15;
-                findings.push({
-                    ruleType: 'KEYWORDS_CHECK',
-                    severity: 'WARNING',
-                    message: 'Keywords section is required but was not found.',
-                });
-            }
-        }
-
-        return {
-            formatScore: Math.max(0, Math.min(100, score)),
-            findings,
-            wordCount: words,
-        };
-    },
-
-    async processUpload({ tenantId, file, authorId = null }) {
+    async processUpload({ tenantId, file, authorId = null, legacy = false, parentManuscriptId = null }) {
         if (!file) {
-            throw new AppError('File is required (.docx format)', 400);
+            throw new AppError('File naskah wajib diunggah.', 400, null, 'INVALID_FILE');
         }
 
-        // Ensure tenant and default rule template exist in PostgreSQL
-        await manuscriptRepository.ensureTenantExists(tenantId);
-        const template = await manuscriptRepository.ensureDefaultRuleTemplate(tenantId);
+        const activeRule = await manuscriptRepository.getActiveRuleTemplate(tenantId);
+        if (!activeRule) {
+            throw new AppError(
+                'Tenant belum memiliki rule format aktif.',
+                409,
+                null,
+                'NO_ACTIVE_RULE'
+            );
+        }
 
-        // Ensure uploads directory exists on host/container
-        const uploadsDir = path.resolve(process.cwd(), 'uploads');
-        await fs.mkdir(uploadsDir, { recursive: true });
+        if (!legacy) {
+            await validateDocx(file.buffer);
+        }
 
-        const manuscriptId = `ms-${crypto.randomUUID().slice(0, 8)}`;
-        const storedFileName = `${manuscriptId}-${file.originalname}`;
-        const storedFilePath = path.join(uploadsDir, storedFileName);
+        let parent = null;
+        if (parentManuscriptId) {
+            parent = await manuscriptRepository.findParentManuscript({
+                id: parentManuscriptId,
+                tenantId,
+                authorId,
+            });
 
-        await fs.writeFile(storedFilePath, file.buffer);
+            if (!parent) {
+                throw new AppError(
+                    'Naskah induk tidak ditemukan.',
+                    404,
+                    null,
+                    'NOT_FOUND'
+                );
+            }
+        }
 
-        // Extract text and evaluate rules
-        const textContent = await this.extractTextFromDocx(file.buffer);
-        const { formatScore, findings } = this.evaluateRules(textContent, template);
+        const manuscriptId = newId('ms');
+        const objectKey = manuscriptObjectKey(tenantId, manuscriptId);
+        const revisionNo = parent ? parent.revision_no + 1 : 1;
+        const filename = originalFilename(file);
 
-        // Save manuscript record
-        const manuscript = await manuscriptRepository.createManuscript({
-            id: manuscriptId,
-            tenantId,
-            authorId,
-            title: file.originalname,
-            filePath: `/uploads/${storedFileName}`,
-        });
+        await storage.put(objectKey, file.buffer);
 
-        // Save check result
-        const checkResultId = `cr-${crypto.randomUUID().slice(0, 8)}`;
-        const checkResult = await manuscriptRepository.createCheckResult({
-            id: checkResultId,
-            manuscriptId: manuscript.id,
-            status: 'COMPLETED',
-            formatScore,
-        });
-
-        // Save findings
-        const findingsPayload = findings.map((f, idx) => ({
-            id: `f-${checkResultId.slice(3)}-${idx + 1}`,
-            checkResultId: checkResult.id,
-            ruleType: f.ruleType,
-            severity: f.severity,
-            message: f.message,
-        }));
-        const savedFindings = await manuscriptRepository.createFindings(findingsPayload);
+        try {
+            await manuscriptRepository.createSubmissionTx({
+                manuscript: {
+                    id: manuscriptId,
+                    tenantId,
+                    authorId,
+                    ruleTemplateId: activeRule.id,
+                    ruleVersion: activeRule.version,
+                    parentManuscriptId: parent?.id || null,
+                    revisionNo,
+                    title: filename,
+                    objectKey,
+                    originalFilename: filename,
+                    sizeBytes: file.size ?? file.buffer.length,
+                    sha256: sha256(file.buffer),
+                },
+                formatCheck: { id: newId('cr') },
+                scopeCheck: { id: newId('cr') },
+                enqueue: (...args) => queueService.enqueueFormatCheck(...args),
+            });
+        } catch (err) {
+            await storage.delete(objectKey).catch(() => {});
+            throw err;
+        }
 
         return {
-            manuscript,
-            checkResult,
-            findings: savedFindings,
+            manuscript_id: manuscriptId,
+            revision_no: revisionNo,
+            status: 'queued',
         };
     },
 
@@ -158,7 +125,7 @@ export const manuscriptService = {
             : (authOrTenant || {});
 
         const fullReport = await manuscriptRepository.getFullReportByManuscriptId(manuscriptId);
-        if (!fullReport || !fullReport.manuscript) {
+        if (!fullReport?.manuscript) {
             throw new AppError(
                 `Manuscript with ID '${manuscriptId}' not found`,
                 404,
@@ -167,7 +134,6 @@ export const manuscriptService = {
             );
         }
 
-        // Multi-tenant isolation: never reveal resources owned by another tenant.
         if (fullReport.manuscript.tenant_id !== auth.tenantId) {
             throw new AppError(
                 `Manuscript with ID '${manuscriptId}' not found`,
@@ -177,7 +143,6 @@ export const manuscriptService = {
             );
         }
 
-        // Authors may only read their own manuscripts within their tenant.
         const roles = auth.roles || [];
         const isAuthorOnly = roles.length > 0 && roles.every((role) => role === 'author');
         const userId = auth.user?.id || null;
@@ -190,10 +155,33 @@ export const manuscriptService = {
             );
         }
 
+        const format = fullReport.format;
+        const countFromFindings = { error: 0, warning: 0, info: 0 };
+        for (const finding of fullReport.findings) {
+            if (countFromFindings[finding.severity] !== undefined) {
+                countFromFindings[finding.severity] += 1;
+            }
+        }
+
         return {
-            manuscript: fullReport.manuscript,
-            checkResult: fullReport.checkResult,
-            findings: fullReport.findings,
+            manuscript: {
+                id: fullReport.manuscript.id,
+                tenant_id: fullReport.manuscript.tenant_id,
+                author_id: fullReport.manuscript.author_id,
+                revision_no: fullReport.manuscript.revision_no,
+                title: fullReport.manuscript.title,
+                status: fullReport.manuscript.status,
+                created_at: fullReport.manuscript.created_at,
+            },
+            rule: fullReport.rule,
+            format: {
+                status: format?.status || 'queued',
+                outcome: format?.outcome || null,
+                counts: format?.summary?.counts || countFromFindings,
+                findings: fullReport.findings.map(mapFinding),
+            },
+            scope: mapScope(fullReport.scope),
+            generated_at: new Date().toISOString(),
         };
     },
 };

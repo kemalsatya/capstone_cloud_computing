@@ -1,4 +1,5 @@
 import { query } from '../../../config/database.js';
+import { isQueueReady } from '../../queue/index.js';
 
 export const healthController = {
     getLive(req, res) {
@@ -9,20 +10,22 @@ export const healthController = {
     },
 
     async getReady(req, res) {
+        let database = 'connected';
+        let queue = isQueueReady() ? 'ready' : 'unavailable';
+
         try {
             await query('SELECT 1');
-            return res.status(200).json({
-                status: 'ready',
-                database: 'connected',
-                timestamp: new Date().toISOString(),
-            });
-        } catch (err) {
-            return res.status(503).json({
-                status: 'unready',
-                database: 'disconnected',
-                error: err.message,
-                timestamp: new Date().toISOString(),
-            });
+        } catch {
+            database = 'disconnected';
         }
+
+        const ready = database === 'connected' && queue === 'ready';
+
+        return res.status(ready ? 200 : 503).json({
+            status: ready ? 'ready' : 'unready',
+            database,
+            queue,
+            timestamp: new Date().toISOString(),
+        });
     },
 };

@@ -18,11 +18,40 @@ services:
       - postgres_data:/var/lib/postgresql/data
       - ./source/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./source/migrations/001_add_keycloak_auth.sql:/docker-entrypoint-initdb.d/02-auth.sql:ro
+      - ./source/migrations/002_prd_format_foundation.sql:/docker-entrypoint-initdb.d/03-format.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-capstone} -d ${DB_NAME:-journalfit}"]
       interval: 5s
       timeout: 5s
       retries: 20
+    networks:
+      - capstone-net
+
+  # One-shot setup: migrations then demo seed, using the app image.
+  # The postgres init scripts above only run on an empty volume, so older
+  # volumes still need this job to receive 001/002.
+  db-setup:
+    build:
+      context: ./source
+      dockerfile: Dockerfile
+    container_name: journalfit-db-setup
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-capstone}
+      DB_PASSWORD: ${DB_PASSWORD:-capstone}
+      DB_NAME: ${DB_NAME:-journalfit}
+      UPLOAD_DIR: uploads
+    command:
+      - sh
+      - -c
+      - |
+        node scripts/run-migrations.js &&
+        node scripts/seed-demo-data.js
+    restart: "no"
     networks:
       - capstone-net
 
@@ -37,6 +66,8 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_started
+      db-setup:
+        condition: service_completed_successfully
     environment:
       PORT: ${PORT:-8000}
       NODE_ENV: ${NODE_ENV:-development}
@@ -49,8 +80,46 @@ services:
       KEYCLOAK_ISSUER: ${KEYCLOAK_ISSUER:-http://localhost:${KEYCLOAK_PORT:-8081}/realms/journalfit}
       KEYCLOAK_JWKS_URI: ${KEYCLOAK_JWKS_URI:-http://keycloak:8080/realms/journalfit/protocol/openid-connect/certs}
       KEYCLOAK_AUDIENCE: ${KEYCLOAK_AUDIENCE:-journalfit-api}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-10}
+      UPLOAD_DIR: uploads
+      PG_BOSS_SCHEMA: ${PG_BOSS_SCHEMA:-pgboss}
+      FORMAT_QUEUE: ${FORMAT_QUEUE:-format-check}
+      SCOPE_QUEUE: ${SCOPE_QUEUE:-scope-check}
+      ENABLE_DOCS: ${ENABLE_DOCS:-false}
     ports:
       - "127.0.0.1:${PORT:-8000}:8000"
+    volumes:
+      - app_uploads:/app/uploads
+    networks:
+      - capstone-net
+
+  worker-format:
+    build:
+      context: ./source
+      dockerfile: Dockerfile
+    container_name: journalfit-worker-format
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-setup:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-capstone}
+      DB_PASSWORD: ${DB_PASSWORD:-capstone}
+      DB_NAME: ${DB_NAME:-journalfit}
+      UPLOAD_DIR: uploads
+      PG_BOSS_SCHEMA: ${PG_BOSS_SCHEMA:-pgboss}
+      FORMAT_QUEUE: ${FORMAT_QUEUE:-format-check}
+      SCOPE_QUEUE: ${SCOPE_QUEUE:-scope-check}
+      WORKER_TYPE: format
+      WORKER_METRICS_PORT: ${WORKER_METRICS_PORT:-9101}
+    command: ["node", "src/worker.js"]
+    ports:
+      - "127.0.0.1:${WORKER_METRICS_PORT:-9101}:9101"
     volumes:
       - app_uploads:/app/uploads
     networks:

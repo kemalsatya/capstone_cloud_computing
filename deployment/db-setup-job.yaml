@@ -1,0 +1,73 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: journalfit-db-setup
+  namespace: default
+  labels:
+    app: journalfit-db-setup
+spec:
+  backoffLimit: 2
+  activeDeadlineSeconds: 900
+  template:
+    metadata:
+      labels:
+        app: journalfit-db-setup
+    spec:
+      automountServiceAccountToken: false
+      restartPolicy: OnFailure
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+      initContainers:
+        - name: migrate
+          image: registry:5000/journalfit-backend:2dc3593
+          imagePullPolicy: Always
+          command: ["node", "scripts/run-migrations.js"]
+          envFrom:
+            - configMapRef:
+                name: journalfit-backend-config
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: journalfit-backend-secret
+                  key: DB_PASSWORD
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 192Mi
+      containers:
+        - name: seed
+          image: registry:5000/journalfit-backend:2dc3593
+          imagePullPolicy: Always
+          command: ["node", "scripts/seed-demo-data.js"]
+          envFrom:
+            - configMapRef:
+                name: journalfit-backend-config
+          env:
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: journalfit-backend-secret
+                  key: DB_PASSWORD
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+          resources:
+            requests:
+              cpu: 50m
+              memory: 64Mi
+            limits:
+              cpu: 200m
+              memory: 192Mi

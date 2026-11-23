@@ -5,6 +5,8 @@ import manuscriptsRouter from './modules/manuscripts/index.js';
 import authRouter from './modules/auth/index.js';
 import { errorHandler, AppError } from './common/middlewares/errorHandler.js';
 import { metricsMiddleware, renderPrometheusMetrics } from './common/utils/metrics.js';
+import { env } from './config/env.js';
+import { mountApiDocs } from './docs/index.js';
 
 export function createApp() {
     const app = express();
@@ -30,8 +32,10 @@ export function createApp() {
                 healthReady: 'GET /health/ready',
                 metrics: 'GET /metrics',
                 currentUser: 'GET /api/auth/me',
-                uploadManuscript: 'POST /api/manuscripts/upload',
+                uploadManuscript: 'POST /api/manuscripts',
+                uploadManuscriptLegacy: 'POST /api/manuscripts/upload',
                 getReport: 'GET /api/manuscripts/:id/report',
+                apiDocs: env.ENABLE_DOCS ? 'GET /docs' : 'disabled (set ENABLE_DOCS=true)',
             },
         });
     });
@@ -41,6 +45,9 @@ export function createApp() {
         res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
         res.status(200).send(renderPrometheusMetrics());
     });
+
+    // API documentation (demo/dev only)
+    mountApiDocs(app, { enabled: env.ENABLE_DOCS });
 
     // Modules Routing
     app.use('/health', healthRouter);
