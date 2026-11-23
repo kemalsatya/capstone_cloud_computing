@@ -17,6 +17,13 @@ karena host.k3d.internal ENOTFOUND. DB_HOST diubah ke host.docker.internal setel
 koneksi database read-only terverifikasi. Catatan pemulihan disimpan di
 evidence/platform/readiness-dns-recovery-20261110.txt; database/PVC tidak dibuat ulang.
 
+**Koreksi 2026-11-23:** pada k3d di atas Docker Linux, `host.docker.internal` tidak
+tersedia sehingga worker gagal `getaddrinfo ENOTFOUND` dan `CrashLoopBackOff`.
+Verifikasi dari pod: `host.k3d.internal` resolve ke gateway host dan TCP ke
+PostgreSQL:5433 berhasil. Baseline `deployment/configmap.yaml` dan
+`deployment/keycloak/configmap.yaml` dikembalikan ke `host.k3d.internal`;
+`host.docker.internal` hanya fallback Docker Desktop Windows.
+
 ## POSISI DAN URUTAN BERIKUTNYA
 
 M3 platform lokal sudah diimplementasikan dan diuji. Dokumentasi F merangkum
@@ -36,7 +43,9 @@ workload Kubernetes tetap artifact 3bdf305 Node 24 sampai promosi berikutnya.
 
 Git membagikan source dan konfigurasi, bukan database/Secret/upload yang berjalan.
 Penerapan schema.sql yang sudah ada dilakukan setelah izin pengguna, tanpa perubahan
-SQL/backend. Perbaikan DNS memakai DB_HOST host.docker.internal untuk Windows ini.
+SQL/backend. Perbaikan DNS 2026-11-10 memakai DB_HOST host.docker.internal khusus
+Windows; pada k3d di atas Docker Linux alias itu tidak resolve dan baseline
+manifest dikembalikan ke host.k3d.internal (lihat koreksi 2026-11-23 di atas).
 
 ## 0. PERSIAPAN LAB
 

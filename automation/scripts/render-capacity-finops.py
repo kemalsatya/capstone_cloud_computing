@@ -198,7 +198,7 @@ def render(directory, assumptions_path):
     risks = [
         ("R1 / P1 · STORAGE", "RWO local-path pins API + worker to one node; nominal 1Gi is not a filesystem quota.", "Next: Garage/S3, lifecycle + restore, then topology-aware placement."),
         ("R2 / P1 · IDENTITY", "Direct access grant/demo users and single Keycloak Recreate deployment remain.", "Next: PKCE, production identities, Secret rotation and measured IAM recovery."),
-        ("R3 / P1 · DATABASE", "host.docker.internal DB + manual backup. Prior restore evidence predates this schema migration.", "Next: private DB DNS, scheduled off-site backups and a fresh isolated restore drill."),
+        ("R3 / P1 · DATABASE", "host.k3d.internal DB (host.docker.internal is Docker Desktop-only) + manual backup. Prior restore evidence predates this schema migration.", "Next: private DB DNS, scheduled off-site backups and a fresh isolated restore drill."),
         ("R4 / P1 · ARTIFACTS", "Local registry uses HTTP without authentication; laptop artifact is not a cloud release.", "Next: private TLS registry, same-digest scan and release traceability."),
         ("R5 / P1 · RESOURCE BUDGETS", f"Keycloak exceeds its RAM request; {no_requests} K8s containers have no CPU/RAM requests; Docker support is uncapped.", "Next: validate 768Mi Keycloak request, DOCX/login load profile, quotas and alerts."),
         ("R6 / P1 · DELIVERY", "Argo CD is Ready but has no Application in this lab. Capacity rollout was manual.", "Next: align source/tag/digest and prove Healthy/Synced, drift and HPA ownership."),

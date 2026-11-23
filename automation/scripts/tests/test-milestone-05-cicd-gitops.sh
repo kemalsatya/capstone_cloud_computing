@@ -31,6 +31,35 @@ if command -v kubectl >/dev/null 2>&1 && kubectl -n argocd get applications.argo
   else
     record_skip "M05-03 | Argo CD terdaftar (status saat ini: sync=$SYNC_ST, health=$HLTH_ST)"
   fi
+
+  if [[ "$WITH_DRIFT_TEST" == "true" ]]; then
+    print_step "2b. Live Argo CD Self-Heal Drift Test (--with-drift-test: hapus service/journalfit-backend)"
+    OLD_UID=$(kubectl -n default get service journalfit-backend -o jsonpath='{.metadata.uid}' 2>/dev/null || echo "")
+    echo "  UID awal service/journalfit-backend : $OLD_UID"
+    echo "  Menghapus paksa service/journalfit-backend untuk memicu Argo CD selfHeal..."
+    kubectl -n default delete service journalfit-backend --wait=true || true
+
+    HEALED=false
+    T0=$(date +%s)
+    for i in $(seq 1 30); do
+      NEW_UID=$(kubectl -n default get service journalfit-backend -o jsonpath='{.metadata.uid}' 2>/dev/null || echo "")
+      if [[ -n "$NEW_UID" && "$NEW_UID" != "$OLD_UID" ]]; then
+        T1=$(date +%s)
+        echo "  [HEALED] service/journalfit-backend otomatis dibuat ulang oleh Argo CD dalam $((T1 - T0))s (UID baru: $NEW_UID)"
+        kubectl -n default get service journalfit-backend || true
+        HEALED=true
+        break
+      fi
+      sleep 1
+    done
+    if [[ "$HEALED" == "true" ]]; then
+      record_pass "M05-03b | Live Argo CD selfHeal berhasil memulihkan service/journalfit-backend otomatis"
+    else
+      record_fail "M05-03b | Argo CD tidak memulihkan service/journalfit-backend dalam 30 detik"
+    fi
+  else
+    record_skip "M05-03b | Live Argo CD selfHeal drift test dilewati (tambahkan --with-drift-test untuk menguji)"
+  fi
 else
   record_skip "M05-03 | Argo CD Application belum terpasang di kluster lokal"
 fi

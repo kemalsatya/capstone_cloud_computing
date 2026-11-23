@@ -21,3 +21,15 @@ Kredensial database (`DB_PASSWORD`), token akses, dan artefak build berisiko boc
 - **Negatif / Batasan:**
   - Secret di kluster `k3d` dibuat pada tahap inisialisasi (`setup-keycloak.sh` / preflight), belum memakai External Secrets Operator.
   - Mekanisme autentikasi & otorisasi tingkat lanjut (verifikasi signature RS256, claim `tenant_id`, role enforcement) dipisahkan ke **ADR-009** menggunakan Keycloak OIDC/JWKS.
+
+## Status Implementasi 2026-11-23
+
+- `aquasecurity/trivy-action` di CI memakai `exit-code: 0`, sehingga saat ini bersifat
+  **report-only**, bukan blocking gate.
+- Scan image demo `localhost:5001/journalfit-backend:0c2cf92`:
+  **0 CRITICAL**, **10 HIGH** pada npm CLI bawaan image
+  (`/usr/local/lib/node_modules/npm/...`); `/app/node_modules` bersih.
+- Remediasi yang disarankan: hapus `npm`/`npx` dari runtime image setelah `npm ci`
+  (atau multi-stage build), rebuild, lalu re-scan. Setelah bersih, `exit-code: 1`
+  dapat diaktifkan sebagai gate nyata.
+- `test-milestone-06-security.sh` juga menjalankan Trivy dengan `--exit-code 0`.

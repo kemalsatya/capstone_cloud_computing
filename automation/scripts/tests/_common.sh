@@ -42,11 +42,15 @@ SKIP_COUNT=0
 PEND_COUNT=0
 ALLOW_PENDING="${ALLOW_PENDING:-false}"
 WITH_TRIVY="${WITH_TRIVY:-false}"
+WITH_LOAD_TEST="${WITH_LOAD_TEST:-false}"
+WITH_DRIFT_TEST="${WITH_DRIFT_TEST:-false}"
 
 for arg in "$@"; do
   case "$arg" in
     --allow-pending) ALLOW_PENDING=true ;;
     --with-trivy) WITH_TRIVY=true ;;
+    --with-load-test) WITH_LOAD_TEST=true ;;
+    --with-drift-test) WITH_DRIFT_TEST=true ;;
   esac
 done
 

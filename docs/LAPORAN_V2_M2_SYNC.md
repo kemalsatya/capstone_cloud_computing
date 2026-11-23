@@ -134,10 +134,10 @@ Setiap anggota tim tetap bertanggung jawab memahami keseluruhan sistem saat *Tec
 
 ### 4.2 Risiko Aktual dan Mitigasi
 
-1. **Kerumitan variasi berkas DOCX:** Dimitigasi dengan validasi ZIP safety (`INVALID_FILE`), pembatasan format hanya `.docx`, dan 9 aturan Tier-1 deterministik (`FMT-001..009`) yang teruji dengan 63/64 unit/integration tests.
+1. **Kerumitan variasi berkas DOCX:** Dimitigasi dengan validasi ZIP safety (`INVALID_FILE`), pembatasan format hanya `.docx`, dan 9 aturan Tier-1 deterministik (`FMT-001..009`) yang teruji dengan 63/64 unit/integration tests (1 skipped golden template; 64/64 dengan template lokal).
 2. **PVC `ReadWriteOnce` (`local-path`) mengikat pod pada 1 node (`k3d-capstone-agent-0`):** Dimitigasi sementara dengan `nodeSelector: journalfit-storage: uploads` dan anotasi Argo CD `Prune=false,Delete=false`; migrasi ke Object Storage (Garage/MinIO S3) dijadwalkan pada Roadmap v2.
 3. **Footprint memori Keycloak (`~596 MiB` saat cold start ~72 detik) & *Direct Access Grants* dev flow:** Dimitigasi dengan startupProbe 180 detik, strategi `Recreate`, serta pemisahan database `keycloak` tersendiri; migrasi ke *Authorization Code + PKCE* masuk Roadmap v2.
-4. **PostgreSQL lokal via `host.docker.internal` & backup CLI manual:** Dimitigasi dengan verifikasi restore terisolasi rutin (RTO 0,78 detik untuk `journalfit` dan 101 tabel `keycloak`); otomatisasi `CronJob` + Managed DB masuk Roadmap v2.
+4. **PostgreSQL lokal via alias host k3d (`host.k3d.internal`) & backup CLI manual:** Dimitigasi dengan verifikasi restore terisolasi rutin (RTO 0,78 detik untuk `journalfit` dan 101 tabel `keycloak`); otomatisasi `CronJob` + Managed DB masuk Roadmap v2.
 5. **Fitur Roadmap v2 (Worker Scope AI Groq & S3):** Dicatat secara jujur sebagai *limitation* v1 agar tidak terjadi klaim fitur yang belum terbukti.
 
 ---
@@ -193,7 +193,7 @@ Diagram ArchiMate 3.2 menampilkan keterlacakan menyeluruh dari **Business Layer*
 | :--- | :--- | :--- | :--- | :--- |
 | **7.1** | **Performa** | Beban unggahan & pembacaan laporan secara paralel | API tetap responsif; p95 format < 30 detik, report cepat | **PASS:** API report p95 < 50 ms; rolling update 777 req (0 gagal, p95 26,73 ms); uji beban 19.865 req (0 gagal). |
 | **7.2** | **Elastisitas** | Lonjakan CPU > 70% pada pod backend | HPA otomatis menaikkan replika `2→3` dan turun kembali ke `2` saat beban mereda | **PASS (`04_evidence`):** HPA teruji scale `2→3→2` pada beban 64 worker tanpa request gagal. |
-| **7.3** | **Keamanan — Isolasi Tenant** | `author.b` (`tenant-b`) mengakses `ms-001` (`tenant-a`) atau mengirim `X-Tenant-ID` palsu | Akses lintas-tenant ditolak `404 NOT_FOUND`; header palsu diabaikan | **PASS (`06_evidence`):** Terbukti di Docker Compose & K8s Ingress + automated tests (`63/64 PASS`). |
+| **7.3** | **Keamanan — Isolasi Tenant** | `author.b` (`tenant-b`) mengakses `ms-001` (`tenant-a`) atau mengirim `X-Tenant-ID` palsu | Akses lintas-tenant ditolak `404 NOT_FOUND`; header palsu diabaikan | **PASS (`06_evidence`):** Terbukti di Docker Compose & K8s Ingress + automated tests (`63/64 PASS`, 1 skipped golden template). |
 | **7.4** | **Keamanan — Kontrol Peran (RBAC)** | `editor.a` memanggil endpoint upload (`author`-only) atau akses tanpa token | Tanpa token → `401`; salah peran → `403 FORBIDDEN` | **PASS (`06_evidence`):** Terbukti di Compose & K8s Ingress + OpenAPI tenant restriction tests. |
 | **7.5** | **Ketahanan Worker & Queue** | File `.docx` korup atau error transien pada `worker-format` | File korup → `failed` (`INVALID_FILE`) tanpa retry; error transien → retry + DLQ + idempoten | **PASS (`format-worker.test.js`):** Terverifikasi pada automated worker & parser test suites. *(Graceful degradation AI scope masuk Roadmap v2).* |
 | **7.6** | **Recovery (Backup & Restore)** | Simulasi kehilangan database (`restore drill`) & penghapusan pod | Restore DB < 5 menit; pod pulih otomatis tanpa hilang berkas PVC | **PASS (`08_evidence`):** Pod self-healing **7,1 detik** (SHA-256 cocok); DB Restore RTO **0,78 detik** (`journalfit` 6 tabel + `keycloak` 101 tabel). |
@@ -203,7 +203,7 @@ Diagram ArchiMate 3.2 menampilkan keterlacakan menyeluruh dari **Business Layer*
 
 ## Bab VIII — Architecture Decision Records (ADR-001 s.d. ADR-009)
 
-Seluruh 9 keputusan arsitektur terdokumentasi di `decisions/ADR-001` s.d. `ADR-009` dan telah diverifikasi otomatis menggunakan `automation/scripts/test-adr-conformance.py` (**9/9 ADR PASS — 100% compliant**) serta `npm test` (**63/64 tests PASS, 0 failures**).
+Seluruh 9 keputusan arsitektur terdokumentasi di `decisions/ADR-001` s.d. `ADR-009` dan telah diverifikasi otomatis menggunakan `automation/scripts/tests/test-milestone-10-adr.sh` (**9/9 ADR PASS — 100% compliant**) serta `npm test` (**63/64 tests PASS, 0 failures (1 skipped golden template)**).
 
 > **[Sisipkan Gambar Terbaru: `10-decisions-adr/10_evidence.jpg` — Matriks ADR-001 s.d. ADR-009 & Automated Conformance Test]**
 
@@ -211,10 +211,10 @@ Seluruh 9 keputusan arsitektur terdokumentasi di `decisions/ADR-001` s.d. `ADR-0
 | :--- | :--- | :--- | :--- |
 | **ADR-001** | Modular Monolith (`Node.js 22 + Express 5.3`) + Async Worker (`pg-boss`) | Microservices penuh terpisah | Hemat RAM (~128 MiB/pod), pemrosesan format asinkron terpisah via `worker-format.yaml`; scaling API tetap di level pod utuh. |
 | **ADR-002** | PostgreSQL 17 + Logical Multi-Tenancy (`tenant_id`) | Dedicated DB per tenant / NoSQL | Integritas ACID & hemat resource; isolasi bergantung pada disiplin filter `tenant_id` di repository/service. |
-| **ADR-003** | Kluster `k3d` + Hardened Container Non-Root (`UID 10001`) + HPA (2–3) | Docker Compose saja / Root container | Image ringan (`node:22-alpine`), `drop ALL`, HPA teruji `2→3→2`; koneksi DB lab masih memakai `host.docker.internal`. |
+| **ADR-003** | Kluster `k3d` + Hardened Container Non-Root (`UID 10001`) + HPA (2–3) | Docker Compose saja / Root container | Image ringan (`node:22-alpine`), `drop ALL`, HPA teruji `2→3→2`; koneksi DB lab memakai alias host k3d `host.k3d.internal` (koreksi 2026-11-23: `host.docker.internal` hanya ada di Docker Desktop dan gagal `ENOTFOUND` pada k3d Linux). |
 | **ADR-004** | Declarative GitOps (Argo CD) + Immutable Tag SHA-7 (`0c2cf92`) | Manual `kubectl apply` & tag `:latest` | Audit trail Git 1:1 & anti-drift (`selfHeal: true`, `ignoreDifferences /spec/replicas`); butuh update `newTag` di `kustomization.yaml`. |
 | **ADR-005** | PVC `local-path` RWO (1Gi) + `nodeSelector` Storage Pinning | Deploy kluster S3/MinIO penuh di v1 | Berkas `.docx` tetap utuh saat pod diganti (SHA-256 cocok 100%); replika terkunci pada 1 node (migrasi S3 di v2). |
-| **ADR-006** | Runtime Secret Separation (`secretKeyRef`) + Trivy CI Scan Gate | Hardcoded password di YAML / Git | 0 kredensial di Git (`secret.example.yaml`), Trivy memblokir CVE `HIGH/CRITICAL`; secret dibuat imperatif saat setup kluster. |
+| **ADR-006** | Runtime Secret Separation (`secretKeyRef`) + Trivy CI Scan Gate | Hardcoded password di YAML / Git | 0 kredensial di Git (`secret.example.yaml`), Trivy memindai CVE `HIGH/CRITICAL` dengan `exit-code: 0` (report-only); 10 HIGH npm CLI masih terbuka. |
 | **ADR-007** | Pull Telemetry (`GET /metrics` API & Worker) + Prometheus & Grafana SLO | Paid SaaS APM Agent | Ringan & vendor-neutral (4 Golden Signals, retensi TSDB 3 hari); belum mencakup distributed tracing (OpenTelemetry). |
 | **ADR-008** | `pg_dump` Isolated Restore + Native OOXML Rule Engine (`jszip` + `fast-xml-parser`) | Full-text DOCX ke Paid LLM API di v1 | RTO aktual **0,78 detik**, 9 rule `FMT-001..009`, **$0 biaya AI**; analisis semantik scope via AI masuk Roadmap v2. |
 | **ADR-009** | Keycloak OIDC (`26.8.2`) RS256/JWKS, Claim `tenant_id` & Policy `404` | Mock token / Spoofable `X-Tenant-ID` | Verifikasi kriptografis kuat, anti-enumerasi `404`, RBAC `403`, `X-Tenant-ID` diabaikan; overhead RAM Keycloak ~596 MiB & cold start ~72s. |
