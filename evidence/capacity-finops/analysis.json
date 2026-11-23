@@ -1,0 +1,429 @@
+{
+  "source": {
+    "commit": "be509cd230f7ffa153adce01657923f1a32b582c",
+    "branch": "feat/m2-paket-c-capacity-finops",
+    "owner": "RafaelKyKy",
+    "started_at": "2026-11-23T14:20:42+00:00",
+    "finished_at": "2026-11-23T14:23:22+00:00",
+    "sample_count": 5,
+    "capture_sha256": "3d38e500b4e2c45af0d057187d597814927636deeb36375eb9683cd042900e09",
+    "live_metrics_sha256": "befa44e5c80eb24367bef56e90d02647ad368be887d4ba060c5474ce3cf6c408",
+    "assumptions_sha256": "04c466ef5c3713058a4d4729bf4bb360427fc61fd0b92bdf201b52a57a06cfcd"
+  },
+  "docker_host": {
+    "cpu_count": 12,
+    "ram_mib": 7561.203125
+  },
+  "measured_workloads": {
+    "argocd": {
+      "cpu_m": {
+        "min": 18.0,
+        "max": 108.0,
+        "mean": 59.2
+      },
+      "ram_mib": {
+        "min": 173.0,
+        "max": 175.0,
+        "mean": 173.6
+      }
+    },
+    "backend": {
+      "cpu_m": {
+        "min": 11.0,
+        "max": 57.0,
+        "mean": 23.2
+      },
+      "ram_mib": {
+        "min": 77.0,
+        "max": 81.0,
+        "mean": 79.6
+      }
+    },
+    "capstone-smoke": {
+      "cpu_m": {
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "ram_mib": {
+        "min": 12.0,
+        "max": 12.0,
+        "mean": 12.0
+      }
+    },
+    "keycloak": {
+      "cpu_m": {
+        "min": 4.0,
+        "max": 593.0,
+        "mean": 149.2
+      },
+      "ram_mib": {
+        "min": 568.0,
+        "max": 570.0,
+        "mean": 568.8
+      }
+    },
+    "kube-system": {
+      "cpu_m": {
+        "min": 15.0,
+        "max": 77.0,
+        "mean": 31.8
+      },
+      "ram_mib": {
+        "min": 143.0,
+        "max": 144.0,
+        "mean": 143.8
+      }
+    },
+    "worker-format": {
+      "cpu_m": {
+        "min": 5.0,
+        "max": 12.0,
+        "mean": 8.6
+      },
+      "ram_mib": {
+        "min": 29.0,
+        "max": 30.0,
+        "mean": 29.2
+      }
+    }
+  },
+  "measured_namespaces": {
+    "argocd": {
+      "cpu_m": {
+        "min": 18.0,
+        "max": 108.0,
+        "mean": 59.2
+      },
+      "ram_mib": {
+        "min": 173.0,
+        "max": 175.0,
+        "mean": 173.6
+      }
+    },
+    "capstone-smoke": {
+      "cpu_m": {
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "ram_mib": {
+        "min": 12.0,
+        "max": 12.0,
+        "mean": 12.0
+      }
+    },
+    "default": {
+      "cpu_m": {
+        "min": 21.0,
+        "max": 657.0,
+        "mean": 181.0
+      },
+      "ram_mib": {
+        "min": 674.0,
+        "max": 680.0,
+        "mean": 677.6
+      }
+    },
+    "kube-system": {
+      "cpu_m": {
+        "min": 15.0,
+        "max": 77.0,
+        "mean": 31.8
+      },
+      "ram_mib": {
+        "min": 143.0,
+        "max": 144.0,
+        "mean": 143.8
+      }
+    }
+  },
+  "measured_nodes": {
+    "k3d-capstone-agent-0": {
+      "cpu_m": {
+        "min": 117.0,
+        "max": 194.0,
+        "mean": 155.4
+      },
+      "ram_mib": {
+        "min": 774.0,
+        "max": 778.0,
+        "mean": 776.4
+      }
+    },
+    "k3d-capstone-server-0": {
+      "cpu_m": {
+        "min": 146.0,
+        "max": 797.0,
+        "mean": 349.2
+      },
+      "ram_mib": {
+        "min": 1597.0,
+        "max": 1608.0,
+        "mean": 1601.8
+      }
+    }
+  },
+  "measured_docker": {
+    "capstone-grafana": {
+      "cpu_percent": {
+        "min": 0.07,
+        "max": 9.19,
+        "mean": 2.192
+      },
+      "ram_mib": {
+        "min": 56.5,
+        "max": 56.54,
+        "mean": 56.524
+      }
+    },
+    "capstone-postgres": {
+      "cpu_percent": {
+        "min": 0.02,
+        "max": 5.3,
+        "mean": 1.246
+      },
+      "ram_mib": {
+        "min": 88.97,
+        "max": 89.56,
+        "mean": 89.312
+      }
+    },
+    "capstone-prometheus": {
+      "cpu_percent": {
+        "min": 0.0,
+        "max": 0.13,
+        "mean": 0.044
+      },
+      "ram_mib": {
+        "min": 31.84,
+        "max": 32.57,
+        "mean": 32.282
+      }
+    },
+    "capstone-registry": {
+      "cpu_percent": {
+        "min": 0.0,
+        "max": 0.05,
+        "mean": 0.01
+      },
+      "ram_mib": {
+        "min": 24.37,
+        "max": 24.51,
+        "mean": 24.454
+      }
+    },
+    "k3d-capstone-agent-0": {
+      "cpu_percent": {
+        "min": 7.04,
+        "max": 16.8,
+        "mean": 11.804
+      },
+      "ram_mib": {
+        "min": 774.6,
+        "max": 776.4,
+        "mean": 775.78
+      }
+    },
+    "k3d-capstone-server-0": {
+      "cpu_percent": {
+        "min": 10.55,
+        "max": 13.78,
+        "mean": 12.104
+      },
+      "ram_mib": {
+        "min": 1599.488,
+        "max": 1606.656,
+        "mean": 1601.536
+      }
+    },
+    "k3d-capstone-serverlb": {
+      "cpu_percent": {
+        "min": 0.0,
+        "max": 0.04,
+        "mean": 0.008
+      },
+      "ram_mib": {
+        "min": 23.07,
+        "max": 23.18,
+        "mean": 23.134
+      }
+    },
+    "k3d-capstone-tools": {
+      "cpu_percent": {
+        "min": 0.0,
+        "max": 0.0,
+        "mean": 0.0
+      },
+      "ram_mib": {
+        "min": 2.887,
+        "max": 2.887,
+        "mean": 2.887
+      }
+    }
+  },
+  "vm": {
+    "available_ram_mib": {
+      "min": 4087.0625,
+      "max": 4270.785156,
+      "mean": 4199.158594
+    },
+    "used_ram_mib": {
+      "min": 3290.417969,
+      "max": 3474.140625,
+      "mean": 3362.044531
+    },
+    "ram_headroom_percent": {
+      "min": 54.053071,
+      "max": 56.482878,
+      "mean": 55.535588
+    },
+    "cpu_busy_percent": {
+      "min": 16.242726,
+      "max": 21.371448,
+      "mean": 18.815086
+    },
+    "cpu_idle_percent": {
+      "min": 78.628552,
+      "max": 83.757274,
+      "mean": 81.184914
+    },
+    "docker_container_memory_sum_mib": {
+      "min": 2602.785,
+      "max": 2612.053,
+      "mean": 2605.909
+    },
+    "docker_cpu_normalized_percent": {
+      "min": 2.0675,
+      "max": 2.5825,
+      "mean": 2.284
+    }
+  },
+  "hpa_cpu_request_percent": {
+    "min": 6,
+    "max": 17,
+    "mean": 9.4
+  },
+  "node_reservations": {
+    "k3d-capstone-agent-0": {
+      "pod_count": 16,
+      "requests": {
+        "cpu_m": 500.0,
+        "ram_mib": 524.0
+      },
+      "allocatable": {
+        "cpu_m": 12000.0,
+        "ram_mib": 7561.203125
+      },
+      "unreserved": {
+        "cpu_m": 11500.0,
+        "ram_mib": 7037.203125
+      },
+      "containers_without_cpu_request": 12,
+      "containers_without_memory_request": 12
+    },
+    "k3d-capstone-server-0": {
+      "pod_count": 2,
+      "requests": {
+        "cpu_m": 250.0,
+        "ram_mib": 512.0
+      },
+      "allocatable": {
+        "cpu_m": 12000.0,
+        "ram_mib": 7561.203125
+      },
+      "unreserved": {
+        "cpu_m": 11750.0,
+        "ram_mib": 7049.203125
+      },
+      "containers_without_cpu_request": 2,
+      "containers_without_memory_request": 2
+    }
+  },
+  "application_configured_scenarios": {
+    "baseline": {
+      "backend_replicas": 2,
+      "requests": {
+        "cpu_m": 550.0,
+        "ram_mib": 896.0
+      },
+      "limits": {
+        "cpu_m": 1750.0,
+        "ram_mib": 1792.0
+      }
+    },
+    "hpa_max": {
+      "backend_replicas": 3,
+      "requests": {
+        "cpu_m": 650.0,
+        "ram_mib": 1024.0
+      },
+      "limits": {
+        "cpu_m": 2000.0,
+        "ram_mib": 2048.0
+      }
+    },
+    "hpa_max_rolling_surge": {
+      "backend_replicas": 4,
+      "requests": {
+        "cpu_m": 750.0,
+        "ram_mib": 1152.0
+      },
+      "limits": {
+        "cpu_m": 2250.0,
+        "ram_mib": 2304.0
+      }
+    }
+  },
+  "node_requests_at_hpa_max_surge": {
+    "k3d-capstone-agent-0": {
+      "cpu_m": 700.0,
+      "ram_mib": 780.0
+    },
+    "k3d-capstone-server-0": {
+      "cpu_m": 250.0,
+      "ram_mib": 512.0
+    }
+  },
+  "finops": {
+    "classification": "ASSUMED volumes/deployment; reference prices, not a bill",
+    "compute_usd_month": 96,
+    "daily_vm_backup_usd_month": 28.8,
+    "infra_usd_month": 141.8,
+    "abstract_llm_usd_per_call": 0.000135,
+    "full_text_llm_usd_per_call": 0.0009,
+    "llm_token_cost_reduction_percent": 85.0,
+    "volume_scenarios": [
+      {
+        "completed_checks": 10000,
+        "infra_usd_per_check": 0.01418,
+        "infra_usd_per_1000": 14.18,
+        "abstract_llm_usd_month": 1.35,
+        "v2_total_usd_month": 143.15,
+        "v2_usd_per_check": 0.014315,
+        "upload_gib": 9.765625,
+        "storage_with_backups_gib": 19.765625
+      },
+      {
+        "completed_checks": 50000,
+        "infra_usd_per_check": 0.002836,
+        "infra_usd_per_1000": 2.836,
+        "abstract_llm_usd_month": 6.75,
+        "v2_total_usd_month": 148.55,
+        "v2_usd_per_check": 0.002971,
+        "upload_gib": 48.828125,
+        "storage_with_backups_gib": 58.828125
+      },
+      {
+        "completed_checks": 100000,
+        "infra_usd_per_check": 0.001418,
+        "infra_usd_per_1000": 1.418,
+        "abstract_llm_usd_month": 13.5,
+        "v2_total_usd_month": 155.3,
+        "v2_usd_per_check": 0.001553,
+        "upload_gib": 97.65625,
+        "storage_with_backups_gib": 107.65625
+      }
+    ]
+  }
+}
