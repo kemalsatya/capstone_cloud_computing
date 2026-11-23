@@ -16,3 +16,11 @@ data:
   # In-cluster JWKS fetch: the issuer above is not resolvable from pods.
   KEYCLOAK_JWKS_URI: http://keycloak.default.svc.cluster.local/realms/journalfit/protocol/openid-connect/certs
   KEYCLOAK_AUDIENCE: journalfit-api
+  MAX_UPLOAD_MB: "10"
+  UPLOAD_DIR: /app/uploads
+  PG_BOSS_SCHEMA: pgboss
+  FORMAT_QUEUE: format-check
+  SCOPE_QUEUE: scope-check
+  WORKER_METRICS_PORT: "9101"
+  # Set to "true" only for a demo; exposes /docs and /openapi.yaml.
+  ENABLE_DOCS: "false"

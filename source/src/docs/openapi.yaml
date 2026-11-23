@@ -1,0 +1,636 @@
+openapi: 3.0.3
+info:
+  title: JournalFit API
+  version: 1.0.0
+  description: |
+    Multi-tenant journal manuscript pre-submission checker.
+
+    Tenant isolation rules:
+    - Every `/api/manuscripts` operation is tenant-scoped.
+    - A resource from another tenant is reported as `404 NOT_FOUND` so the API
+      does not disclose whether the resource exists.
+    - `Authorization: Bearer <JWT>` is the production mechanism.
+    - `X-Tenant-ID` is a development-only fallback and is ignored when a valid
+      JWT is present.
+
+    Kubernetes demo uses the public issuer
+    `http://keycloak.localhost:8088/realms/journalfit`. Docker Compose uses its
+    own `http://localhost:8081/realms/journalfit`; tokens must not be mixed
+    between environments.
+  contact:
+    name: JournalFit
+servers:
+  - url: /
+    description: Current host (recommended for Swagger UI)
+  - url: http://localhost:8000
+    description: Local development
+  - url: http://journalfit.localhost:8088
+    description: Kubernetes demo (k3d + Traefik)
+tags:
+  - name: Health
+    description: Liveness and readiness probes
+  - name: Auth
+    description: Current identity from the access token
+  - name: Manuscripts
+    description: Tenant-scoped manuscript submission and reports
+  - name: Operations
+    description: Metrics and operational endpoints
+
+paths:
+  /health/live:
+    get:
+      tags: [Health]
+      operationId: getHealthLive
+      summary: Liveness probe
+      security: []
+      responses:
+        '200':
+          description: Process is alive.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthLive'
+
+  /health/ready:
+    get:
+      tags: [Health]
+      operationId: getHealthReady
+      summary: Readiness probe
+      description: Ready only when PostgreSQL responds and the pg-boss queue is ready.
+      security: []
+      responses:
+        '200':
+          description: Database and queue are ready.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReady'
+        '503':
+          description: Database or queue is not ready.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthReady'
+
+  /metrics:
+    get:
+      tags: [Operations]
+      operationId: getMetrics
+      summary: Prometheus metrics
+      security: []
+      responses:
+        '200':
+          description: Prometheus exposition format.
+          content:
+            text/plain:
+              schema:
+                type: string
+
+  /api/auth/me:
+    get:
+      tags: [Auth]
+      operationId: getCurrentUser
+      summary: Current authenticated identity
+      security:
+        - bearerAuth: []
+      responses:
+        '200':
+          description: Claims and provisioned user for the current token.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/manuscripts:
+    post:
+      tags: [Manuscripts]
+      operationId: createManuscript
+      summary: Upload a manuscript for asynchronous format checking
+      description: |
+        Validates the DOCX, stores it, creates a format check and a scope check,
+        and enqueues a `format-check` job in the same database transaction.
+        The response is `202 Accepted`; poll the report for completion.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [author]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: DOCX file to check.
+                parent_manuscript_id:
+                  type: string
+                  nullable: true
+                  description: Optional parent manuscript for a new revision.
+      responses:
+        '202':
+          description: Manuscript accepted and queued.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UploadAccepted'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/manuscripts/upload:
+    post:
+      tags: [Manuscripts]
+      operationId: uploadManuscriptLegacy
+      summary: Legacy upload alias
+      deprecated: true
+      description: |
+        Compatibility endpoint for existing evidence scripts. It returns
+        `201 Created` and keeps the legacy `data.manuscript.id` envelope.
+        New clients should use `POST /api/manuscripts`.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [author]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                parent_manuscript_id:
+                  type: string
+                  nullable: true
+      responses:
+        '201':
+          description: Legacy-compatible accepted response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LegacyUpload'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+        '503':
+          $ref: '#/components/responses/ServiceUnavailable'
+
+  /api/manuscripts/{id}/report:
+    get:
+      tags: [Manuscripts]
+      operationId: getManuscriptReport
+      summary: Get the combined format and scope report
+      description: |
+        Authors may only read their own manuscripts. Editors and tenant admins
+        may read manuscripts in their tenant. Cross-tenant access returns
+        `404 NOT_FOUND` rather than `403` to avoid leaking existence.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [author, editor, tenant_admin]
+      x-cross-tenant-status: 404
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ms-001
+      responses:
+        '200':
+          description: Report for a manuscript owned by the caller's tenant.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReportResponse'
+              examples:
+                tenantA:
+                  value:
+                    success: true
+                    message: Manuscript report retrieved successfully.
+                    data:
+                      manuscript:
+                        id: ms-001
+                        tenant_id: tenant-a
+                        author_id: user-a-01
+                        revision_no: 1
+                        title: Cloud Native Performance Study
+                        status: completed
+                        created_at: '2026-01-01T00:00:00.000Z'
+                      rule:
+                        template_id: tpl-a-default
+                        version: 1
+                      format:
+                        status: completed
+                        outcome: passed
+                        counts:
+                          error: 0
+                          warning: 0
+                          info: 0
+                        findings: []
+                      scope:
+                        status: queued
+                        fit_level: null
+                        rationale: null
+                        matched_topics: []
+                        suggestions: []
+                        disclaimer: Saran kecocokan topik, bukan keputusan penerimaan naskah.
+                      generated_at: '2026-01-01T00:00:01.000Z'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+    tenantHeader:
+      type: apiKey
+      in: header
+      name: X-Tenant-ID
+      description: |
+        Development-only fallback used when `AUTH_MODE=header`. It is ignored
+        whenever a valid JWT is present and must not be used in production.
+
+  schemas:
+    Error:
+      type: object
+      description: |
+        Operational errors use `{error:{code,message,request_id}}`.
+        Unexpected errors use `{success:false,status,message,details}`.
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+            request_id:
+              type: string
+              nullable: true
+        success:
+          type: boolean
+          example: false
+        status:
+          type: integer
+          example: 500
+        message:
+          type: string
+        details:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    HealthLive:
+      type: object
+      properties:
+        status:
+          type: string
+          example: alive
+        timestamp:
+          type: string
+          format: date-time
+
+    HealthReady:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [ready, unready]
+        database:
+          type: string
+          enum: [connected, disconnected]
+        queue:
+          type: string
+          enum: [ready, unavailable]
+        timestamp:
+          type: string
+          format: date-time
+
+    User:
+      type: object
+      properties:
+        user_id:
+          type: string
+          nullable: true
+        sub:
+          type: string
+        tenant_id:
+          type: string
+          example: tenant-a
+        role:
+          type: string
+          enum: [author, editor, tenant_admin, admin_platform]
+        roles:
+          type: array
+          items:
+            type: string
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+
+    UploadAccepted:
+      type: object
+      required: [manuscript_id, revision_no, status]
+      properties:
+        manuscript_id:
+          type: string
+          example: ms-811dc737-ef34-4557-a384-44a8d4c2d71f
+        revision_no:
+          type: integer
+          example: 1
+        status:
+          type: string
+          enum: [queued]
+
+    LegacyUpload:
+      type: object
+      required: [success, message, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            manuscript_id:
+              type: string
+            revision_no:
+              type: integer
+            status:
+              type: string
+              enum: [queued]
+            manuscript:
+              type: object
+              properties:
+                id:
+                  type: string
+                revision_no:
+                  type: integer
+                status:
+                  type: string
+                  enum: [queued]
+
+    Finding:
+      type: object
+      properties:
+        rule_id:
+          type: string
+          example: FMT-002
+        severity:
+          type: string
+          enum: [error, warning, info]
+        message:
+          type: string
+        location:
+          type: object
+          nullable: true
+          additionalProperties: true
+        expected:
+          type: object
+          nullable: true
+          additionalProperties: true
+        actual:
+          type: object
+          nullable: true
+          additionalProperties: true
+
+    ManuscriptReport:
+      type: object
+      properties:
+        manuscript:
+          type: object
+          properties:
+            id:
+              type: string
+            tenant_id:
+              type: string
+            author_id:
+              type: string
+              nullable: true
+            revision_no:
+              type: integer
+            title:
+              type: string
+              nullable: true
+            status:
+              type: string
+              enum: [queued, processing, completed, failed]
+            created_at:
+              type: string
+              format: date-time
+        rule:
+          type: object
+          nullable: true
+          properties:
+            template_id:
+              type: string
+            version:
+              type: integer
+        format:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [queued, running, completed, failed]
+            outcome:
+              type: string
+              nullable: true
+              enum: [passed, failed]
+            counts:
+              type: object
+              properties:
+                error:
+                  type: integer
+                warning:
+                  type: integer
+                info:
+                  type: integer
+            findings:
+              type: array
+              items:
+                $ref: '#/components/schemas/Finding'
+        scope:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [queued, running, completed, failed]
+            fit_level:
+              type: string
+              nullable: true
+              enum: [high, medium, low]
+            rationale:
+              type: string
+              nullable: true
+            matched_topics:
+              type: array
+              items:
+                type: string
+            suggestions:
+              type: array
+              items:
+                type: string
+            disclaimer:
+              type: string
+        generated_at:
+          type: string
+          format: date-time
+
+    ReportResponse:
+      type: object
+      required: [success, message, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          $ref: '#/components/schemas/ManuscriptReport'
+
+  responses:
+    Unauthorized:
+      description: Missing, invalid, or expired bearer token.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            missingToken:
+              value:
+                error:
+                  code: UNAUTHENTICATED
+                  message: Authorization bearer token is required.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
+    Forbidden:
+      description: |
+        The role is not allowed, or the token is missing a recognized tenant
+        claim. `X-Tenant-ID` is not used when a JWT is present.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            forbidden:
+              value:
+                error:
+                  code: FORBIDDEN
+                  message: You do not have permission to perform this action.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+            tenantClaimMissing:
+              value:
+                error:
+                  code: TENANT_CLAIM_MISSING
+                  message: Access token is missing the tenant_id claim.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
+    NotFound:
+      description: |
+        Resource not found in the caller's tenant. Cross-tenant access
+        intentionally returns `404` to avoid disclosing existence.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            crossTenant:
+              value:
+                error:
+                  code: NOT_FOUND
+                  message: "Manuscript with ID 'ms-001' not found"
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
+    BadRequest:
+      description: Missing file or invalid DOCX.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalidFile:
+              value:
+                error:
+                  code: INVALID_FILE
+                  message: Berkas bukan DOCX/ZIP yang valid.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
+    Conflict:
+      description: The tenant has no active format rule.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            noActiveRule:
+              value:
+                error:
+                  code: NO_ACTIVE_RULE
+                  message: Tenant belum memiliki rule format aktif.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
+    PayloadTooLarge:
+      description: Upload exceeds the configured maximum size.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            fileTooLarge:
+              value:
+                error:
+                  code: FILE_TOO_LARGE
+                  message: Ukuran file melebihi batas 10 MB.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
+    ServiceUnavailable:
+      description: The pg-boss queue is not ready.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            queueUnavailable:
+              value:
+                error:
+                  code: QUEUE_UNAVAILABLE
+                  message: Antrean pemeriksaan belum siap.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11

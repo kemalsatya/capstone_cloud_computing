@@ -65,8 +65,16 @@ echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | jq
 | Metode | Path | Role | Keterangan |
 |---|---|---|---|
 | GET | `/api/auth/me` | semua token valid | Menampilkan `user_id`, `sub`, `tenant_id`, role |
-| POST | `/api/manuscripts/upload` | `author` | Upload naskah |
+| POST | `/api/manuscripts` | `author` | Upload naskah (route PRD, validasi DOCX ketat, `202`) |
+| POST | `/api/manuscripts/upload` | `author` | Alias legacy (`201`) untuk skrip evidence yang sudah ada |
 | GET | `/api/manuscripts/:id/report` | `author`, `editor`, `tenant_admin` | Author hanya naskah miliknya |
+
+Upload sekarang **asinkron**: API menyimpan naskah, membuat dua `check_results`
+(`format` dan `scope`), lalu memasukkan job `format-check` ke pg-boss dalam satu
+transaksi. Worker terpisah (`npm run worker`) memproses parser + rule engine.
+`GET .../report` tetap `200` selama naskah ditemukan; klien membaca
+`format.status` (`queued|running|completed|failed`). Detail pipeline ada di
+[FORMAT.md](./FORMAT.md).
 
 Error autentikasi memakai envelope PRD:
 

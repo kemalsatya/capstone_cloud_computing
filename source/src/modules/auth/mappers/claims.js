@@ -14,9 +14,7 @@ const ROLE_ALIASES = {
 const ROLE_PRECEDENCE = ['tenant_admin', 'editor', 'author'];
 
 function extractRawRoles(claims) {
-    const realmRoles = claims.realm_access?.roles || [];
-    const clientRoles = claims.resource_access?.[env.KEYCLOAK_AUDIENCE]?.roles || [];
-    return [...realmRoles, ...clientRoles];
+    return claims.realm_access?.roles || [];
 }
 
 export function normalizeRoles(claims) {

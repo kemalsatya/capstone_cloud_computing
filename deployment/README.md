@@ -16,13 +16,16 @@ Status pemeriksaan baru dicatat pada [indeks aktif](../evidence/platform/README.
 
 | File | Fungsi & Hasil Review | Batas / Tindak Lanjut |
 | :--- | :--- | :--- |
-| `configmap.yaml` | Konfigurasi non-rahasia backend (`PORT`, `DB_HOST`, `AUTH_MODE: jwt`). | Perubahan ConfigMap membutuhkan restart pod terkontrol. |
+| `configmap.yaml` | Konfigurasi non-rahasia backend (`PORT`, `DB_HOST`, `AUTH_MODE: jwt`, antrean pg-boss); `ENABLE_DOCS` default `false`. | Perubahan ConfigMap membutuhkan restart pod terkontrol. |
+| `secret.example.yaml` | Template Secret password database backend. | Nilai rahasia nyata dibuat di luar Git. |
 | `pvc.yaml` | Penyimpanan berkas `.docx` `local-path` RWO (1Gi), mode 2777. | Terikat pada 1 node k3d; roadmap migrasi ke S3/MinIO. |
 | `deployment.yaml` | Backend modular monolith, non-root `UID 10001`, probes `/health/live` & `/health/ready`. | Replica (2-3) dikendalikan secara dinamis oleh HPA. |
 | `service.yaml` | ClusterIP port 80 menuju port container named `http` (8000). | EndpointSlice sinkron dengan pod status Ready. |
 | `ingress.yaml` | Traefik routing untuk domain `journalfit.localhost`. | Akses via port Ingress kluster (:8088). |
 | `kustomization.yaml` | Entry point deklaratif Kustomize & override tag image immutable. | Mengorkestrasi seluruh resource K8s + subdirektori `keycloak`. |
 | `hpa.yaml` | Horizontal Pod Autoscaler target CPU 70%, minimum 2, maksimum 3 pod. | Mengadaptasi lonjakan trafik saat deadline submission jurnal. |
+| `worker-format.yaml` | Worker pg-boss untuk format check, non-root `UID 10001`. | Memakai PVC dan node storage yang sama dengan backend. |
+| `db-setup-job.yaml` | Job migrasi 001+002 (initContainer), lalu seed default rules. | Memerlukan database/Secret dan image yang memuat scripts serta migrations. |
 | `keycloak/deployment.yaml` | Keycloak IAM production mode (`start --import-realm`), limit 1 CPU / 1Gi RAM. | Recreate stateful, cold-start ~72 detik, RAM ~596 MiB. |
 | `keycloak/service.yaml` | ClusterIP `keycloak:80` menuju container 8080. | Endpoint internal JWKS untuk verifikasi JWT backend. |
 | `keycloak/ingress.yaml` | Traefik routing untuk domain `keycloak.localhost`. | Akses login & admin console Keycloak (:8088). |
@@ -66,4 +69,34 @@ curl -i http://keycloak.localhost:8088/realms/journalfit
   sudah diperiksa pada lab; batas storage satu node tetap berlaku.
 - ConfigMap host.docker.internal sesuai jalur lab yang diuji. Environment kedua
   pod cocok; perubahan ConfigMap tidak otomatis mengganti environment proses.
-- Readiness aplikasi memakai `SELECT 1`; schema dan transaksi diperiksa terpisah.
+- Readiness aplikasi memeriksa koneksi PostgreSQL dan kesiapan antrean pg-boss;
+  schema dan transaksi diperiksa terpisah.
+
+## OpenAPI / Swagger UI (demo)
+
+`ENABLE_DOCS` default `false`. Untuk demo, set `ENABLE_DOCS: "true"` pada
+`journalfit-backend-config` atau:
+
+```bash
+kubectl -n default set env deployment/journalfit-backend ENABLE_DOCS=true
+```
+
+Setelah rollout:
+
+- Swagger UI: `http://journalfit.localhost:8088/docs`
+- Spec: `http://journalfit.localhost:8088/openapi.yaml`
+
+Issuer tetap opsi B: `http://keycloak.localhost:8088/realms/journalfit`.
+Panduan demo lengkap, token, matriks tenant, dan worker/PVC ada di
+[`source/DEMO.md`](../source/DEMO.md).
+
+## Validasi lokal
+
+Jalankan dari root repository:
+
+```powershell
+kubectl kustomize ./deployment
+```
+
+Perintah ini merender konfigurasi tanpa menghubungi cluster. Hasil render memuat
+backend API, worker format, Job migrasi/seed, dan resource Keycloak.

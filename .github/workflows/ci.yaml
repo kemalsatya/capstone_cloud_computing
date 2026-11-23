@@ -72,7 +72,7 @@ jobs:
             docker build -t "journalfit-backend:${{ env.COMMIT_SHA }}" -f "$DOCKERFILE_PATH" ./source
           else
             echo "[NOTICE] Dockerfile not yet authored by Anggota 2."
-            echo "[NOTICE] Building lightweight Node.js stub image to keep CI delivery verified..."
+            echo "[NOTICE] Building lightweight Node.js stub image to keep CI delivery verified..." 
             docker build -t "journalfit-backend:${{ env.COMMIT_SHA }}" - << 'EOF'
           FROM node:22-alpine
           WORKDIR /app

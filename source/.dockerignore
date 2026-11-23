@@ -3,6 +3,10 @@
 !package-lock.json
 !src/
 !src/**
+!scripts/
+!scripts/**
+!migrations/
+!migrations/**
 node_modules
 npm-debug.log
 .git
