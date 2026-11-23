@@ -30,7 +30,7 @@ Jalankan seluruh perintah dari root repositori (`capstone_cloud_computing/`) men
 | `create-cluster.sh` | Buat kluster `k3d-capstone` terintegrasi registry lokal & Traefik Ingress (`:8088`) | `bash automation/scripts/create-cluster.sh` |
 | `setup-keycloak.sh` | Siapkan database `keycloak` & Kubernetes Secret Keycloak | `bash automation/scripts/setup-keycloak.sh` |
 | `install-argocd.sh` | Pasang Argo CD di namespace `argocd` dan terapkan `automation/argocd/application.yaml` | `bash automation/scripts/install-argocd.sh` |
-| `build-and-tag.sh` | Build image `journalfit-backend:<sha7>` dan push ke registry lokal (`localhost:5000`) | `bash automation/scripts/build-and-tag.sh` |
+| `build-and-tag.sh` | Build image `journalfit-backend:<sha7>` dan push ke registry host (`localhost:5001`); pod menarik dari alias cluster `registry:5000` | `bash automation/scripts/build-and-tag.sh` |
 | `prepare-image-update.sh` | Update tag image immutable (`SHA7`) pada `deployment/kustomization.yaml` | `bash automation/scripts/prepare-image-update.sh <7-char-sha>` |
 | `simulate-rollback.sh` | Simulasi rollback GitOps / Kubernetes Deployment ke revisi stabil sebelumnya | `bash automation/scripts/simulate-rollback.sh` |
 | `db-backup-restore.sh` | Backup `pg_dump` & uji restore Disaster Recovery PostgreSQL (`journalfit` + `keycloak`) | `bash automation/scripts/db-backup-restore.sh backup` / `restore <file.sql>` |
@@ -81,6 +81,8 @@ bash automation/scripts/tests/run-milestone-tests.sh 03 04 06 08 --with-trivy
 | `11` | Demo & Defense (live `doctor.sh`, ping semua endpoint demo, 12 Q&A §13.1) | `bash automation/scripts/tests/test-milestone-11-demo.sh` |
 
 ---
+
+> **M06 di K8s:** set `APP_URL=http://journalfit.localhost:8088` dan `KEYCLOAK_URL=http://keycloak.localhost:8088` sebelum menjalankan `test-milestone-06-security.sh`.
 
 ## 3. Generator Diagram & Evidence (`automation/scripts/generators/`)
 
