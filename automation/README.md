@@ -28,6 +28,7 @@ Jalankan seluruh perintah dari root repositori (`capstone_cloud_computing/`) men
 | :--- | :--- | :--- |
 | `doctor.sh` | Cek prasyarat tools (`git`, `docker`, `node`, `kubectl`, `k3d`, `jq`, port) | `bash automation/scripts/doctor.sh` |
 | `create-cluster.sh` | Buat kluster `k3d-capstone` terintegrasi registry lokal & Traefik Ingress (`:8088`) | `bash automation/scripts/create-cluster.sh` |
+| `fix-k3d-host-alias.sh` | Pastikan `host.k3d.internal` resolve ke gateway host di CoreDNS (cluster existing) | `bash automation/scripts/fix-k3d-host-alias.sh` |
 | `setup-keycloak.sh` | Siapkan database `keycloak` & Kubernetes Secret Keycloak | `bash automation/scripts/setup-keycloak.sh` |
 | `install-argocd.sh` | Pasang Argo CD di namespace `argocd` dan terapkan `automation/argocd/application.yaml` | `bash automation/scripts/install-argocd.sh` |
 | `build-and-tag.sh` | Build image `journalfit-backend:<sha7>` dan push ke registry host (`localhost:5001`); pod menarik dari alias cluster `registry:5000` | `bash automation/scripts/build-and-tag.sh` |

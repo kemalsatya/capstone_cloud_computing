@@ -8,8 +8,10 @@ metadata:
 data:
   KC_DB: postgres
   # Shared lab PostgreSQL, separate database "keycloak" (PRD A-08).
-  # host.k3d.internal is k3d's platform-independent host alias; host.docker.internal
-  # only exists under Docker Desktop (see deployment/INTEGRATION_CONTRACT.md A.2).
+  # host.k3d.internal points to the Docker host gateway. k3d v5.9 may not inject
+  # it automatically; create-cluster.sh passes --host-alias or run
+  # automation/scripts/fix-k3d-host-alias.sh. host.docker.internal is Docker
+  # Desktop-only (see deployment/INTEGRATION_CONTRACT.md A.2).
   KC_DB_URL: jdbc:postgresql://host.k3d.internal:5432/keycloak
   KC_DB_USERNAME: capstone
   # External issuer URL. Must match KEYCLOAK_ISSUER used by the backend.

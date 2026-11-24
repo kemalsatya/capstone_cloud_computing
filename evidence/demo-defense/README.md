@@ -25,7 +25,7 @@
 ## 2. Penjelasan Demo 11 & Baseline Platform
 
 **Demo 11** adalah tahap verifikasi dan demonstrasi terpadu yang menguji ulang seluruh evidence (`01` s.d. `10`) dalam satu alur kerja nyata di atas kluster hidup:
-- **Platform Baseline Terverifikasi:** `DB_HOST=host.k3d.internal` (alias host bawaan k3d; `host.docker.internal` hanya Docker Desktop — koreksi 2026-11-23: baseline manifest kembali ke `host.k3d.internal` setelah `ENOTFOUND` pada k3d Linux), `node:22-alpine` non-root `UID 10001` (`drop ALL`), `HPA 2→3→2` (teruji 19.865 request, 0 gagal), rolling update (`777` request, `0` gagal, p95 `26,73 ms`, rollout `22,53 detik`), controlled pod deletion (`7,1 detik` self-healing, SHA-256 PVC identik), serta isolated DB restore (`0,78 detik` untuk `journalfit` 6 tabel + `101` tabel `keycloak`).
+- **Platform Baseline Terverifikasi:** `DB_HOST=host.k3d.internal` (alias host k3d; perlu `--host-alias`/patch CoreDNS; `host.docker.internal` hanya Docker Desktop — koreksi 2026-11-23: baseline manifest kembali ke `host.k3d.internal` setelah `ENOTFOUND` pada k3d Linux), `node:22-alpine` non-root `UID 10001` (`drop ALL`), `HPA 2→3→2` (teruji 19.865 request, 0 gagal), rolling update (`777` request, `0` gagal, p95 `26,73 ms`, rollout `22,53 detik`), controlled pod deletion (`7,1 detik` self-healing, SHA-256 PVC identik), serta isolated DB restore (`0,78 detik` untuk `journalfit` 6 tabel + `101` tabel `keycloak`).
 - **Batas Klaim Jujur:** Storage PVC `ReadWriteOnce` single-node bukan multi-AZ HA; baseline resource lab bukan optimasi produksi penuh; `.env`, kredensial nyata, dan secret tidak pernah disimpan di Git.
 
 ---

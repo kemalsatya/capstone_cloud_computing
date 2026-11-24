@@ -132,12 +132,13 @@ hasil ini belum membuktikan workload aplikasi bisa berjalan.
   Langkah ini sudah dilakukan menggunakan schema.sql tanpa perubahan pada 2026-11-10;
   jangan menginisialisasi ulang atau menimpa database yang sudah berisi data uji.
 - Jika pod Running tetapi tidak Ready setelah restart lingkungan, periksa pesan
-  /health/ready dari dalam pod. Default manifest kini memakai `host.k3d.internal`,
-  alias host bawaan k3d yang tersedia lintas platform. `host.docker.internal` hanya
-  ada di Docker Desktop; di k3d di atas Docker Linux alias itu tidak resolve dan
-  memunculkan `ENOTFOUND`, seperti yang terjadi pada worker `CrashLoopBackOff`.
-  Untuk Docker Desktop Windows yang kehilangan alias k3d setelah restart, tukar ke
-  `host.docker.internal` lalu restart pod. Jangan membuat ulang database/PVC untuk
+  /health/ready dari dalam pod. Default manifest memakai `host.k3d.internal`.
+  k3d v5.9 tidak selalu menginjeksi alias ini ke CoreDNS; `create-cluster.sh`
+  sekarang membuat cluster dengan `--host-alias`, dan cluster existing dapat
+  diperbaiki dengan `bash automation/scripts/fix-k3d-host-alias.sh`.
+  `host.docker.internal` hanya ada di Docker Desktop. Verifikasi dari pod:
+  `nslookup host.k3d.internal` harus mengarah ke gateway Docker (mis. 172.22.0.1)
+  dan TCP ke port DB harus terbuka. Jangan membuat ulang database/PVC untuk
   memperbaiki kegagalan DNS.
 - Siapkan Secret runtime `journalfit-backend-secret`, key `DB_PASSWORD`, dalam
   namespace default. Tidak ada Secret berisi credential dalam konfigurasi ini.

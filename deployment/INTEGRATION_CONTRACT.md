@@ -43,7 +43,7 @@ memeriksa keberadaan tabel; verifikasi skema dan transaksi harus dilakukan terpi
 | Key | Baseline sementara | Tempat konfigurasi Kubernetes |
 | --- | --- | --- |
 | `PORT` | `8000` | ConfigMap |
-| `DB_HOST` | `host.k3d.internal`, alias host bawaan k3d yang tersedia lintas platform | ConfigMap |
+| `DB_HOST` | `host.k3d.internal` (alias host k3d; dipasang via `--host-alias` atau `fix-k3d-host-alias.sh`) | ConfigMap |
 | `DB_PORT` | `5432` | ConfigMap |
 | `DB_NAME` | `journalfit`, database aplikasi terpisah dari database lab `capstone` | ConfigMap |
 | `DB_USER` | `capstone`, user lab dari konfigurasi paket; evaluasi hak akses bersama Anggota 4 | ConfigMap |
@@ -66,10 +66,12 @@ Bukti diagnosis/perbaikan: evidence/platform/readiness-dns-recovery-20261110.txt
 
 Pembaruan 2026-11-23: pada k3d di atas Docker Linux, `host.docker.internal` tidak
 pernah tersedia dan worker gagal dengan `getaddrinfo ENOTFOUND host.docker.internal`
-(CrashLoopBackOff). Verifikasi dari pod menunjukkan `host.k3d.internal` resolve ke
-gateway host dan TCP ke PostgreSQL:5433 berhasil. Baseline ConfigMap dikembalikan ke
-`host.k3d.internal` karena itu alias bawaan k3d yang berlaku lintas platform;
-`host.docker.internal` hanya dipakai sebagai fallback Docker Desktop Windows.
+(CrashLoopBackOff). `host.k3d.internal` juga tidak otomatis ada pada k3d v5.9 jika
+cluster dibuat tanpa `--host-alias`; CoreDNS harus diberi entry gateway. Setelah
+`create-cluster.sh` memakai `--host-alias` (atau `fix-k3d-host-alias.sh` dijalankan),
+verifikasi dari pod menunjukkan `host.k3d.internal` resolve ke gateway host dan TCP
+ke PostgreSQL:5433 berhasil. `host.docker.internal` hanya dipakai sebagai fallback
+Docker Desktop Windows.
 
 **Pembagian pekerjaan:**
 
