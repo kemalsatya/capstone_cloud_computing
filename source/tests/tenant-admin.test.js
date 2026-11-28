@@ -143,7 +143,12 @@ describe('Tenant admin service', () => {
         try {
             const body = {
                 schema_version: 1,
-                rules: [{ id: 'FMT-001', enabled: true, severity: 'error', params: {} }],
+                rules: [{
+                    id: 'FMT-001',
+                    enabled: true,
+                    severity: 'error',
+                    params: { width_twips: 11906, height_twips: 16838 },
+                }],
             };
             const result = await tenantService.saveRules({
                 tenantId: 'tenant-a',
@@ -194,7 +199,15 @@ describe('Tenant admin service', () => {
                 () => tenantService.saveRules({
                     tenantId: 'tenant-a',
                     id: 'tpl-1',
-                    body: { schema_version: 1, rules: [] },
+                    body: {
+                        schema_version: 1,
+                        rules: [{
+                            id: 'FMT-001',
+                            enabled: true,
+                            severity: 'error',
+                            params: { width_twips: 11906, height_twips: 16838 },
+                        }],
+                    },
                     auth: adminAuth(),
                 }),
                 (err) => err.statusCode === 409 && err.code === 'RULE_NOT_DRAFT'

@@ -1,6 +1,9 @@
+import Ajv from 'ajv';
 import { RULES } from './catalog.js';
+import { RULE_SCHEMA } from './rule-schema.js';
 
-const SEVERITIES = new Set(['error', 'warning', 'info']);
+const ajv = new Ajv({ allErrors: true, strict: false });
+const validateRuleSchema = ajv.compile(RULE_SCHEMA);
 
 export function runRules(document, config) {
     const ruleList = Array.isArray(config) ? config : config?.rules || [];
@@ -59,22 +62,26 @@ export function outcomeFor(findings) {
 }
 
 export function validateRuleConfig(config) {
-    if (!config || typeof config !== 'object') {
-        throw new Error('Konfigurasi rule harus berupa objek.');
+    if (!validateRuleSchema(config)) {
+        const detail = (validateRuleSchema.errors || [])
+            .map((error) => `${error.instancePath || '/'} ${error.message}`)
+            .join('; ');
+        throw new Error(`Konfigurasi rule tidak valid: ${detail}`);
     }
 
-    if (!Array.isArray(config.rules)) {
-        throw new Error('Konfigurasi rule harus memiliki array "rules".');
+    const ruleById = new Map(config.rules.map((rule) => [rule.id, rule]));
+    const abstractRule = ruleById.get('FMT-008');
+    const abstract = abstractRule?.params?.abstract;
+
+    if (abstract && abstract.max_words < abstract.min_words) {
+        throw new Error('FMT-008: max_words tidak boleh lebih kecil dari min_words.');
     }
 
-    for (const rule of config.rules) {
-        if (!rule?.id || !RULES[rule.id]) {
-            throw new Error(`Rule tidak dikenal: ${rule?.id || '(kosong)'}.`);
-        }
+    const keywordsRule = ruleById.get('FMT-009');
+    const keywords = keywordsRule?.params?.keywords;
 
-        if (rule.severity && !SEVERITIES.has(rule.severity)) {
-            throw new Error(`Severity tidak valid untuk ${rule.id}: ${rule.severity}.`);
-        }
+    if (keywords && keywords.max < keywords.min) {
+        throw new Error('FMT-009: max tidak boleh lebih kecil dari min.');
     }
 
     return config;
