@@ -4,6 +4,7 @@ import healthRouter from './modules/health/index.js';
 import manuscriptsRouter from './modules/manuscripts/index.js';
 import authRouter from './modules/auth/index.js';
 import tenantRouter from './modules/tenant/index.js';
+import { getQueueDepths } from './modules/queue/index.js';
 import { errorHandler, AppError } from './common/middlewares/errorHandler.js';
 import { metricsMiddleware, renderPrometheusMetrics } from './common/utils/metrics.js';
 import { env } from './config/env.js';
@@ -48,11 +49,18 @@ export function createApp() {
         });
     });
 
-    // Prometheus Metrics Endpoint
-    app.get('/metrics', (req, res) => {
-        res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
-        res.status(200).send(renderPrometheusMetrics());
-    });
+    // Prometheus Metrics Endpoint (public only when explicitly enabled)
+    if (env.METRICS_PUBLIC) {
+        app.get('/metrics', async (req, res, next) => {
+            try {
+                const queueDepths = await getQueueDepths();
+                res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+                res.status(200).send(renderPrometheusMetrics({ queueDepths }));
+            } catch (err) {
+                next(err);
+            }
+        });
+    }
 
     // API documentation (demo/dev only)
     mountApiDocs(app, { enabled: env.ENABLE_DOCS });

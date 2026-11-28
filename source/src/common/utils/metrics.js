@@ -91,7 +91,7 @@ export function metricsMiddleware(req, res, next) {
     next();
 }
 
-export function renderPrometheusMetrics() {
+export function renderPrometheusMetrics({ queueDepths = {} } = {}) {
     const lines = [
         '# HELP http_requests_total Total HTTP requests handled by JournalFit backend',
         '# TYPE http_requests_total counter',
@@ -165,6 +165,16 @@ export function renderPrometheusMetrics() {
     for (const [tenant, cost] of aiCostCounters.entries()) {
         lines.push(
             `journalfit_ai_cost_usd_total{tenant="${escapeLabel(tenant)}"} ${cost.toFixed(6)}`
+        );
+    }
+
+    lines.push(
+        '# HELP journalfit_queue_depth Background jobs waiting or active per queue',
+        '# TYPE journalfit_queue_depth gauge'
+    );
+    for (const [queue, depth] of Object.entries(queueDepths)) {
+        lines.push(
+            `journalfit_queue_depth{queue="${escapeLabel(queue)}"} ${Number(depth) || 0}`
         );
     }
 

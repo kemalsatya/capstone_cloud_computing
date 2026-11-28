@@ -14,6 +14,25 @@ export function getBoss() {
     return boss;
 }
 
+export async function getQueueDepths() {
+    if (!ready || !boss) return {};
+
+    const queues = [FORMAT_QUEUE, SCOPE_QUEUE];
+    const entries = await Promise.all(queues.map(async (queue) => {
+        try {
+            const stats = await boss.getQueue(queue);
+            const depth = stats
+                ? Number(stats.queuedCount || 0) + Number(stats.activeCount || 0)
+                : 0;
+            return [queue, depth];
+        } catch {
+            return [queue, 0];
+        }
+    }));
+
+    return Object.fromEntries(entries);
+}
+
 export async function startQueue() {
     if (ready && boss) return boss;
 
