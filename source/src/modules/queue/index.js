@@ -14,6 +14,25 @@ export function getBoss() {
     return boss;
 }
 
+export async function getQueueDepths() {
+    if (!ready || !boss) return {};
+
+    const queues = [FORMAT_QUEUE, SCOPE_QUEUE];
+    const entries = await Promise.all(queues.map(async (queue) => {
+        try {
+            const stats = await boss.getQueue(queue);
+            const depth = stats
+                ? Number(stats.queuedCount || 0) + Number(stats.activeCount || 0)
+                : 0;
+            return [queue, depth];
+        } catch {
+            return [queue, 0];
+        }
+    }));
+
+    return Object.fromEntries(entries);
+}
+
 export async function startQueue() {
     if (ready && boss) return boss;
 
@@ -75,6 +94,26 @@ export const queueService = {
             retryLimit: 2,
             retryDelay: 5,
             expireInSeconds: 120,
+            db,
+        });
+    },
+
+    async enqueueScopeCheck(manuscriptId, tenantId, db) {
+        if (!ready || !boss) {
+            throw new AppError(
+                'Antrean pemeriksaan belum siap.',
+                503,
+                null,
+                'QUEUE_UNAVAILABLE'
+            );
+        }
+
+        return boss.send(SCOPE_QUEUE, { manuscriptId, tenantId }, {
+            singletonKey: manuscriptId,
+            retryLimit: 3,
+            retryDelay: 5,
+            retryBackoff: true,
+            expireInSeconds: 180,
             db,
         });
     },

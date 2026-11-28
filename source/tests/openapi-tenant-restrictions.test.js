@@ -108,8 +108,20 @@ describe('OpenAPI tenant restrictions', () => {
         }
 
         assert.ok(openApiSpec.paths['/api/manuscripts'].post.responses['202']);
+        assert.ok(openApiSpec.paths['/api/manuscripts'].get.responses['200']);
         assert.ok(openApiSpec.paths['/api/manuscripts/upload'].post.responses['201']);
+        assert.ok(openApiSpec.paths['/api/manuscripts/{id}'].get.responses['200']);
+        assert.ok(openApiSpec.paths['/api/manuscripts/{id}/history'].get.responses['200']);
         assert.ok(openApiSpec.paths['/api/manuscripts/{id}/report'].get.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/rule-templates'].get.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/rule-templates'].post.responses['201']);
+        assert.ok(openApiSpec.paths['/api/tenant/rule-templates/{id}'].get.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/rule-templates/{id}/rules'].put.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/rule-templates/{id}/activate'].post.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/aim-scope'].get.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/aim-scope'].put.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/summary'].get.responses['200']);
+        assert.ok(openApiSpec.paths['/api/tenant/ai-usage'].get.responses['200']);
     });
 
     test('author in tenant-a can read the tenant-a report', async () => {

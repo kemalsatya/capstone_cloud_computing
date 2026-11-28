@@ -1,15 +1,17 @@
 import http from 'node:http';
-import { assertSafeAuthMode, env } from './config/env.js';
-import { startQueue, stopQueue } from './modules/queue/index.js';
+import { assertSafeAiMode, assertSafeAuthMode, env } from './config/env.js';
+import { getQueueDepths, startQueue, stopQueue } from './modules/queue/index.js';
 import { registerFormatWorker } from './modules/workers/format.worker.js';
+import { registerScopeWorker } from './modules/workers/scope.worker.js';
 import { renderPrometheusMetrics } from './common/utils/metrics.js';
 
 assertSafeAuthMode();
 
-const metricsServer = http.createServer((req, res) => {
+const metricsServer = http.createServer(async (req, res) => {
     if (req.url === '/metrics') {
+        const queueDepths = await getQueueDepths().catch(() => ({}));
         res.writeHead(200, { 'Content-Type': 'text/plain; version=0.0.4; charset=utf-8' });
-        res.end(renderPrometheusMetrics());
+        res.end(renderPrometheusMetrics({ queueDepths }));
         return;
     }
 
@@ -39,6 +41,9 @@ async function main() {
 
     if (env.WORKER_TYPE === 'format') {
         await registerFormatWorker(boss);
+    } else if (env.WORKER_TYPE === 'scope') {
+        assertSafeAiMode();
+        await registerScopeWorker(boss);
     } else {
         throw new Error(`WORKER_TYPE tidak dikenal: ${env.WORKER_TYPE}`);
     }

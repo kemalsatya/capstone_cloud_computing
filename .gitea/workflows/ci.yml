@@ -18,7 +18,28 @@ jobs:
           npm --version || true
           docker version
 
+      - name: Start Test PostgreSQL
+        run: |
+          set -euo pipefail
+          docker rm -f journalfit-test-postgres || true
+          docker run -d --name journalfit-test-postgres \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            -e POSTGRES_DB=journalfit_test \
+            -p 55432:5432 \
+            postgres:17-alpine
+          for attempt in $(seq 1 30); do
+            if docker exec journalfit-test-postgres pg_isready -U postgres -d journalfit_test; then
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "[ERROR] PostgreSQL test container tidak siap." >&2
+          exit 1
+
       - name: Verify Application Code (Node.js Test)
+        env:
+          TEST_DATABASE_URL: postgres://postgres:postgres@localhost:55432/journalfit_test
         run: |
           set -euo pipefail
           if [ -f "source/package.json" ]; then
@@ -28,6 +49,10 @@ jobs:
           else
             echo "[NOTICE] source/package.json is missing."
           fi
+
+      - name: Stop Test PostgreSQL
+        if: always()
+        run: docker rm -f journalfit-test-postgres || true
 
       - name: Build, Scan, and Tag Immutable Container Artifact
         run: |

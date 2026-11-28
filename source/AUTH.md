@@ -67,7 +67,18 @@ echo "$TOKEN" | cut -d. -f2 | base64 -d 2>/dev/null | jq
 | GET | `/api/auth/me` | semua token valid | Menampilkan `user_id`, `sub`, `tenant_id`, role |
 | POST | `/api/manuscripts` | `author` | Upload naskah (route PRD, validasi DOCX ketat, `202`) |
 | POST | `/api/manuscripts/upload` | `author` | Alias legacy (`201`) untuk skrip evidence yang sudah ada |
+| GET | `/api/manuscripts` | `author`, `editor`, `tenant_admin` | Author hanya miliknya; editor/admin seluruh tenant |
+| GET | `/api/manuscripts/:id` | `author`, `editor`, `tenant_admin` | Metadata + status format/scope |
+| GET | `/api/manuscripts/:id/history` | `author`, `editor`, `tenant_admin` | Rantai revisi |
 | GET | `/api/manuscripts/:id/report` | `author`, `editor`, `tenant_admin` | Author hanya naskah miliknya |
+| POST | `/api/tenant/rule-templates` | `tenant_admin` | Unggah template DOCX → rule draft |
+| GET | `/api/tenant/rule-templates` | `tenant_admin` | Daftar versi rule |
+| GET | `/api/tenant/rule-templates/:id` | `tenant_admin` | Detail rule draft/aktif |
+| PUT | `/api/tenant/rule-templates/:id/rules` | `tenant_admin` | Simpan hasil review |
+| POST | `/api/tenant/rule-templates/:id/activate` | `tenant_admin` | Aktivasi rule (arsipkan yang lama) |
+| GET/PUT | `/api/tenant/aim-scope` | `tenant_admin` | Baca/ubah aim and scope |
+| GET | `/api/tenant/summary` | `tenant_admin` | Statistik tenant |
+| GET | `/api/tenant/ai-usage` | `tenant_admin` | Token, biaya, kuota AI |
 
 Upload sekarang **asinkron**: API menyimpan naskah, membuat dua `check_results`
 (`format` dan `scope`), lalu memasukkan job `format-check` ke pg-boss dalam satu

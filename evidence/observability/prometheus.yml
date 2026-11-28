@@ -7,13 +7,14 @@ scrape_configs:
     metrics_path: /metrics
     static_configs:
       - targets:
-          - app:8000
+          - app:9100
         labels:
           environment: local-compose
+      # For k3d, port-forward journalfit-backend:9100 to the host first.
       - targets:
-          - journalfit.localhost:8088
+          - host.docker.internal:9100
         labels:
-          environment: k3d-ingress
+          environment: k3d-port-forward
 
   - job_name: prometheus
     static_configs:

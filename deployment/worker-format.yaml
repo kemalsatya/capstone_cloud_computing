@@ -40,6 +40,16 @@ spec:
                 secretKeyRef:
                   name: journalfit-backend-secret
                   key: DB_PASSWORD
+            - name: S3_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: garage-s3-credentials
+                  key: GARAGE_DEFAULT_ACCESS_KEY
+            - name: S3_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: garage-s3-credentials
+                  key: GARAGE_DEFAULT_SECRET_KEY
             - name: WORKER_TYPE
               value: format
           ports:

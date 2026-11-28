@@ -3,6 +3,8 @@ import express from 'express';
 import healthRouter from './modules/health/index.js';
 import manuscriptsRouter from './modules/manuscripts/index.js';
 import authRouter from './modules/auth/index.js';
+import tenantRouter from './modules/tenant/index.js';
+import { getQueueDepths } from './modules/queue/index.js';
 import { errorHandler, AppError } from './common/middlewares/errorHandler.js';
 import { metricsMiddleware, renderPrometheusMetrics } from './common/utils/metrics.js';
 import { env } from './config/env.js';
@@ -34,17 +36,31 @@ export function createApp() {
                 currentUser: 'GET /api/auth/me',
                 uploadManuscript: 'POST /api/manuscripts',
                 uploadManuscriptLegacy: 'POST /api/manuscripts/upload',
+                listManuscripts: 'GET /api/manuscripts',
+                getManuscript: 'GET /api/manuscripts/:id',
+                getManuscriptHistory: 'GET /api/manuscripts/:id/history',
                 getReport: 'GET /api/manuscripts/:id/report',
+                tenantRuleTemplates: 'GET/POST /api/tenant/rule-templates',
+                tenantAimScope: 'GET/PUT /api/tenant/aim-scope',
+                tenantSummary: 'GET /api/tenant/summary',
+                tenantAiUsage: 'GET /api/tenant/ai-usage',
                 apiDocs: env.ENABLE_DOCS ? 'GET /docs' : 'disabled (set ENABLE_DOCS=true)',
             },
         });
     });
 
-    // Prometheus Metrics Endpoint
-    app.get('/metrics', (req, res) => {
-        res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
-        res.status(200).send(renderPrometheusMetrics());
-    });
+    // Prometheus Metrics Endpoint (public only when explicitly enabled)
+    if (env.METRICS_PUBLIC) {
+        app.get('/metrics', async (req, res, next) => {
+            try {
+                const queueDepths = await getQueueDepths();
+                res.set('Content-Type', 'text/plain; version=0.0.4; charset=utf-8');
+                res.status(200).send(renderPrometheusMetrics({ queueDepths }));
+            } catch (err) {
+                next(err);
+            }
+        });
+    }
 
     // API documentation (demo/dev only)
     mountApiDocs(app, { enabled: env.ENABLE_DOCS });
@@ -52,6 +68,7 @@ export function createApp() {
     // Modules Routing
     app.use('/health', healthRouter);
     app.use('/api/manuscripts', manuscriptsRouter);
+    app.use('/api/tenant', tenantRouter);
     app.use('/api/auth', authRouter);
 
     // 404 Catch-All

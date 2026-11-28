@@ -5,6 +5,11 @@ function positiveInt(value, fallback) {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function nonNegativeNumber(value, fallback) {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+}
+
 export const env = {
     PORT: process.env.PORT || 8000,
     DB_HOST: process.env.DB_HOST || 'localhost',
@@ -12,6 +17,7 @@ export const env = {
     DB_USER: process.env.DB_USER || 'postgres',
     DB_PASSWORD: process.env.DB_PASSWORD || 'postgres',
     DB_NAME: process.env.DB_NAME || 'journalfit',
+    KEYCLOAK_DB_NAME: process.env.KEYCLOAK_DB_NAME || 'keycloak',
     DATABASE_URL: process.env.DATABASE_URL || null,
     AUTH_MODE: process.env.AUTH_MODE || 'jwt',
     KEYCLOAK_ISSUER: process.env.KEYCLOAK_ISSUER || 'http://localhost:8081/realms/journalfit',
@@ -27,6 +33,22 @@ export const env = {
     WORKER_TYPE: process.env.WORKER_TYPE || 'format',
     WORKER_METRICS_PORT: positiveInt(process.env.WORKER_METRICS_PORT, 9101),
     ENABLE_DOCS: process.env.ENABLE_DOCS === 'true',
+    AI_MODE: process.env.AI_MODE || 'mock',
+    GROQ_API_KEY: process.env.GROQ_API_KEY || null,
+    GROQ_MODEL: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
+    GROQ_BASE_URL: process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1',
+    AI_TIMEOUT_MS: positiveInt(process.env.AI_TIMEOUT_MS, 30000),
+    AI_PRICE_IN_PER_1M: nonNegativeNumber(process.env.AI_PRICE_IN_PER_1M, 0),
+    AI_PRICE_OUT_PER_1M: nonNegativeNumber(process.env.AI_PRICE_OUT_PER_1M, 0),
+    STORAGE_DRIVER: process.env.STORAGE_DRIVER || (process.env.S3_BUCKET ? 's3' : 'local'),
+    S3_ENDPOINT: process.env.S3_ENDPOINT || null,
+    S3_BUCKET: process.env.S3_BUCKET || null,
+    S3_REGION: process.env.S3_REGION || 'garage',
+    S3_FORCE_PATH_STYLE: process.env.S3_FORCE_PATH_STYLE !== 'false',
+    S3_ACCESS_KEY: process.env.S3_ACCESS_KEY || null,
+    S3_SECRET_KEY: process.env.S3_SECRET_KEY || null,
+    METRICS_PUBLIC: process.env.METRICS_PUBLIC !== 'false',
+    METRICS_PORT: positiveInt(process.env.METRICS_PORT, 9100),
 };
 
 export function databaseConnectionString() {
@@ -44,5 +66,34 @@ export function assertSafeAuthMode() {
         throw new Error(
             `AUTH_MODE='${env.AUTH_MODE}' is not allowed in production. Use AUTH_MODE=jwt.`
         );
+    }
+}
+
+export function assertSafeAiMode() {
+    if (!['groq', 'mock'].includes(env.AI_MODE)) {
+        throw new Error(`AI_MODE='${env.AI_MODE}' tidak dikenal. Gunakan groq atau mock.`);
+    }
+
+    if (env.AI_MODE === 'groq' && !env.GROQ_API_KEY) {
+        throw new Error('GROQ_API_KEY wajib diisi ketika AI_MODE=groq.');
+    }
+}
+
+export function assertSafeStorageMode() {
+    if (!['local', 's3'].includes(env.STORAGE_DRIVER)) {
+        throw new Error(
+            `STORAGE_DRIVER='${env.STORAGE_DRIVER}' tidak dikenal. Gunakan local atau s3.`
+        );
+    }
+
+    if (env.STORAGE_DRIVER === 's3') {
+        const missing = ['S3_ENDPOINT', 'S3_BUCKET', 'S3_ACCESS_KEY', 'S3_SECRET_KEY']
+            .filter((key) => !env[key]);
+
+        if (missing.length > 0) {
+            throw new Error(
+                `Konfigurasi S3 tidak lengkap. Variabel hilang: ${missing.join(', ')}.`
+            );
+        }
     }
 }
