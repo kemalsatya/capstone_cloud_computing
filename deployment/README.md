@@ -23,6 +23,7 @@ Lihat [ringkasan versi dan kontribusi](../evidence/platform/RINGKASAN_M3_ANGGOTA
 | `hpa.yaml` | HPA CPU 70%, minimum dua dan maksimum tiga replica. |
 | `worker-format.yaml` | Worker pg-boss untuk format check; memakai PVC dan node storage yang sama. |
 | `worker-scope.yaml` | Worker pg-boss untuk scope AI (`AI_MODE=mock` default; secret Groq opsional). |
+| `garage/` | StatefulSet Garage single-node, Service, ConfigMap, dan secret contoh. |
 | `db-setup-job.yaml` | Job migrate 001+002+003 (initContainer) lalu seed default rules. |
 | `keycloak/deployment.yaml` | Keycloak production mode (`start --import-realm`), probes 9000, limit 1 CPU/1Gi. |
 | `keycloak/service.yaml` | ClusterIP `keycloak:80` menuju container 8080. |

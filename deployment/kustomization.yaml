@@ -11,6 +11,7 @@ resources:
   - worker-scope.yaml
   - db-setup-job.yaml
   - keycloak
+  - garage
 images:
   - name: registry:5000/journalfit-backend
     newTag: be509cd

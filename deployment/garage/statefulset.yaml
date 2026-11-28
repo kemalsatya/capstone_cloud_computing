@@ -1,0 +1,78 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: garage
+  namespace: default
+  labels:
+    app: garage
+spec:
+  serviceName: garage
+  replicas: 1
+  selector:
+    matchLabels:
+      app: garage
+  template:
+    metadata:
+      labels:
+        app: garage
+    spec:
+      automountServiceAccountToken: false
+      containers:
+        - name: garage
+          image: dxflrs/garage:v2.6.0
+          imagePullPolicy: IfNotPresent
+          command: ["/garage", "server", "--single-node", "--default-bucket"]
+          envFrom:
+            - secretRef:
+                name: garage-s3-credentials
+          ports:
+            - name: s3
+              containerPort: 3900
+            - name: rpc
+              containerPort: 3901
+          readinessProbe:
+            tcpSocket:
+              port: s3
+            periodSeconds: 10
+            timeoutSeconds: 3
+            failureThreshold: 6
+          livenessProbe:
+            tcpSocket:
+              port: s3
+            periodSeconds: 20
+            timeoutSeconds: 3
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 512Mi
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/garage
+            - name: config
+              mountPath: /etc/garage.toml
+              subPath: garage.toml
+              readOnly: true
+            - name: rpc-secret
+              mountPath: /run/secrets
+              readOnly: true
+      volumes:
+        - name: config
+          configMap:
+            name: garage-config
+        - name: rpc-secret
+          secret:
+            secretName: garage-rpc-secret
+            defaultMode: 384
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 2Gi

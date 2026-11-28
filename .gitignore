@@ -1,5 +1,6 @@
 # Local generated artifacts
 output/
+rules.json
 # Course reference materials (personal binaries)
 reference-docs/
 # Scratch and render intermediates
@@ -22,8 +23,16 @@ deployment/secret.yaml
 deployment/*-secret.yaml
 deployment/keycloak/secret.yaml
 deployment/keycloak/*-secret.yaml
+deployment/garage/secret.yaml
+deployment/garage/rpc_secret
 !deployment/secret.example.yaml
 !deployment/keycloak/secret.example.yaml
+!deployment/garage/secret.example.yaml
+
+# Backup artifacts
+evidence/reliability-recovery/backup_*/
+evidence/reliability-recovery/garage/
+garage-backup/
 
 # Node
 node_modules/

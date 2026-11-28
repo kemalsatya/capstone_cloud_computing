@@ -27,7 +27,7 @@ worker-format
 | `src/modules/suggester/` | Turunkan `generated_rules` dari DOCX template; dipakai CLI dan API tenant admin |
 | `src/modules/tenant/` | API tenant admin: rule draft/review/aktivasi, aim-scope, summary, ai-usage |
 | `src/modules/ai/` | Cek scope Groq + mode mock, validasi output JSON, hitung token/biaya |
-| `src/modules/storage/` | Adapter penyimpanan lokal (`UPLOAD_DIR`, default `uploads`) |
+| `src/modules/storage/` | Adapter penyimpanan `local` atau S3/Garage (`STORAGE_DRIVER`) |
 | `src/modules/workers/format.worker.js` | Handler worker format; enqueue scope jika abstrak terekstrak |
 | `src/modules/workers/scope.worker.js` | Handler worker scope: kuota, AI, retry, delayed/DLQ |
 | `src/worker.js` | Entry worker + endpoint metrik worker |
@@ -96,12 +96,29 @@ Catatan deviasi:
 - `check_results` memakai satu baris per `(manuscript_id, check_type)`.
 - `format_score`, `status`, `rule_type`, dan `file_path` lama dipertahankan untuk kompatibilitas.
 
+## Storage (local / Garage S3)
+
+- `STORAGE_DRIVER=local` (default): file di `UPLOAD_DIR`.
+- `STORAGE_DRIVER=s3`: file di Garage/S3-compatible.
+- Variabel S3: `S3_ENDPOINT`, `S3_BUCKET`, `S3_REGION`, `S3_FORCE_PATH_STYLE`,
+  `S3_ACCESS_KEY`, `S3_SECRET_KEY`.
+- Key objek tetap:
+  - `tenants/{tenant_id}/manuscripts/{manuscript_id}.docx`
+  - `tenants/{tenant_id}/templates/{template_id}.docx`
+- Konfigurasi S3 tidak lengkap → proses gagal cepat saat startup.
+- Backup/restore objek: `scripts/garage-backup.js`, `scripts/garage-restore.js`,
+  dan `scripts/verify-restore.js` (sha256 manifest vs tabel).
+- `automation/scripts/db-backup-restore.sh` mencakup PostgreSQL `journalfit`
+  (termasuk `pgboss`), DB `keycloak`, dan objek Garage.
+
 ## Menjalankan
 
 Docker Compose:
 
 ```bash
-docker compose up -d postgres keycloak db-setup app worker-format worker-scope
+docker compose up -d postgres keycloak garage db-setup app worker-format worker-scope
+# Untuk menyimpan DOCX di Garage:
+# STORAGE_DRIVER=s3 docker compose up -d ...
 ```
 
 Lokal:
@@ -113,7 +130,7 @@ npm run worker                         # worker format (WORKER_TYPE=format)
 WORKER_TYPE=scope npm run worker       # worker scope
 ```
 
-Environment penting: `DB_*`/`DATABASE_URL`, `PG_BOSS_SCHEMA`, `FORMAT_QUEUE`, `SCOPE_QUEUE`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `WORKER_METRICS_PORT`, `AI_MODE`, `GROQ_API_KEY`, `GROQ_MODEL`, `AI_TIMEOUT_MS`, `AI_PRICE_IN_PER_1M`, `AI_PRICE_OUT_PER_1M`.
+Environment penting: `DB_*`/`DATABASE_URL`, `PG_BOSS_SCHEMA`, `FORMAT_QUEUE`, `SCOPE_QUEUE`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `WORKER_METRICS_PORT`, `AI_MODE`, `GROQ_API_KEY`, `GROQ_MODEL`, `AI_TIMEOUT_MS`, `AI_PRICE_IN_PER_1M`, `AI_PRICE_OUT_PER_1M`, `STORAGE_DRIVER`, `S3_*`, `METRICS_PUBLIC`, `METRICS_PORT`.
 
 ## Endpoint
 
@@ -188,6 +205,7 @@ Variabel: `AI_MODE`, `GROQ_API_KEY`, `GROQ_MODEL`, `GROQ_BASE_URL`, `AI_TIMEOUT_
 
 ## Batasan saat ini
 
-- Penyimpanan masih lokal; adapter Garage S3 menyusul.
+- Garage yang disediakan adalah single-node; multi-node/multi-AZ belum.
 - Route legacy `/upload` menerima file non-DOCX demi kompatibilitas evidence.
-- Manifest K8s `worker-format`, `worker-scope`, dan Job `db-setup` sudah ada; image/tag tetap harus dibangun ulang dan `deployment/kustomization.yaml` diperbarui sebelum demo.
+- Manifest K8s `worker-format`, `worker-scope`, Garage, dan Job `db-setup` sudah ada; image/tag tetap harus dibangun ulang dan `deployment/kustomization.yaml` diperbarui sebelum demo.
+- `/metrics` pada deployment K8s hanya dibuka di port internal `9100`, bukan lewat Ingress.
