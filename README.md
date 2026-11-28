@@ -8,13 +8,13 @@ Repositori proyek akhir Cloud Computing: **JournalFit**, sistem manajemen dan pe
 
 | Komponen | Spesifikasi / Status Terverifikasi |
 | :--- | :--- |
-| **Backend & Worker** | Node.js 22 (`node:22-alpine`, non-root `USER node`, `dumb-init`), Express `5.3.0`, OpenAPI/Swagger UI (`/docs`, `/openapi.yaml`) |
-| **Async Job & OOXML Engine** | `pg-boss` (`worker-format` pod + antrean `format-check` + DLQ), parser native `jszip` + `fast-xml-parser` untuk Tier-1 rules `FMT-001..009` (`$0` biaya AI) |
+| **Backend & Worker** | Node.js 22 (`node:22-alpine`, non-root `USER node`, `dumb-init`), Express `5.3.0`, OpenAPI/Swagger UI (`/docs`, `/openapi.yaml`), pod `worker-format` + `worker-scope` |
+| **Async Job & OOXML Engine** | `pg-boss` (`format-check` + `scope-check` + DLQ), parser native `jszip` + `fast-xml-parser` untuk Tier-1 rules `FMT-001..009`, scope AI Groq/mock dengan validasi JSON dan pencatatan token/biaya |
 | **Auth & Multi-Tenant** | Keycloak `26.8.2` (OIDC RS256 JWKS, `jose`), isolasi tenant & RBAC terverifikasi (`404` cross-tenant, `403` RBAC, `63/64` tests PASS + 1 skipped golden; `64/64` dengan template lokal) |
 | **Artifact K8s Teruji** | `registry:5000/journalfit-backend:0c2cf92` (non-root runtime, Kustomize + `db-setup` Job) |
 | **Kluster & Delivery** | `k3d-capstone`, namespace `default`, Traefik Ingress (`:8088`), HPA (`2->3->2`, `19.865 req / 0 fail`), Argo CD GitOps (`automation/argocd/application.yaml`) |
 | **Observability & Recovery** | `GET /metrics` + Prometheus (`:9090`) + Grafana (`:3000`); Pod self-healing `7.1s`, DB Restore RTO `0.78s`, Rolling Update `777 req / 0 fail / p95 26.73ms` |
-| **Scope Boundary (v1 vs v2)** | Pemeriksaan format deterministik (`FMT-001..009`) aktif penuh; Groq AI scope checker & Garage S3 multi-AZ dicatat eksplisit sebagai **Roadmap v2** |
+| **Scope Boundary (v1 vs v2)** | Pemeriksaan format deterministik (`FMT-001..009`) aktif penuh; scope checker Groq/mock, API tenant admin, list/detail/history naskah sudah ada; Garage S3 multi-AZ tetap **Roadmap v2** |
 
 ---
 

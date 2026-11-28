@@ -106,6 +106,63 @@ paths:
           $ref: '#/components/responses/Forbidden'
 
   /api/manuscripts:
+    get:
+      tags: [Manuscripts]
+      operationId: listManuscripts
+      summary: List manuscripts in the caller's tenant
+      description: |
+        Authors only see their own manuscripts. Editors and tenant admins see
+        every manuscript in their tenant. The tenant always comes from the
+        validated token, so cross-tenant access is impossible.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [author, editor, tenant_admin]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [queued, processing, completed, failed]
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: author_id
+          in: query
+          description: Only honored for editors and tenant admins. Authors are always scoped to their own user.
+          schema:
+            type: string
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 100
+            default: 20
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Paginated manuscript list.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManuscriptListResponse'
+        '400':
+          $ref: '#/components/responses/InvalidQuery'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
     post:
       tags: [Manuscripts]
       operationId: createManuscript
@@ -269,6 +326,340 @@ paths:
           $ref: '#/components/responses/Forbidden'
         '404':
           $ref: '#/components/responses/NotFound'
+
+  /api/manuscripts/{id}:
+    get:
+      tags: [Manuscripts]
+      operationId: getManuscript
+      summary: Get manuscript metadata and per-check status
+      description: |
+        Returns metadata plus separate format and scope statuses. Authors may
+        only read their own manuscripts; editors and tenant admins may read any
+        manuscript in their tenant. A resource from another tenant returns 404.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [author, editor, tenant_admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ms-001
+      responses:
+        '200':
+          description: Manuscript metadata and status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManuscriptDetailResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/manuscripts/{id}/history:
+    get:
+      tags: [Manuscripts]
+      operationId: getManuscriptHistory
+      summary: Get the revision chain for a manuscript
+      description: |
+        Returns the full revision chain ordered by revision number. Authors may
+        only read their own chains; editors and tenant admins may read any chain
+        in their tenant.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [author, editor, tenant_admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: ms-001
+      responses:
+        '200':
+          description: Revision chain.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ManuscriptHistoryResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/tenant/rule-templates:
+    post:
+      tags: [Tenant]
+      operationId: createRuleTemplateDraft
+      summary: Upload a DOCX template and create a draft rule
+      description: |
+        Parses the template, runs the suggester, and creates a draft rule.
+        The draft must be reviewed and activated before it is used.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: DOCX template.
+      responses:
+        '201':
+          description: Draft created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleTemplateDraftResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '413':
+          $ref: '#/components/responses/PayloadTooLarge'
+    get:
+      tags: [Tenant]
+      operationId: listRuleTemplates
+      summary: List all rule template versions
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      responses:
+        '200':
+          description: Rule template versions ordered by version descending.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleTemplateListResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/tenant/rule-templates/{id}:
+    get:
+      tags: [Tenant]
+      operationId: getRuleTemplate
+      summary: Get a rule template version
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rule template detail.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleTemplateDetailResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /api/tenant/rule-templates/{id}/rules:
+    put:
+      tags: [Tenant]
+      operationId: saveRuleTemplateRules
+      summary: Save reviewed rules on a draft
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RuleTemplateRulesRequest'
+      responses:
+        '200':
+          description: Rules saved.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleTemplateDetailResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /api/tenant/rule-templates/{id}/activate:
+    post:
+      tags: [Tenant]
+      operationId: activateRuleTemplate
+      summary: Activate a reviewed draft rule
+      description: |
+        Archives the currently active rule and activates this draft in one
+        transaction. A tenant never has more than one active rule.
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Rule activated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RuleTemplateDetailResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /api/tenant/aim-scope:
+    get:
+      tags: [Tenant]
+      operationId: getAimScope
+      summary: Get the tenant aim and scope
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      responses:
+        '200':
+          description: Aim and scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AimScopeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+    put:
+      tags: [Tenant]
+      operationId: updateAimScope
+      summary: Update the tenant aim and scope
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AimScope'
+      responses:
+        '200':
+          description: Updated aim and scope.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AimScopeResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '422':
+          $ref: '#/components/responses/UnprocessableEntity'
+
+  /api/tenant/summary:
+    get:
+      tags: [Tenant]
+      operationId: getTenantSummary
+      summary: Get tenant submission and format statistics
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      parameters:
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Tenant summary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TenantSummaryResponse'
+        '400':
+          $ref: '#/components/responses/InvalidQuery'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+
+  /api/tenant/ai-usage:
+    get:
+      tags: [Tenant]
+      operationId: getAiUsage
+      summary: Get current-month AI token usage and cost
+      security:
+        - bearerAuth: []
+      x-tenant-scoped: true
+      x-required-roles: [tenant_admin]
+      responses:
+        '200':
+          description: AI usage for the current month.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AiUsageResponse'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '403':
+          $ref: '#/components/responses/Forbidden'
 
 components:
   securitySchemes:
@@ -493,7 +884,7 @@ components:
           properties:
             status:
               type: string
-              enum: [queued, running, completed, failed]
+              enum: [queued, running, completed, delayed, skipped, failed]
             fit_level:
               type: string
               nullable: true
@@ -526,7 +917,446 @@ components:
         data:
           $ref: '#/components/schemas/ManuscriptReport'
 
+    ManuscriptListItem:
+      type: object
+      properties:
+        id:
+          type: string
+        revision_no:
+          type: integer
+        title:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        author_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+        original_filename:
+          type: string
+          nullable: true
+        size_bytes:
+          type: integer
+          nullable: true
+        format:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [queued, running, completed, failed]
+            outcome:
+              type: string
+              nullable: true
+              enum: [passed, failed]
+        scope:
+          type: object
+          properties:
+            status:
+              type: string
+              enum: [queued, running, completed, delayed, skipped, failed]
+            outcome:
+              type: string
+              nullable: true
+              enum: [high, medium, low]
+
+    ManuscriptListResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/ManuscriptListItem'
+            next_cursor:
+              type: string
+              nullable: true
+
+    ManuscriptDetailResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            manuscript:
+              type: object
+              properties:
+                id:
+                  type: string
+                tenant_id:
+                  type: string
+                author_id:
+                  type: string
+                  nullable: true
+                revision_no:
+                  type: integer
+                title:
+                  type: string
+                  nullable: true
+                status:
+                  type: string
+                  enum: [queued, processing, completed, failed]
+                created_at:
+                  type: string
+                  format: date-time
+                  nullable: true
+            rule:
+              type: object
+              nullable: true
+              properties:
+                template_id:
+                  type: string
+                version:
+                  type: integer
+            format:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [queued, running, completed, failed]
+                outcome:
+                  type: string
+                  nullable: true
+                  enum: [passed, failed]
+                counts:
+                  type: object
+                  properties:
+                    error:
+                      type: integer
+                    warning:
+                      type: integer
+                    info:
+                      type: integer
+            scope:
+              type: object
+              properties:
+                status:
+                  type: string
+                  enum: [queued, running, completed, delayed, skipped, failed]
+                fit_level:
+                  type: string
+                  nullable: true
+                  enum: [high, medium, low]
+            generated_at:
+              type: string
+              format: date-time
+
+    RevisionHistoryItem:
+      type: object
+      properties:
+        id:
+          type: string
+        revision_no:
+          type: integer
+        parent_manuscript_id:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        author_id:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    ManuscriptHistoryResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          required: [items]
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/RevisionHistoryItem'
+
+    RuleTemplateSummary:
+      type: object
+      properties:
+        id:
+          type: string
+        version:
+          type: integer
+        status:
+          type: string
+          enum: [draft, active, archived]
+        template_name:
+          type: string
+        template_original_filename:
+          type: string
+          nullable: true
+        template_size_bytes:
+          type: integer
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+        activated_at:
+          type: string
+          format: date-time
+          nullable: true
+        archived_at:
+          type: string
+          format: date-time
+          nullable: true
+
+    RuleTemplateListResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/RuleTemplateSummary'
+
+    RuleTemplateDraftResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            version:
+              type: integer
+            status:
+              type: string
+              enum: [draft]
+            generated_rules:
+              type: object
+              additionalProperties: true
+              nullable: true
+
+    RuleTemplateRulesRequest:
+      type: object
+      required: [rules]
+      properties:
+        schema_version:
+          type: integer
+          minimum: 1
+        rules:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+
+    RuleTemplateDetailResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            id:
+              type: string
+            tenant_id:
+              type: string
+            version:
+              type: integer
+            status:
+              type: string
+              enum: [draft, active, archived]
+            template_name:
+              type: string
+            template_original_filename:
+              type: string
+              nullable: true
+            template_size_bytes:
+              type: integer
+              nullable: true
+            template_sha256:
+              type: string
+              nullable: true
+            generated_rules:
+              type: object
+              additionalProperties: true
+              nullable: true
+            rules:
+              type: object
+              additionalProperties: true
+              nullable: true
+            reviewed_by:
+              type: string
+              nullable: true
+            activated_by:
+              type: string
+              nullable: true
+            created_at:
+              type: string
+              format: date-time
+            activated_at:
+              type: string
+              format: date-time
+              nullable: true
+            archived_at:
+              type: string
+              format: date-time
+              nullable: true
+
+    AimScope:
+      type: object
+      required: [aim_scope]
+      properties:
+        aim_scope:
+          type: string
+          minLength: 50
+          maxLength: 4000
+
+    AimScopeResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            aim_scope:
+              type: string
+              nullable: true
+            updated_at:
+              type: string
+              format: date-time
+              nullable: true
+
+    TenantSummaryResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            from:
+              type: string
+              format: date-time
+            to:
+              type: string
+              format: date-time
+            total_manuscripts:
+              type: integer
+            format:
+              type: object
+              properties:
+                checks:
+                  type: integer
+                passed:
+                  type: integer
+                failed:
+                  type: integer
+            scope:
+              type: object
+              properties:
+                completed:
+                  type: integer
+                skipped:
+                  type: integer
+                delayed:
+                  type: integer
+
+    AiUsageResponse:
+      type: object
+      required: [success, data]
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            tokens_in:
+              type: integer
+            tokens_out:
+              type: integer
+            total_tokens:
+              type: integer
+            est_cost_usd:
+              type: number
+            quota:
+              type: integer
+            usage_percentage:
+              type: number
+
   responses:
+    UnprocessableEntity:
+      description: Request body failed validation.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            ruleInvalid:
+              value:
+                error:
+                  code: RULE_INVALID
+                  message: Rule tidak dikenal FMT-999.
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
+    InvalidQuery:
+      description: Invalid query parameter.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            invalidQuery:
+              value:
+                error:
+                  code: INVALID_QUERY
+                  message: "Parameter 'status' tidak valid."
+                  request_id: 6f1c3b1e-3e2a-4f9a-9f0d-2f4b8c1a7d11
+
     Unauthorized:
       description: Missing, invalid, or expired bearer token.
       content:

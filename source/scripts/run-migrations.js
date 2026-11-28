@@ -9,6 +9,7 @@ const migrationsDir = path.resolve(here, '..', 'migrations');
 const MIGRATIONS = [
     '001_add_keycloak_auth.sql',
     '002_prd_format_foundation.sql',
+    '003_tenant_admin.sql',
 ];
 
 async function main() {

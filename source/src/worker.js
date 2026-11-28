@@ -1,7 +1,8 @@
 import http from 'node:http';
-import { assertSafeAuthMode, env } from './config/env.js';
+import { assertSafeAiMode, assertSafeAuthMode, env } from './config/env.js';
 import { startQueue, stopQueue } from './modules/queue/index.js';
 import { registerFormatWorker } from './modules/workers/format.worker.js';
+import { registerScopeWorker } from './modules/workers/scope.worker.js';
 import { renderPrometheusMetrics } from './common/utils/metrics.js';
 
 assertSafeAuthMode();
@@ -39,6 +40,9 @@ async function main() {
 
     if (env.WORKER_TYPE === 'format') {
         await registerFormatWorker(boss);
+    } else if (env.WORKER_TYPE === 'scope') {
+        assertSafeAiMode();
+        await registerScopeWorker(boss);
     } else {
         throw new Error(`WORKER_TYPE tidak dikenal: ${env.WORKER_TYPE}`);
     }

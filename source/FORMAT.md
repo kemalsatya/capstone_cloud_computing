@@ -24,8 +24,12 @@ worker-format
 | `src/modules/parser/` | Baca DOCX: ZIP safety, `document.xml`, `styles.xml`, theme, section, paragraf, tabel, abstrak/keywords, resolusi style |
 | `src/modules/rules/` | Katalog FMT-001..009, engine, `default-rules.json` |
 | `src/modules/queue/` | pg-boss: queue `format-check`, retry, DLQ, enqueue atomik |
+| `src/modules/suggester/` | Turunkan `generated_rules` dari DOCX template; dipakai CLI dan API tenant admin |
+| `src/modules/tenant/` | API tenant admin: rule draft/review/aktivasi, aim-scope, summary, ai-usage |
+| `src/modules/ai/` | Cek scope Groq + mode mock, validasi output JSON, hitung token/biaya |
 | `src/modules/storage/` | Adapter penyimpanan lokal (`UPLOAD_DIR`, default `uploads`) |
-| `src/modules/workers/format.worker.js` | Handler worker format |
+| `src/modules/workers/format.worker.js` | Handler worker format; enqueue scope jika abstrak terekstrak |
+| `src/modules/workers/scope.worker.js` | Handler worker scope: kuota, AI, retry, delayed/DLQ |
 | `src/worker.js` | Entry worker + endpoint metrik worker |
 | `scripts/derive-template-rules.js` | Turunkan `default-rules.json` dari template DOCX |
 | `scripts/seed-demo-data.js` | Seed tenant/user + satu rule aktif per tenant |
@@ -75,7 +79,8 @@ cd source
 node scripts/run-migrations.js
 ```
 
-Setelah migrasi, seed rule default:
+Migrasi berurutan: `001_add_keycloak_auth.sql`, `002_prd_format_foundation.sql`,
+`003_tenant_admin.sql`. Setelah migrasi, seed rule default:
 
 ```bash
 cd source
@@ -96,18 +101,19 @@ Catatan deviasi:
 Docker Compose:
 
 ```bash
-docker compose up -d postgres keycloak db-setup app worker-format
+docker compose up -d postgres keycloak db-setup app worker-format worker-scope
 ```
 
 Lokal:
 
 ```bash
 cd source
-npm start          # API
-npm run worker     # worker format
+npm start                              # API
+npm run worker                         # worker format (WORKER_TYPE=format)
+WORKER_TYPE=scope npm run worker       # worker scope
 ```
 
-Environment penting: `DB_*`/`DATABASE_URL`, `PG_BOSS_SCHEMA`, `FORMAT_QUEUE`, `SCOPE_QUEUE`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `WORKER_METRICS_PORT`.
+Environment penting: `DB_*`/`DATABASE_URL`, `PG_BOSS_SCHEMA`, `FORMAT_QUEUE`, `SCOPE_QUEUE`, `UPLOAD_DIR`, `MAX_UPLOAD_MB`, `WORKER_METRICS_PORT`, `AI_MODE`, `GROQ_API_KEY`, `GROQ_MODEL`, `AI_TIMEOUT_MS`, `AI_PRICE_IN_PER_1M`, `AI_PRICE_OUT_PER_1M`.
 
 ## Endpoint
 
@@ -115,6 +121,9 @@ Environment penting: `DB_*`/`DATABASE_URL`, `PG_BOSS_SCHEMA`, `FORMAT_QUEUE`, `S
 |---|---|---|---|
 | POST | `/api/manuscripts` | 202 | Route PRD, validasi DOCX ketat |
 | POST | `/api/manuscripts/upload` | 201 | Alias legacy untuk skrip evidence; validasi longgar |
+| GET | `/api/manuscripts` | 200 | Daftar naskah; author hanya miliknya, editor/admin seluruh tenant; cursor pagination |
+| GET | `/api/manuscripts/{id}` | 200 | Metadata + status format/scope terpisah |
+| GET | `/api/manuscripts/{id}/history` | 200 | Rantai revisi berurutan |
 | GET | `/api/manuscripts/{id}/report` | 200 | Laporan gabungan; envelope `success/data` dipertahankan |
 
 Route legacy sengaja menerima file non-DOCX agar e2e lama tetap hijau; worker akan menandainya `failed` dengan `error_code=INVALID_FILE`. Demo baru sebaiknya memakai `/api/manuscripts`.
@@ -122,7 +131,8 @@ Route legacy sengaja menerima file non-DOCX agar e2e lama tetap hijau; worker ak
 ## Queue dan reliability
 
 - Queue `format-check`: policy `exclusive`, `singletonKey=manuscript_id`, retry 2, delay 5 dtk, expire 120 dtk.
-- DLQ: `format-check-dlq`.
+- Queue `scope-check`: `singletonKey=manuscript_id`, retry 3, backoff eksponensial, expire 180 dtk.
+- DLQ: `format-check-dlq` dan `scope-check-dlq`.
 - Enqueue memakai `db: { executeSql }` di dalam transaksi `pg`, sehingga job ikut rollback bila insert gagal.
 - Worker idempoten: bila `check_results.format.status = completed`, job dilewati.
 - DOCX korup ditandai `failed` + `INVALID_FILE` tanpa retry.
@@ -157,9 +167,27 @@ Demo K8s memakai issuer publik
 `http://keycloak.localhost:8088/realms/journalfit`. Langkah lengkap, token,
 matriks tenant, worker, dan PVC ada di [DEMO.md](./DEMO.md).
 
+## Scope AI
+
+Format worker men-enqueue `scope-check` dalam transaksi yang sama bila abstrak berhasil
+diekstrak. Jika tidak ada abstrak, scope langsung `skipped` dengan `error_code=NO_ABSTRACT`.
+
+Worker scope:
+
+- Idempoten: `completed`/`skipped` dilewati.
+- Cek kuota token bulan berjalan sebelum memanggil AI; habis → `skipped` `QUOTA_EXCEEDED`.
+- `AI_MODE=mock` (default) tidak memanggil jaringan; `AI_MODE=groq` memakai Groq dengan
+  timeout 30 dtk dan validasi output JSON.
+- Output tidak valid atau error transien di-retry 3x dengan backoff; setelah itu scope
+  `delayed` dan job masuk DLQ. Laporan format tidak terpengaruh.
+- Token, model, dan estimasi biaya disimpan di `check_results` dan tersedia lewat
+  `GET /api/tenant/ai-usage`.
+
+Variabel: `AI_MODE`, `GROQ_API_KEY`, `GROQ_MODEL`, `GROQ_BASE_URL`, `AI_TIMEOUT_MS`,
+`AI_PRICE_IN_PER_1M`, `AI_PRICE_OUT_PER_1M`.
+
 ## Batasan saat ini
 
 - Penyimpanan masih lokal; adapter Garage S3 menyusul.
-- `check_results.scope` dibuat `queued` tetapi worker scope/AI belum diimplementasikan.
 - Route legacy `/upload` menerima file non-DOCX demi kompatibilitas evidence.
-- Manifest K8s `worker-format` dan Job `db-setup` sudah ada; image/tag tetap harus dibangun ulang dan `deployment/kustomization.yaml` diperbarui sebelum demo.
+- Manifest K8s `worker-format`, `worker-scope`, dan Job `db-setup` sudah ada; image/tag tetap harus dibangun ulang dan `deployment/kustomization.yaml` diperbarui sebelum demo.

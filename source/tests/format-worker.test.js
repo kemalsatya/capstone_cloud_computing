@@ -92,6 +92,7 @@ describe('Format worker', () => {
             assert.equal(mocks.state.completeFormat.payload.counts.error, 0);
             assert.equal(mocks.state.completeFormat.payload.document.abstract.wordCount, 120);
             assert.equal(mocks.state.completeFormat.payload.tenantId, 'tenant-a');
+            assert.equal(typeof mocks.state.completeFormat.payload.enqueueScope, 'function');
             assert.equal(mocks.state.failFormat, null);
         } finally {
             storage.get = originalGet;

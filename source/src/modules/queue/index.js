@@ -78,4 +78,24 @@ export const queueService = {
             db,
         });
     },
+
+    async enqueueScopeCheck(manuscriptId, tenantId, db) {
+        if (!ready || !boss) {
+            throw new AppError(
+                'Antrean pemeriksaan belum siap.',
+                503,
+                null,
+                'QUEUE_UNAVAILABLE'
+            );
+        }
+
+        return boss.send(SCOPE_QUEUE, { manuscriptId, tenantId }, {
+            singletonKey: manuscriptId,
+            retryLimit: 3,
+            retryDelay: 5,
+            retryBackoff: true,
+            expireInSeconds: 180,
+            db,
+        });
+    },
 };

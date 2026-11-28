@@ -3,6 +3,7 @@ import { countFindings, outcomeFor, runRules } from '../rules/engine.js';
 import { manuscriptRepository } from '../manuscripts/repositories/manuscript.repository.js';
 import { storage } from '../storage/index.js';
 import { FORMAT_QUEUE } from '../queue/names.js';
+import { queueService } from '../queue/index.js';
 import { recordCheckDuration, recordJobResult } from '../../common/utils/metrics.js';
 
 async function failPermanently(manuscriptId, errorCode, message) {
@@ -76,6 +77,7 @@ export function registerFormatWorker(boss) {
                 counts,
                 document,
                 templateVersion: template.version,
+                enqueueScope: (id, tenant, db) => queueService.enqueueScopeCheck(id, tenant, db),
             });
 
             const startedAt = new Date(manuscript.created_at).getTime();

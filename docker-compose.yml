@@ -19,6 +19,7 @@ services:
       - ./source/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
       - ./source/migrations/001_add_keycloak_auth.sql:/docker-entrypoint-initdb.d/02-auth.sql:ro
       - ./source/migrations/002_prd_format_foundation.sql:/docker-entrypoint-initdb.d/03-format.sql:ro
+      - ./source/migrations/003_tenant_admin.sql:/docker-entrypoint-initdb.d/04-tenant.sql:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-capstone} -d ${DB_NAME:-journalfit}"]
       interval: 5s
@@ -29,7 +30,7 @@ services:
 
   # One-shot setup: migrations then demo seed, using the app image.
   # The postgres init scripts above only run on an empty volume, so older
-  # volumes still need this job to receive 001/002.
+  # volumes still need this job to receive 001/002/003.
   db-setup:
     build:
       context: ./source
@@ -122,6 +123,41 @@ services:
       - "127.0.0.1:${WORKER_METRICS_PORT:-9101}:9101"
     volumes:
       - app_uploads:/app/uploads
+    networks:
+      - capstone-net
+
+  worker-scope:
+    build:
+      context: ./source
+      dockerfile: Dockerfile
+    container_name: journalfit-worker-scope
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      db-setup:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-capstone}
+      DB_PASSWORD: ${DB_PASSWORD:-capstone}
+      DB_NAME: ${DB_NAME:-journalfit}
+      PG_BOSS_SCHEMA: ${PG_BOSS_SCHEMA:-pgboss}
+      SCOPE_QUEUE: ${SCOPE_QUEUE:-scope-check}
+      WORKER_TYPE: scope
+      WORKER_METRICS_PORT: 9101
+      AI_MODE: ${AI_MODE:-mock}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GROQ_MODEL: ${GROQ_MODEL:-llama-3.1-8b-instant}
+      GROQ_BASE_URL: ${GROQ_BASE_URL:-https://api.groq.com/openai/v1}
+      AI_TIMEOUT_MS: ${AI_TIMEOUT_MS:-30000}
+      AI_PRICE_IN_PER_1M: ${AI_PRICE_IN_PER_1M:-0}
+      AI_PRICE_OUT_PER_1M: ${AI_PRICE_OUT_PER_1M:-0}
+    command: ["node", "src/worker.js"]
+    ports:
+      - "127.0.0.1:${WORKER_SCOPE_METRICS_PORT:-9102}:9101"
     networks:
       - capstone-net
 

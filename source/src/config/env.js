@@ -5,6 +5,11 @@ function positiveInt(value, fallback) {
     return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 }
 
+function nonNegativeNumber(value, fallback) {
+    const parsed = Number.parseFloat(value);
+    return Number.isFinite(parsed) && parsed >= 0 ? parsed : fallback;
+}
+
 export const env = {
     PORT: process.env.PORT || 8000,
     DB_HOST: process.env.DB_HOST || 'localhost',
@@ -27,6 +32,13 @@ export const env = {
     WORKER_TYPE: process.env.WORKER_TYPE || 'format',
     WORKER_METRICS_PORT: positiveInt(process.env.WORKER_METRICS_PORT, 9101),
     ENABLE_DOCS: process.env.ENABLE_DOCS === 'true',
+    AI_MODE: process.env.AI_MODE || 'mock',
+    GROQ_API_KEY: process.env.GROQ_API_KEY || null,
+    GROQ_MODEL: process.env.GROQ_MODEL || 'llama-3.1-8b-instant',
+    GROQ_BASE_URL: process.env.GROQ_BASE_URL || 'https://api.groq.com/openai/v1',
+    AI_TIMEOUT_MS: positiveInt(process.env.AI_TIMEOUT_MS, 30000),
+    AI_PRICE_IN_PER_1M: nonNegativeNumber(process.env.AI_PRICE_IN_PER_1M, 0),
+    AI_PRICE_OUT_PER_1M: nonNegativeNumber(process.env.AI_PRICE_OUT_PER_1M, 0),
 };
 
 export function databaseConnectionString() {
@@ -44,5 +56,15 @@ export function assertSafeAuthMode() {
         throw new Error(
             `AUTH_MODE='${env.AUTH_MODE}' is not allowed in production. Use AUTH_MODE=jwt.`
         );
+    }
+}
+
+export function assertSafeAiMode() {
+    if (!['groq', 'mock'].includes(env.AI_MODE)) {
+        throw new Error(`AI_MODE='${env.AI_MODE}' tidak dikenal. Gunakan groq atau mock.`);
+    }
+
+    if (env.AI_MODE === 'groq' && !env.GROQ_API_KEY) {
+        throw new Error('GROQ_API_KEY wajib diisi ketika AI_MODE=groq.');
     }
 }

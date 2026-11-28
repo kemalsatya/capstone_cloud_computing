@@ -3,6 +3,7 @@ import express from 'express';
 import healthRouter from './modules/health/index.js';
 import manuscriptsRouter from './modules/manuscripts/index.js';
 import authRouter from './modules/auth/index.js';
+import tenantRouter from './modules/tenant/index.js';
 import { errorHandler, AppError } from './common/middlewares/errorHandler.js';
 import { metricsMiddleware, renderPrometheusMetrics } from './common/utils/metrics.js';
 import { env } from './config/env.js';
@@ -34,7 +35,14 @@ export function createApp() {
                 currentUser: 'GET /api/auth/me',
                 uploadManuscript: 'POST /api/manuscripts',
                 uploadManuscriptLegacy: 'POST /api/manuscripts/upload',
+                listManuscripts: 'GET /api/manuscripts',
+                getManuscript: 'GET /api/manuscripts/:id',
+                getManuscriptHistory: 'GET /api/manuscripts/:id/history',
                 getReport: 'GET /api/manuscripts/:id/report',
+                tenantRuleTemplates: 'GET/POST /api/tenant/rule-templates',
+                tenantAimScope: 'GET/PUT /api/tenant/aim-scope',
+                tenantSummary: 'GET /api/tenant/summary',
+                tenantAiUsage: 'GET /api/tenant/ai-usage',
                 apiDocs: env.ENABLE_DOCS ? 'GET /docs' : 'disabled (set ENABLE_DOCS=true)',
             },
         });
@@ -52,6 +60,7 @@ export function createApp() {
     // Modules Routing
     app.use('/health', healthRouter);
     app.use('/api/manuscripts', manuscriptsRouter);
+    app.use('/api/tenant', tenantRouter);
     app.use('/api/auth', authRouter);
 
     // 404 Catch-All

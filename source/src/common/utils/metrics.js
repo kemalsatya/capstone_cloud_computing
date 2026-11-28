@@ -9,6 +9,8 @@ let durationCount = 0;
 
 const jobCounts = new Map();
 const checkDurationStats = new Map();
+const aiTokenCounters = new Map();
+const aiCostCounters = new Map();
 
 function escapeLabel(value) {
     return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
@@ -37,6 +39,16 @@ function checkStats(checkType) {
 export function recordJobResult(queue, result) {
     const key = `${queue}|${result}`;
     jobCounts.set(key, (jobCounts.get(key) || 0) + 1);
+}
+
+export function recordAiUsage(tenantId, tokensIn, tokensOut, costUsd) {
+    const tenant = tenantId || 'unknown';
+    const inKey = `${tenant}|in`;
+    const outKey = `${tenant}|out`;
+
+    aiTokenCounters.set(inKey, (aiTokenCounters.get(inKey) || 0) + Number(tokensIn || 0));
+    aiTokenCounters.set(outKey, (aiTokenCounters.get(outKey) || 0) + Number(tokensOut || 0));
+    aiCostCounters.set(tenant, (aiCostCounters.get(tenant) || 0) + Number(costUsd || 0));
 }
 
 export function recordCheckDuration(checkType, milliseconds) {
@@ -132,6 +144,27 @@ export function renderPrometheusMetrics() {
         );
         lines.push(
             `journalfit_check_e2e_seconds_count{check_type="${escapeLabel(checkType)}"} ${stats.count}`
+        );
+    }
+
+    lines.push(
+        '# HELP journalfit_ai_tokens_total Total AI tokens by direction and tenant',
+        '# TYPE journalfit_ai_tokens_total counter'
+    );
+    for (const [key, count] of aiTokenCounters.entries()) {
+        const [tenant, direction] = key.split('|');
+        lines.push(
+            `journalfit_ai_tokens_total{direction="${escapeLabel(direction)}",tenant="${escapeLabel(tenant)}"} ${count}`
+        );
+    }
+
+    lines.push(
+        '# HELP journalfit_ai_cost_usd_total Estimated AI cost in USD by tenant',
+        '# TYPE journalfit_ai_cost_usd_total counter'
+    );
+    for (const [tenant, cost] of aiCostCounters.entries()) {
+        lines.push(
+            `journalfit_ai_cost_usd_total{tenant="${escapeLabel(tenant)}"} ${cost.toFixed(6)}`
         );
     }
 

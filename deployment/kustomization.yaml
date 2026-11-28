@@ -8,6 +8,7 @@ resources:
   - ingress.yaml
   - hpa.yaml
   - worker-format.yaml
+  - worker-scope.yaml
   - db-setup-job.yaml
   - keycloak
 images:
